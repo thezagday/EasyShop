@@ -19,3 +19,9 @@ $(window).on("load", function() {
 
 // start the Stimulus application
 // import './bootstrap';
+
+import ReactDom from "react-dom";
+import React from 'react';
+import HomePage from "./js/components/Page/HomePage";
+
+ReactDom.render(<HomePage />, document.getElementById('home'));
