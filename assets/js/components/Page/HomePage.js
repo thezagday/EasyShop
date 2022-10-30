@@ -36,16 +36,13 @@ class HomePage extends React.Component {
     }
 
     updateList (shops, text) {
-        // Разобраться
-        if (shops && text) {
-            this.setState(
-                {
-                    isLoading: false,
-                    text: text,
-                    shops: shops,
-                }
-            );
-        }
+        this.setState(
+            {
+                isLoading: false,
+                text: text,
+                shops: shops,
+            }
+        );
     }
 
     searching () {

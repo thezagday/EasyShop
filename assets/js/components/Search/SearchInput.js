@@ -17,10 +17,10 @@ class SearchInput extends React.Component {
 
         this.setState({text: event.target.value});
 
-        fetch(`http://easy:8080/api/shops/${event.target.value}`)
+        fetch(`http://easy:8080/api/shops?name=${event.target.value}`)
             .then(response => response.json())
             .then(data => {
-                this.props.onTextChange(data['name'],  this.state.text);
+                this.props.onTextChange(data['hydra:member'],  this.state.text);
             });
     }
 

@@ -8,12 +8,9 @@ class ShopList extends React.Component {
     }
 
     render () {
-        let shopItems;
-        if (Array.isArray(this.props.shops)) {
-            shopItems = this.props.shops.map((shop) => <ShopListItem id={shop.id} name={shop.name}/>);
-        } else {
-            shopItems = <ShopListItem name={this.props.shops}/>;
-        }
+        const shopItems = this.props.shops.map((shop) =>
+            <ShopListItem key={shop.id} id={shop.id} name={shop.name}/>
+        );
         return (
             <div className="container-fluid tm-container-content tm-mt-60">
                 <div className="row mb-4">
