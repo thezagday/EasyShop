@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Breadcrumbs extends Component {
+class Pagination extends Component {
     render () {
         return (
             <div className="row tm-mb-90">
@@ -19,4 +19,4 @@ class Breadcrumbs extends Component {
     }
 }
 
-export default Breadcrumbs;
+export default Pagination;

@@ -17,7 +17,7 @@ class SearchInput extends React.Component {
 
         this.setState({text: event.target.value});
 
-        fetch(`http://easy:8080/api/shops?name=${event.target.value}`)
+        fetch(`http://easy:8080/api/shops?title=${event.target.value}`)
             .then(response => response.json())
             .then(data => {
                 this.props.onTextChange(data['hydra:member'],  this.state.text);
@@ -33,7 +33,7 @@ class SearchInput extends React.Component {
                            type="text"
                            value={text}
                            onChange={this.handleChange}
-                           placeholder="Search"
+                           placeholder="Поиск"
                            aria-label="Search"
                     />
                     <button className="btn btn-outline-success tm-search-btn" type="submit">
