@@ -10,13 +10,37 @@ export function withRouter(Children) {
 }
 
 class Shop extends Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            shop: '',
+        };
+
+        this.fetchShop = this.fetchShop.bind(this);
+    }
+
+    async fetchShop () {
+        await fetch(`http://easy:8080/api/shops/${this.props.match.params.id}`)
+            .then(response => response.json())
+            .then(data => {
+                this.setState({
+                    shop: data,
+                });
+            });
+    }
+
+    async componentDidMount () {
+        this.fetchShop();
+    }
+
     render () {
         return (
             <div>
                 <div className="tm-hero d-flex justify-content-center align-items-center" data-parallax="scroll" data-image-src="img/hero.jpg"></div>
                 <div className="container-fluid tm-container-content tm-mt-60">
                     <div className="row mb-4">
-                        <h2 className="col-12 tm-text-primary">Shop {this.props.match.params.id}</h2>
+                        <h2 className="col-12 tm-text-primary">{this.state.shop.title}</h2>
                     </div>
                     <div className="row tm-mb-90">
                         <div className="col-xl-8 col-lg-7 col-md-6 col-sm-12">
