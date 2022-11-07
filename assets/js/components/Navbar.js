@@ -1,15 +1,13 @@
-import React from 'react';
-import Home from "./Home";
-import Contact from "./Contact";
-import {Routes, Route, NavLink} from 'react-router-dom';
+import React, { Component } from 'react';
+import {NavLink} from 'react-router-dom';
 
-class Navbar extends React.Component {
+class Navbar extends Component {
     render () {
         return (
             <div>
                 <nav className="navbar navbar-expand-lg">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="#">
+                        <a className="navbar-brand" href="/">
                             <i className="fas fa-film mr-2"></i>
                             EasyShop
                         </a>
@@ -29,10 +27,6 @@ class Navbar extends React.Component {
                         </div>
                     </div>
                 </nav>
-                <Routes>
-                    <Route exact path="/" element={<Home />} />
-                    <Route path="/contact" element={<Contact/>} />
-                </Routes>
             </div>
         );
     }

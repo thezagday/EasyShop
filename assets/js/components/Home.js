@@ -1,8 +1,8 @@
-import React from "react";
+import React, { Component } from 'react';
 import ShopList from "./Shop/ShopList";
 import SearchInput from "./Search/SearchInput";
 
-class Home extends React.Component {
+class Home extends Component {
     constructor (props) {
         super(props);
 
@@ -60,4 +60,3 @@ class Home extends React.Component {
 }
 
 export default Home;
-

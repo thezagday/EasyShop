@@ -9,8 +9,7 @@ class SearchInput extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    handleChange (event)
-    {
+    handleChange (event) {
         if (event.target.value.length === 0) {
             this.props.onEmptyInput();
         }
