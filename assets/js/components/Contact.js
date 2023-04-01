@@ -11,12 +11,10 @@ class Contact extends Component {
                             <h2 className="tm-text-primary mb-5">Напишите нам</h2>
                             <form id="contact-form" action="" method="POST" className="tm-contact-form">
                                 <div className="form-group">
-                                    <input type="text" name="name" className="form-control rounded-0" placeholder="Name"
-                                           required/>
+                                    <input type="text" name="name" className="form-control rounded-0" placeholder="Name" required/>
                                 </div>
                                 <div className="form-group">
-                                    <input type="email" name="email" className="form-control rounded-0"
-                                           placeholder="Email" required/>
+                                    <input type="email" name="email" className="form-control rounded-0" placeholder="Email" required/>
                                 </div>
                                 <div className="form-group">
                                     <select className="form-control" id="contact-select" name="inquiry">
@@ -27,10 +25,8 @@ class Contact extends Component {
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <textarea rows="8" name="message" className="form-control rounded-0"
-                                              placeholder="Message" required></textarea>
+                                    <textarea rows="8" name="message" className="form-control rounded-0" placeholder="Message" required></textarea>
                                 </div>
-
                                 <div className="form-group tm-text-right">
                                     <button type="submit" className="btn btn-primary">Send</button>
                                 </div>
@@ -41,10 +37,12 @@ class Contact extends Component {
                                 <h2 className="tm-text-primary mb-5">Адрес</h2>
                                 <p className="tm-mb-50">Quisque eleifend mi et nisi eleifend pretium. Duis porttitor
                                     accumsan arcu id rhoncus. Praesent fermentum venenatis ipsum, eget vestibulum
-                                    purus. </p>
+                                    purus.
+                                </p>
                                 <p className="tm-mb-50">Nulla ut scelerisque elit, in fermentum ante. Aliquam congue
                                     mattis erat, eget iaculis enim posuere nec. Quisque risus turpis, tempus in
-                                    iaculis.</p>
+                                    iaculis.
+                                </p>
                                 <address className="tm-text-gray tm-mb-50">
                                     120-240 Fusce eleifend varius tempus<br />
                                     Duis consectetur at ligula 10660
@@ -75,16 +73,22 @@ class Contact extends Component {
                             <h2 className="tm-text-primary mb-5">На карте</h2>
                             <div className="mapouter mb-4">
                                 <div className="gmap-canvas">
-                                    <iframe width="100%" height="520" id="gmap-canvas"
+                                    <iframe width="100%"
+                                            height="520"
+                                            id="gmap-canvas"
                                             src="https://maps.google.com/maps?q=Av.+L%C3%BAcio+Costa,+Rio+de+Janeiro+-+RJ,+Brazil&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                                            frameBorder="0" scrolling="no" marginHeight="0" marginWidth="0"></iframe>
+                                            frameBorder="0"
+                                            scrolling="no"
+                                            marginHeight="0"
+                                            marginWidth="0">
+                                    </iframe>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="row tm-mb-74 tm-people-row">
                         <div className="col-lg-3 col-md-6 col-sm-6 col-12 mb-5">
-                            <img src="/img/people-1.jpg" alt="Image" className="mb-4 img-fluid" />
+                            <img src="/img/roman-zagday.jpg" alt="Image" className="mb-4 img-fluid" />
                                 <h2 className="tm-text-primary mb-4">Загдай Роман</h2>
                                 <h3 className="tm-text-secondary h5 mb-4">CEO</h3>
                                 <p className="mb-4">
@@ -98,7 +102,7 @@ class Contact extends Component {
                                 </ul>
                         </div>
                         <div className="col-lg-3 col-md-6 col-sm-6 col-12 mb-5">
-                            <img src="/img/people-2.jpg" alt="Image" className="mb-4 img-fluid" />
+                            <img src="/img/sofiya-zagday.jpg" alt="Image" className="mb-4 img-fluid" />
                                 <h2 className="tm-text-primary mb-4">Загдай Софья</h2>
                                 <h3 className="tm-text-secondary h5 mb-4">Муза, вдохновительница</h3>
                                 <p className="mb-4">
@@ -112,7 +116,7 @@ class Contact extends Component {
                                 </ul>
                         </div>
                         <div className="col-lg-3 col-md-6 col-sm-6 col-12 mb-5">
-                            <img src="/img/people-3.jpg" alt="Image" className="mb-4 img-fluid" />
+                            <img src="/img/vadim-zubelik.jpg" alt="Image" className="mb-4 img-fluid" />
                             <h2 className="tm-text-primary mb-4">Зубелик Вадим</h2>
                             <h3 className="tm-text-secondary h5 mb-4">Картограф</h3>
                             <p className="mb-4">
@@ -126,7 +130,7 @@ class Contact extends Component {
                             </ul>
                         </div>
                         <div className="col-lg-3 col-md-6 col-sm-6 col-12 mb-5">
-                            <img src="/img/people-4.jpg" alt="Image" className="mb-4 img-fluid" />
+                            <img src="/img/newbie.jpg" alt="Image" className="mb-4 img-fluid" />
                             <h2 className="tm-text-primary mb-4">Новый Член Команды</h2>
                             <h3 className="tm-text-secondary h5 mb-4">Стажер</h3>
                             <p className="mb-4">
