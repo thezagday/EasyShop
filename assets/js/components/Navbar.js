@@ -11,8 +11,15 @@ class Navbar extends Component {
                             <i className="fas fa-film mr-2"></i>
                             EasyShop
                         </a>
-                        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <button
+                            className="navbar-toggler"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent"
+                            aria-expanded="false"
+                            aria-label="Toggle navigation"
+                        >
                             <i className="fas fa-bars"></i>
                         </button>
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
