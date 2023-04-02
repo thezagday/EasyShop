@@ -67,7 +67,7 @@ class Shop extends Component {
                                     <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">M&Ms</a>
                                 </div>
                                 <div className="text-center mb-5 mt-5">
-                                    <a href="#" className="btn btn-primary tm-btn-big">Построить оптимальный маршрут</a>
+                                    <a href={"/dijkstra"} className="btn btn-primary tm-btn-big">Построить оптимальный маршрут Dijkstra</a>
                                 </div>
                             </div>
                         </div>
