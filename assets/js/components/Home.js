@@ -7,7 +7,6 @@ class Home extends Component {
         super(props);
 
         this.state = {
-            isLoading: true,
             shops: [],
             totalShops: 0
         };
@@ -18,13 +17,10 @@ class Home extends Component {
     }
 
     async fetchShops () {
-        this.setState({isLoading: true});
-
         await fetch('http://easy:8080/api/shops')
             .then(response => response.json())
             .then(data => {
                 this.setState({
-                    isLoading: false,
                     shops: data['hydra:member'],
                     totalShops: data['hydra:totalItems'],
                 });
@@ -32,13 +28,12 @@ class Home extends Component {
     }
 
     async componentDidMount () {
-        this.fetchShops();
+        await this.fetchShops();
     }
 
     updateList (shops, text) {
         this.setState(
             {
-                isLoading: false,
                 text: text,
                 shops: shops,
             }
@@ -46,7 +41,7 @@ class Home extends Component {
     }
 
     searching () {
-        this.setState({isLoading: true, shops: [], totalShops: 0});
+        this.setState({shops: [], totalShops: 0});
     }
 
     render () {
