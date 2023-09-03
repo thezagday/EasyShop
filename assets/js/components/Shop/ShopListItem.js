@@ -6,7 +6,7 @@ class ShopListItem extends React.Component {
         return (
             <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
                 <figure className="effect-ming tm-video-item">
-                    <img src={`/img/${this.props.avatar}`}  alt="Image" className="img-fluid"/>
+                    <img src={`/img/${this.props.avatar}`} alt="Image" className="img-fluid"/>
                     <figcaption className="d-flex align-items-center justify-content-center">
                         <h2>Войти</h2>
                         <NavLink to={`/shop/${this.props.id}`}>Войти</NavLink>

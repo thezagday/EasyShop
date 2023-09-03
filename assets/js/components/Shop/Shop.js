@@ -32,7 +32,7 @@ class Shop extends Component {
     }
 
     async componentDidMount () {
-        this.fetchShop();
+        await this.fetchShop();
     }
 
     render () {
