@@ -1,33 +1,39 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import "leaflet";
-import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
+import L, { CRS } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { MapContainer, useMap } from 'react-leaflet';
 
-class Map extends Component {
-    render () {
-        const position = [51.505, -0.09];
+function SimpleImageOverlay() {
+    const map = useMap();
 
-        return (
-            <div>
-                <MapContainer
-                    center={position}
-                    zoom={13}
-                    scrollWheelZoom={true}
-                    style={{ height: '75vh', width: '75wh' }}
-                >
-                    <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <Marker position={position}>
-                        <Popup>
-                            A pretty CSS3 popup. <br /> Easily customizable.
-                        </Popup>
-                    </Marker>
-                </MapContainer>
-            </div>
-        )
-    }
+    useEffect(() => {
+        const bounds = [[-26.5, -25], [1021.5, 1023]];
+        const image = L.imageOverlay(
+            "https://i.imgur.com/Ion6X7C.jpg",
+            bounds
+        ).addTo(map);
+
+        map.fitBounds(image.getBounds());
+    }, []);
+
+    return null;
+}
+
+function Map() {
+    return (
+        <div>
+            <MapContainer
+                minZoom={0}
+                crs={CRS.Simple}
+                maxBoundsViscosity={1.0}
+                boundsOptions={{ padding: [50, 50] }}
+                style={{ height: "100vh" }}
+            >
+                <SimpleImageOverlay />
+            </MapContainer>
+        </div>
+    )
 }
 
 export default Map;
