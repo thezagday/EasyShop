@@ -33,7 +33,7 @@ function addTestRoute(map) {
     let travel = L.polyline([sol, deneb, mizar, kruegerZ]).addTo(map);
 }
 
-function SimpleGameImageOverlay({isShowRoute}) {
+function SimpleGameImageOverlay({isBuildRoute}) {
     const map = useMap();
 
     useEffect(() => {
@@ -45,15 +45,15 @@ function SimpleGameImageOverlay({isShowRoute}) {
 
         map.fitBounds(image.getBounds());
 
-        if (isShowRoute) {
+        if (isBuildRoute) {
             addTestRoute(map);
         }
-    }, [isShowRoute]);
+    }, [isBuildRoute]);
 
     return null;
 }
 
-function Map({ createRouteClicked }) {
+function Map({ buildRouteClicked }) {
     return (
         <div>
             <MapContainer
@@ -63,7 +63,7 @@ function Map({ createRouteClicked }) {
                 boundsOptions={{ padding: [50, 50] }}
                 style={{ height: "100vh" }}
             >
-                <SimpleGameImageOverlay isShowRoute={createRouteClicked} />
+                <SimpleGameImageOverlay isBuildRoute={buildRouteClicked} />
             </MapContainer>
         </div>
     )

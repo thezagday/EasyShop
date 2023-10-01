@@ -16,7 +16,7 @@ class Shop extends Component {
 
         this.state = {
             shop: '',
-            createRouteClicked: false
+            buildRouteClicked: false
         };
 
         this.fetchShop = this.fetchShop.bind(this);
@@ -36,8 +36,8 @@ class Shop extends Component {
         await this.fetchShop();
     }
 
-    handleCreateRouteClick = () => {
-        this.setState({ createRouteClicked: true });
+    handleBuildRouteClick = () => {
+        this.setState({ buildRouteClicked: true });
     }
 
     render () {
@@ -50,7 +50,7 @@ class Shop extends Component {
                     </div>
                     <div className="row tm-mb-90">
                         <div className="col-xl-8 col-lg-7 col-md-6 col-sm-12">
-                            <Map createRouteClicked={this.state.createRouteClicked} />
+                            <Map buildRouteClicked={this.state.buildRouteClicked} />
                         </div>
                         <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
                             <div className="tm-bg-gray tm-video-details">
@@ -69,12 +69,10 @@ class Shop extends Component {
                                     <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Кальмары</a>
                                     <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Рис</a>
                                     <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Несквик</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">M&Ms</a>
                                 </div>
                                 <div className="text-center mb-5 mt-5">
-                                    <a href={"/dijkstra"} className="btn btn-primary tm-btn-big">Построить оптимальный маршрут Dijkstra</a>
+                                    <a className="btn btn-primary tm-btn-big" onClick={this.handleBuildRouteClick}>Построить маршрут</a>
                                 </div>
-                                <button onClick={this.handleCreateRouteClick}>Проложить маршрут</button>
                             </div>
                         </div>
                     </div>
