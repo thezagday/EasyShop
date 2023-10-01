@@ -16,6 +16,7 @@ class Shop extends Component {
 
         this.state = {
             shop: '',
+            createRouteClicked: false
         };
 
         this.fetchShop = this.fetchShop.bind(this);
@@ -35,6 +36,10 @@ class Shop extends Component {
         await this.fetchShop();
     }
 
+    handleCreateRouteClick = () => {
+        this.setState({ createRouteClicked: true });
+    }
+
     render () {
         return (
             <div>
@@ -45,7 +50,7 @@ class Shop extends Component {
                     </div>
                     <div className="row tm-mb-90">
                         <div className="col-xl-8 col-lg-7 col-md-6 col-sm-12">
-                            <Map />
+                            <Map createRouteClicked={this.state.createRouteClicked} />
                         </div>
                         <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
                             <div className="tm-bg-gray tm-video-details">
@@ -69,6 +74,7 @@ class Shop extends Component {
                                 <div className="text-center mb-5 mt-5">
                                     <a href={"/dijkstra"} className="btn btn-primary tm-btn-big">Построить оптимальный маршрут Dijkstra</a>
                                 </div>
+                                <button onClick={this.handleCreateRouteClick}>Проложить маршрут</button>
                             </div>
                         </div>
                     </div>
