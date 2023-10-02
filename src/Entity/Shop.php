@@ -58,4 +58,17 @@ class Shop
 
         return $this;
     }
+
+    public function getRetailer(): ?Retailer
+    {
+        return $this->retailer;
+    }
+
+    public function setRetailer(?Retailer $retailer): self
+    {
+        $this->retailer = $retailer;
+
+        return $this;
+    }
+
 }
