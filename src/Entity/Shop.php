@@ -7,6 +7,8 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ShopRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 
 #[ORM\Entity(repositoryClass: ShopRepository::class)]
 #[ApiResource]
@@ -23,6 +25,10 @@ class Shop
 
     #[ORM\Column(length: 255)]
     private string $avatar;
+
+    #[ManyToOne(targetEntity: Retailer::class)]
+    #[JoinColumn(name: 'retailer_id', referencedColumnName: 'id')]
+    private Retailer|null $retailer = null;
 
     public function getId(): ?int
     {
