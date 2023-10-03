@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
@@ -21,6 +23,14 @@ class Category
     #[ManyToOne(targetEntity: Retailer::class)]
     #[JoinColumn(name: 'retailer_id', referencedColumnName: 'id')]
     private Retailer|null $retailer = null;
+
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: ShopCategory::class, orphanRemoval: true)]
+    private Collection $shops;
+
+    public function __construct()
+    {
+        $this->shops = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -47,6 +57,36 @@ class Category
     public function setRetailer(?Retailer $retailer): self
     {
         $this->retailer = $retailer;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ShopCategory>
+     */
+    public function getShops(): Collection
+    {
+        return $this->shops;
+    }
+
+    public function addShop(ShopCategory $shop): static
+    {
+        if (!$this->shops->contains($shop)) {
+            $this->shops->add($shop);
+            $shop->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShop(ShopCategory $shop): static
+    {
+        if ($this->shops->removeElement($shop)) {
+            // set the owning side to null (unless already changed)
+            if ($shop->getCategory() === $this) {
+                $shop->setCategory(null);
+            }
+        }
 
         return $this;
     }

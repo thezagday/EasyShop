@@ -6,6 +6,8 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ShopRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
@@ -29,6 +31,14 @@ class Shop
     #[ManyToOne(targetEntity: Retailer::class)]
     #[JoinColumn(name: 'retailer_id', referencedColumnName: 'id')]
     private Retailer|null $retailer = null;
+
+    #[ORM\OneToMany(mappedBy: 'shop', targetEntity: ShopCategory::class, orphanRemoval: true)]
+    private Collection $shopCategories;
+
+    public function __construct()
+    {
+        $this->shopCategories = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -67,6 +77,36 @@ class Shop
     public function setRetailer(?Retailer $retailer): self
     {
         $this->retailer = $retailer;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ShopCategory>
+     */
+    public function getShopCategories(): Collection
+    {
+        return $this->shopCategories;
+    }
+
+    public function addShopCategory(ShopCategory $shopCategory): static
+    {
+        if (!$this->shopCategories->contains($shopCategory)) {
+            $this->shopCategories->add($shopCategory);
+            $shopCategory->setShop($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShopCategory(ShopCategory $shopCategory): static
+    {
+        if ($this->shopCategories->removeElement($shopCategory)) {
+            // set the owning side to null (unless already changed)
+            if ($shopCategory->getShop() === $this) {
+                $shopCategory->setShop(null);
+            }
+        }
 
         return $this;
     }
