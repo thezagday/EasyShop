@@ -11,29 +11,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
-function addTestRoute(map) {
-    let yx = L.latLng;
-    let xy = function(x, y) {
-        if (Array.isArray(x)) {    // When doing xy([x, y]);
-            return yx(x[1], x[0]);
-        }
-        return yx(y, x);  // When doing xy(x, y);
-    };
-
-    let sol      = xy(175.2, 145.0);
-    let mizar    = xy( 41.6, 130.1);
-    let kruegerZ = xy( 13.4,  56.5);
-    let deneb    = xy(218.7,   8.3);
-
-    L.marker(sol).addTo(map).bindPopup('Sol');
-    L.marker(mizar).addTo(map).bindPopup('Mizar');
-    L.marker(kruegerZ).addTo(map).bindPopup('Krueger-Z');
-    L.marker(deneb).addTo(map).bindPopup('Deneb');
-
-    let travel = L.polyline([sol, deneb, mizar, kruegerZ]).addTo(map);
-}
-
-function SimpleGameImageOverlay({isBuildRoute}) {
+function SimpleGameImageOverlay({isBuildRoute, shopCategories}) {
     const map = useMap();
 
     useEffect(() => {
@@ -45,17 +23,40 @@ function SimpleGameImageOverlay({isBuildRoute}) {
 
         map.fitBounds(image.getBounds());
 
+        let shops = addShopCategoriesToMapAndReturn(map, shopCategories);
+
         if (isBuildRoute) {
-            addTestRoute(map);
+            addTestRoute(map, shops);
         }
-    }, [isBuildRoute]);
+    }, [isBuildRoute, shopCategories]);
 
     return null;
 }
+let yx = L.latLng;
+let xy = function(x, y) {
+    if (Array.isArray(x)) {    // When doing xy([x, y]);
+        return yx(x[1], x[0]);
+    }
+    return yx(y, x);  // When doing xy(x, y);
+};
+function addShopCategoriesToMapAndReturn(map, shopCategories) {
+    let shops = [];
+    shopCategories.forEach(function(shopCategory) {
+        let shop = xy(shopCategory.x_coordinate, shopCategory.y_coordinate);
+        L.marker(shop).addTo(map).bindTooltip(shopCategory.category.title);
+        shops.push(shop);
+    });
 
-function Map({ buildRouteClicked }) {
+    return shops;
+}
+
+function addTestRoute(map, shops) {
+    let travel = L.polyline(shops).addTo(map);
+}
+
+function Map({ buildRouteClicked, shopCategories }) {
     return (
-        <div>
+        <div className="col-xl-8 col-lg-7 col-md-6 col-sm-12">
             <MapContainer
                 minZoom={0}
                 crs={CRS.Simple}
@@ -63,7 +64,7 @@ function Map({ buildRouteClicked }) {
                 boundsOptions={{ padding: [50, 50] }}
                 style={{ height: "100vh" }}
             >
-                <SimpleGameImageOverlay isBuildRoute={buildRouteClicked} />
+                <SimpleGameImageOverlay isBuildRoute={buildRouteClicked} shopCategories={shopCategories} />
             </MapContainer>
         </div>
     )

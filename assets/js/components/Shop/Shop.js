@@ -55,6 +55,11 @@ class Shop extends Component {
     }
 
     render () {
+        let buildRouteButton = '';
+        if (this.state.shopCategories.length) {
+            buildRouteButton = <a className="btn btn-primary tm-btn-big" onClick={this.handleBuildRouteClick}>Построить маршрут</a>;
+        }
+
         return (
             <div>
                 <div className="tm-hero d-flex justify-content-center align-items-center" data-parallax="scroll" data-image-src="img/hero.jpg"></div>
@@ -63,16 +68,12 @@ class Shop extends Component {
                         <h2 className="col-12 tm-text-primary">{this.state.shop.title}</h2>
                     </div>
                     <div className="row tm-mb-90">
-                        <div className="col-xl-8 col-lg-7 col-md-6 col-sm-12">
-                            <Map buildRouteClicked={this.state.buildRouteClicked} />
-                        </div>
+                        <Map buildRouteClicked={this.state.buildRouteClicked} shopCategories={this.state.shopCategories} />
                         <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
                             <div className="tm-bg-gray tm-video-details">
-                                <div>
-                                    <CategoryList shopCategories={this.state.shopCategories} />
-                                </div>
+                                <CategoryList shopCategories={this.state.shopCategories} />
                                 <div className="text-center mb-5 mt-5">
-                                    <a className="btn btn-primary tm-btn-big" onClick={this.handleBuildRouteClick}>Построить маршрут</a>
+                                    {buildRouteButton}
                                 </div>
                             </div>
                         </div>
