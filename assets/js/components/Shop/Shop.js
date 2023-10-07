@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {useParams} from "react-router-dom";
 import Map from "./Map"
+import CategoryList from "./CategoryList"
 
 export function withRouter(Children) {
     return (props) => {
@@ -16,10 +17,12 @@ class Shop extends Component {
 
         this.state = {
             shop: '',
+            categories: [],
             buildRouteClicked: false
         };
 
         this.fetchShop = this.fetchShop.bind(this);
+        this.fetchCategories = this.fetchCategories.bind(this);
     }
 
     async fetchShop () {
@@ -32,8 +35,19 @@ class Shop extends Component {
             });
     }
 
+    async fetchCategories () {
+        await fetch(`http://easy:8080/api/shop_categories?shop=${this.props.match.params.id}`)
+            .then(response => response.json())
+            .then(data => {
+                this.setState({
+                    categories: data['hydra:member'],
+                });
+            });
+    }
+
     async componentDidMount () {
         await this.fetchShop();
+        await this.fetchCategories();
     }
 
     handleBuildRouteClick = () => {
@@ -55,20 +69,7 @@ class Shop extends Component {
                         <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
                             <div className="tm-bg-gray tm-video-details">
                                 <div>
-                                    <h3 className="tm-text-gray-dark mb-3">К покупке:</h3>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Молоко</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Сметана</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Лук</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Хлеб</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Чай</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Сыр</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Вода</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Бокалы</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Шоколад</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Рыба</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Кальмары</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Рис</a>
-                                    <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">Несквик</a>
+                                    <CategoryList categories={this.state.categories} />
                                 </div>
                                 <div className="text-center mb-5 mt-5">
                                     <a className="btn btn-primary tm-btn-big" onClick={this.handleBuildRouteClick}>Построить маршрут</a>

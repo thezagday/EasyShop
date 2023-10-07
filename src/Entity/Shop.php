@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: ShopRepository::class)]
 #[ApiResource]
@@ -33,6 +34,7 @@ class Shop
     private Retailer|null $retailer = null;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: ShopCategory::class, orphanRemoval: true)]
+    #[Ignore]
     private Collection $shopCategories;
 
     public function __construct()
