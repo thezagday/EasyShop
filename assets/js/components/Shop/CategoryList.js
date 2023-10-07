@@ -2,24 +2,20 @@ import React from "react";
 import "leaflet";
 import 'leaflet/dist/leaflet.css';
 
-function CategoryList({ categories }) {
-
-    console.log(categories);
+function CategoryList({ shopCategories }) {
     const emptyMessage = 'В этом магазине пока нет категорий.';
-    const categoriesArray = categories.map((category) =>
-        <a href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">{category.category}</a>
+    const categoryList = shopCategories.map((shopCategory) =>
+        <a key={shopCategory.category.id} href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">{shopCategory.category.title}</a>
     );
 
     return (
-        categories.length ? (
+        categoryList.length ? (
             <div>
                 <h3 className="tm-text-gray-dark mb-3">К покупке:</h3>
-                {categoriesArray}
+                {categoryList}
             </div>
         ) : (
-            <div>
-                {emptyMessage}
-            </div>
+            <div>{emptyMessage}</div>
         )
     )
 }

@@ -7,29 +7,35 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ShopCategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ShopCategoryRepository::class)]
-#[ApiResource]
+#[ApiResource(normalizationContext: ['groups' => ['shop_category']])] // https://github.com/dunglas/vulcain
 #[ApiFilter(SearchFilter::class, properties: ['shop' => 'exact', 'category' => 'exact'])]
 class ShopCategory
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['shop_category'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'shopCategories')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['shop_category'])]
     private ?Shop $shop = null;
 
     #[ORM\ManyToOne(inversedBy: 'shops')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['shop_category'])]
     private ?Category $category = null;
 
     #[ORM\Column]
+    #[Groups(['shop_category'])]
     private ?float $x_coordinate = null;
 
     #[ORM\Column]
+    #[Groups(['shop_category'])]
     private ?float $y_coordinate = null;
 
     public function getId(): ?int

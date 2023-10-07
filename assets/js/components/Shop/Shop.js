@@ -17,7 +17,7 @@ class Shop extends Component {
 
         this.state = {
             shop: '',
-            categories: [],
+            shopCategories: [],
             buildRouteClicked: false
         };
 
@@ -40,7 +40,7 @@ class Shop extends Component {
             .then(response => response.json())
             .then(data => {
                 this.setState({
-                    categories: data['hydra:member'],
+                    shopCategories: data['hydra:member'],
                 });
             });
     }
@@ -69,7 +69,7 @@ class Shop extends Component {
                         <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
                             <div className="tm-bg-gray tm-video-details">
                                 <div>
-                                    <CategoryList categories={this.state.categories} />
+                                    <CategoryList shopCategories={this.state.shopCategories} />
                                 </div>
                                 <div className="text-center mb-5 mt-5">
                                     <a className="btn btn-primary tm-btn-big" onClick={this.handleBuildRouteClick}>Построить маршрут</a>
