@@ -23,15 +23,16 @@ function SimpleGameImageOverlay({isBuildRoute, shopCategories}) {
 
         map.fitBounds(image.getBounds());
 
-        let shops = addShopCategoriesToMapAndReturn(map, shopCategories);
+        let categoryPoints = addShopCategoriesToMapAndReturn(map, shopCategories);
 
         if (isBuildRoute) {
-            addTestRoute(map, shops);
+            addTestRoute(map, categoryPoints);
         }
     }, [isBuildRoute, shopCategories]);
 
     return null;
 }
+
 let yx = L.latLng;
 let xy = function(x, y) {
     if (Array.isArray(x)) {    // When doing xy([x, y]);
@@ -40,18 +41,24 @@ let xy = function(x, y) {
     return yx(y, x);  // When doing xy(x, y);
 };
 function addShopCategoriesToMapAndReturn(map, shopCategories) {
-    let shops = [];
+    let categoryPoints = [];
     shopCategories.forEach(function(shopCategory) {
-        let shop = xy(shopCategory.x_coordinate, shopCategory.y_coordinate);
-        L.marker(shop).addTo(map).bindTooltip(shopCategory.category.title);
-        shops.push(shop);
+        let categoryPoint = xy(shopCategory.x_coordinate, shopCategory.y_coordinate);
+        L.marker(categoryPoint).addTo(map).bindTooltip(shopCategory.category.title);
+
+        if (
+            shopCategory.category.id !== 8
+            && shopCategory.category.id !== 9
+        ) {
+            categoryPoints.push(categoryPoint);
+        }
     });
 
-    return shops;
+    return categoryPoints;
 }
 
-function addTestRoute(map, shops) {
-    let travel = L.polyline(shops).addTo(map);
+function addTestRoute(map, categoryPoints) {
+    let travel = L.polyline(categoryPoints).addTo(map);
 }
 
 function Map({ buildRouteClicked, shopCategories }) {
