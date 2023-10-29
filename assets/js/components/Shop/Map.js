@@ -15,13 +15,16 @@ function SimpleGameImageOverlay({isBuildRoute, shopCategories}) {
     const map = useMap();
 
     useEffect(() => {
-        const bounds = [[-26.5, -25], [1021.5, 1023]];
+        // const bounds = [[-26.5, -25], [1021.5, 1023]];
+        const bounds = [[-30.68, -30.68], [1048.86, 1048.86]];
         const image = L.imageOverlay(
-            "https://leafletjs.com/examples/crs-simple/uqm_map_full.png",
+            // "https://leafletjs.com/examples/crs-simple/uqm_map_full.png",
+            "/img/map.png",
             bounds
         ).addTo(map);
 
         map.fitBounds(image.getBounds());
+        map.setMaxBounds(map.getBounds());
 
         let categoryPoints = addShopCategoriesToMapAndReturn(map, shopCategories);
 
@@ -46,13 +49,12 @@ function addShopCategoriesToMapAndReturn(map, shopCategories) {
         let categoryPoint = xy(shopCategory.x_coordinate, shopCategory.y_coordinate);
         L.marker(categoryPoint).addTo(map).bindTooltip(shopCategory.category.title);
 
-        if (
-            shopCategory.category.id !== 8
-            && shopCategory.category.id !== 9
-        ) {
-            categoryPoints.push(categoryPoint);
-        }
+        categoryPoints.push(categoryPoint);
     });
+
+    let center = [0, 0];
+    L.marker(center).addTo(map).bindTooltip('Center');
+    categoryPoints.push(center);
 
     return categoryPoints;
 }
@@ -67,9 +69,9 @@ function Map({ buildRouteClicked, shopCategories }) {
             <MapContainer
                 minZoom={0}
                 crs={CRS.Simple}
-                maxBoundsViscosity={1.0}
+                maxBoundsViscosity={1}
                 boundsOptions={{ padding: [50, 50] }}
-                style={{ height: "100vh" }}
+                style={{ height: "120vh" }}
             >
                 <SimpleGameImageOverlay isBuildRoute={buildRouteClicked} shopCategories={shopCategories} />
             </MapContainer>
