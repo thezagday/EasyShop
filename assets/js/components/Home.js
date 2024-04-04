@@ -1,57 +1,39 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import ShopList from "./Shop/ShopList";
 import SearchInput from "./Search/SearchInput";
 
-class Home extends Component {
-    constructor (props) {
-        super(props);
+export default function Home() {
+    const [shops, setShops] = useState([]);
+    const [totalShops, setTotalShops] = useState(0);
+    const [text, setText] = useState('');
 
-        this.state = {
-            shops: [],
-            totalShops: 0
-        };
+    useEffect(() => {
+        fetchShops();
+    }, []);
 
-        this.fetchShops = this.fetchShops.bind(this);
-        this.updateList = this.updateList.bind(this);
-        this.searching = this.searching.bind(this);
-    }
-
-    async fetchShops () {
+    async function fetchShops () {
         await fetch('http://easy:8080/api/shops')
             .then(response => response.json())
             .then(data => {
-                this.setState({
-                    shops: data['hydra:member'],
-                    totalShops: data['hydra:totalItems'],
-                });
+                setShops(data['hydra:member']);
+                setTotalShops(data['hydra:totalItems']);
             });
     }
 
-    async componentDidMount () {
-        await this.fetchShops();
+    function updateList (shops, text) {
+        setShops(shops);
+        setText(text);
     }
 
-    updateList (shops, text) {
-        this.setState(
-            {
-                text: text,
-                shops: shops,
-            }
-        );
+    function searching () {
+        setShops([]);
+        setTotalShops(0);
     }
 
-    searching () {
-        this.setState({shops: [], totalShops: 0});
-    }
-
-    render () {
-        return (
-            <div>
-                <SearchInput onTextChange={this.updateList} onEmptyInput={this.fetchShops} onSearching={this.searching}/>
-                <ShopList shops={this.state.shops}/>
-            </div>
-        );
-    }
+    return (
+        <div>
+            <SearchInput onTextChange={updateList} onEmptyInput={fetchShops} onSearching={searching} />
+            <ShopList shops={shops}/>
+        </div>
+    );
 }
-
-export default Home;
