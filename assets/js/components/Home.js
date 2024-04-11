@@ -4,8 +4,6 @@ import SearchInput from "./Search/SearchInput";
 
 export default function Home() {
     const [shops, setShops] = useState([]);
-    const [totalShops, setTotalShops] = useState(0);
-    const [text, setText] = useState('');
 
     useEffect(() => {
         fetchShops();
@@ -16,23 +14,16 @@ export default function Home() {
             .then(response => response.json())
             .then(data => {
                 setShops(data['hydra:member']);
-                setTotalShops(data['hydra:totalItems']);
             });
     }
 
-    function updateList (shops, text) {
+    function updateShopList (shops) {
         setShops(shops);
-        setText(text);
-    }
-
-    function searching () {
-        setShops([]);
-        setTotalShops(0);
     }
 
     return (
         <div>
-            <SearchInput onTextChange={updateList} onEmptyInput={fetchShops} onSearching={searching} />
+            <SearchInput onTextChange={updateShopList} />
             <ShopList shops={shops}/>
         </div>
     );

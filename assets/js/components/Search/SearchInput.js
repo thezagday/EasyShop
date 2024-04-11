@@ -1,19 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export default function SearchInput({onTextChange, onEmptyInput, onSearching}) {
-    const [text, setText] = useState('');
-
+export default function SearchInput({onTextChange}) {
     function handleChange (event) {
-        if (event.target.value.length === 0) {
-            onEmptyInput();
-        }
-
-        setText(event.target.value);
-
         fetch(`http://easy:8080/api/shops?title=${event.target.value}`)
             .then(response => response.json())
             .then(data => {
-                onTextChange(data['hydra:member'], text);
+                onTextChange(data['hydra:member']);
             });
     }
 
@@ -22,7 +14,6 @@ export default function SearchInput({onTextChange, onEmptyInput, onSearching}) {
             <form className="d-flex tm-search-form">
                 <input className="form-control tm-search-input"
                        type="text"
-                       value={text}
                        onChange={handleChange}
                        placeholder="Поиск"
                        aria-label="Search"
