@@ -16,7 +16,7 @@ let xy = function(x, y) {
     }
     return yx(y, x);  // When doing xy(x, y);
 };
-function SimpleGameImageOverlay({isBuildRoute, shopCategories}) {
+function SimpleGameImageOverlay({isBuildRouteClicked, categories}) {
     const map = useMap();
     const [route, setRoute] = useState(null);
 
@@ -43,19 +43,19 @@ function SimpleGameImageOverlay({isBuildRoute, shopCategories}) {
         map.fitBounds(image.getBounds());
         map.setMaxBounds(map.getBounds());
 
-        addShopCategoriesToMapAndReturn(map, shopCategories);
+        addShopCategoriesToMapAndReturn(map, categories);
 
-        if (isBuildRoute) {
+        if (isBuildRouteClicked) {
             buildRoute();
             addRoute(map, []);
         }
-    }, [isBuildRoute, shopCategories]);
+    }, [isBuildRouteClicked, categories]);
 
     return null;
 }
-function addShopCategoriesToMapAndReturn(map, shopCategories) {
+function addShopCategoriesToMapAndReturn(map, categories) {
     let categoryPoints = [];
-    shopCategories.forEach(function(shopCategory) {
+    categories.forEach(function(shopCategory) {
         if (shopCategory.id == 17 || shopCategory.id == 18) {
             return;
         }
@@ -79,10 +79,10 @@ function addRoute(map, points) {
     let travel = L.polyline(points).addTo(map);
 }
 
-export default function MapImage({ isBuildRoute, shopCategories }) {
+export default function MapImage({ isBuildRouteClicked, categories }) {
     return (
         <>
-            <SimpleGameImageOverlay isBuildRoute={isBuildRoute} shopCategories={shopCategories} />
+            <SimpleGameImageOverlay isBuildRouteClicked={isBuildRouteClicked} categories={categories} />
         </>
     )
 }

@@ -9,7 +9,7 @@ export default function Home() {
         fetchShops();
     }, []);
 
-    async function fetchShops () {
+    async function fetchShops() {
         await fetch('http://easy:8080/api/shops')
             .then(response => response.json())
             .then(data => {
@@ -17,7 +17,7 @@ export default function Home() {
             });
     }
 
-    function updateShopList (shops) {
+    function updateShopList(shops) {
         setShops(shops);
     }
 

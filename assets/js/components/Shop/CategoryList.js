@@ -2,9 +2,9 @@ import React from "react";
 import "leaflet";
 import 'leaflet/dist/leaflet.css';
 
-export default function CategoryList({ shopCategories }) {
+export default function CategoryList({ categories }) {
     const emptyMessage = 'В этом магазине пока нет категорий.';
-    const categoryList = shopCategories.map((shopCategory) =>
+    const categoryList = categories.map((shopCategory) =>
         <a key={shopCategory.category.id} href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">{shopCategory.category.title}</a>
     );
 
