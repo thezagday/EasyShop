@@ -4,7 +4,7 @@ import Map from "./Map"
 import CategoryList from "./CategoryList"
 
 export default function Shop() {
-    const [shop, setShop] = useState({});
+    const [shop, setShop] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isBuildRouteClicked, setBuildRouteClicked] = useState(false);
 
