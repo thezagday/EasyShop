@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import {useMap} from "react-leaflet";
+import { useMap } from "react-leaflet";
 import L from "leaflet";
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -9,16 +8,12 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
-function SimpleGameImageOverlay({isBuildRouteClicked, categories}) {
+export default function MapImage({ isBuildRouteClicked, categories }) {
     const map = useMap();
 
     const bounds = [[-30.68, -30.68], [1048.86, 1048.86]];
-    const image = L.imageOverlay(
-        "/img/map.png", // "https://leafletjs.com/examples/crs-simple/uqm_map_full.png",
-        bounds
-    ).addTo(map);
+    const image = L.imageOverlay("/img/map.png", bounds).addTo(map);
 
-    let route = [];
     let yx = L.latLng;
     let xy = function(x, y) {
         if (Array.isArray(x)) {    // When doing xy([x, y]);
@@ -74,12 +69,4 @@ function SimpleGameImageOverlay({isBuildRouteClicked, categories}) {
     }
 
     return null;
-}
-
-export default function MapImage({ isBuildRouteClicked, categories }) {
-    return (
-        <>
-            <SimpleGameImageOverlay isBuildRouteClicked={isBuildRouteClicked} categories={categories} />
-        </>
-    )
 }
