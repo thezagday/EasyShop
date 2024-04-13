@@ -23,7 +23,7 @@ export default function Home() {
 
     return (
         <div>
-            <SearchInput onTextChange={updateShopList} />
+            <SearchInput onChange={updateShopList} />
             <ShopList shops={shops}/>
         </div>
     );
