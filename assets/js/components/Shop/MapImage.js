@@ -46,17 +46,16 @@ export default function MapImage({ isBuildRouteClicked, categories }) {
     }
 
     async function buildRoute() {
-        const response = await fetch(`http://easy:8080/api/build-route`);
-        const data = await response.json();
-
-        return data[0];
+        await fetch(`http://easy:8080/api/build-route`)
+            .then(response => response.json())
+            .then(data => {
+                addRoute(map, data[0]);
+            });
     }
 
     function addRoute(map, points) {
         console.log(points);
-        // TODO: To be fixed
-        points = [];
-        let travel = L.polyline(points).addTo(map);
+        // let travel = L.polyline(pointsToMap).addTo(map);
     }
 
     map.fitBounds(image.getBounds());
@@ -65,7 +64,7 @@ export default function MapImage({ isBuildRouteClicked, categories }) {
     addShopCategoriesToMapAndReturn(map, categories);
 
     if (isBuildRouteClicked) {
-        addRoute(map, buildRoute());
+        buildRoute();
     }
 
     return null;
