@@ -2,15 +2,34 @@
 
 namespace App\Services;
 
+use App\Entity\ShopCategory;
+use Doctrine\ORM\EntityManagerInterface;
 use Fisharebest\Algorithm\Dijkstra;
 
 class RouteService
 {
+    public function __construct(
+        protected EntityManagerInterface $em
+    ) {
+    }
+
     public function getRoute(): array
     {
-        $graph = [
+        $paths = (new Dijkstra($this->getGraph()))->shortestPaths('A Бакалея', 'L Косметика / гигиена');
+        $path = $paths[0];
+
+        $path = array_map(function($item) {
+            return substr($item, 2);
+        }, $path);
+
+        return $this->em->getRepository(ShopCategory::class)->getShopToCoordinatesByPath($path);
+    }
+
+    protected function getGraph(): array
+    {
+        return [
             'A Бакалея' => [
-                'B Соки и воды' => 1,
+                'B Соки и воды' => 2,
                 'E Молочные продукты' => 1,
             ],
             'B Соки и воды' => [
@@ -88,9 +107,5 @@ class RouteService
             'Q Сезонные товары' => [],
             'R Одежда' => [],
         ];
-
-        $algorithm = new Dijkstra($graph);
-
-        return $algorithm->shortestPaths('A Бакалея', 'L Косметика / гигиена');
     }
 }

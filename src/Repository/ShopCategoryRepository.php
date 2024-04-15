@@ -21,28 +21,17 @@ class ShopCategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, ShopCategory::class);
     }
 
-//    /**
-//     * @return ShopCategory[] Returns an array of ShopCategory objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?ShopCategory
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * @return ShopCategory[] Returns an array of ShopCategory objects
+     */
+    public function getShopToCoordinatesByPath(array $shops): array
+    {
+        return $this->createQueryBuilder('sc')
+            ->innerJoin('sc.category', 'c')
+            ->andWhere('c.title IN (:titles)')
+            ->setParameter('titles', $shops)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

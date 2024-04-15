@@ -49,13 +49,17 @@ export default function MapImage({ isBuildRouteClicked, categories }) {
         await fetch(`http://easy:8080/api/build-route`)
             .then(response => response.json())
             .then(data => {
-                addRoute(map, data[0]);
+                addRoute(map, data);
             });
     }
 
-    function addRoute(map, points) {
-        console.log(points);
-        // let travel = L.polyline(pointsToMap).addTo(map);
+    function addRoute(map, categories) {
+        let pointsToMap = [];
+        categories.forEach(function(category) {
+            pointsToMap.push(xy(category.x_coordinate, category.y_coordinate));
+        });
+
+        let travel = L.polyline(pointsToMap).addTo(map);
     }
 
     map.fitBounds(image.getBounds());
