@@ -14,9 +14,9 @@ class RouteApiController extends AbstractController
     ) {
     }
 
-    #[Route('/api/build-route')]
-    public function buildRoute(): Response
+    #[Route('/api/build-route/{source}/{destination}', methods: ['GET'])]
+    public function buildRoute(string $source, string $destination): Response
     {
-        return $this->json($this->routeService->getRoute());
+        return $this->json($this->routeService->getRoute($source, $destination));
     }
 }

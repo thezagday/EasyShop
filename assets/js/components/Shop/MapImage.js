@@ -8,7 +8,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
-export default function MapImage({ isBuildRouteClicked, categories }) {
+export default function MapImage({ isBuildRouteClicked, categories, source, destination }) {
     const map = useMap();
 
     const bounds = [[-30.68, -30.68], [1048.86, 1048.86]];
@@ -46,7 +46,7 @@ export default function MapImage({ isBuildRouteClicked, categories }) {
     }
 
     async function buildRoute() {
-        await fetch(`http://easy:8080/api/build-route`)
+        await fetch(`http://easy:8080/api/build-route/${source}/${destination}`)
             .then(response => response.json())
             .then(data => {
                 addRoute(map, data);

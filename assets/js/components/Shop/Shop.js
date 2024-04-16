@@ -7,6 +7,8 @@ export default function Shop() {
     const [shop, setShop] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isBuildRouteClicked, setBuildRouteClicked] = useState(false);
+    const [source, setSource] = useState('Бакалея');
+    const [destination, setDestination] = useState('Бакалея');
 
     let { id } = useParams();
 
@@ -35,6 +37,14 @@ export default function Shop() {
         setBuildRouteClicked(true);
     }
 
+    function handleSourceCategoryChange(source) {
+        setSource(source);
+    }
+
+    function handleDestinationCategoryChange(destination) {
+        setDestination(destination)
+    }
+
     let buildRouteButton = '';
     if (categories.length) {
         buildRouteButton = <a className="btn btn-primary tm-btn-big" onClick={handleOnClick}>Построить маршрут</a>
@@ -48,10 +58,10 @@ export default function Shop() {
                     <h2 className="col-12 tm-text-primary">{shop.title}</h2>
                 </div>
                 <div className="row tm-mb-90">
-                    <Map isBuildRouteClicked={isBuildRouteClicked} categories={categories} />
+                    <Map isBuildRouteClicked={isBuildRouteClicked} categories={categories} source={source} destination={destination} />
                     <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
                         <div className="tm-bg-gray tm-video-details">
-                            <CategoryList categories={categories} />
+                            <CategoryList categories={categories} onSourceCategoryChange={handleSourceCategoryChange} onDestinationCategoryChange={handleDestinationCategoryChange} />
                             <div className="text-center mb-5 mt-5">
                                 {buildRouteButton}
                             </div>

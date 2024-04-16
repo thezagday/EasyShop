@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer } from 'react-leaflet';
 import MapImage from "./MapImage";
 
-export default function Map({ isBuildRouteClicked, categories }) {
+export default function Map({ isBuildRouteClicked, categories, source, destination }) {
     return (
         <div className="col-xl-8 col-lg-7 col-md-6 col-sm-12">
             <MapContainer
@@ -15,7 +15,7 @@ export default function Map({ isBuildRouteClicked, categories }) {
                 boundsOptions={{ padding: [50, 50] }}
                 style={{ height: "120vh" }}
             >
-                <MapImage isBuildRouteClicked={isBuildRouteClicked} categories={categories} />
+                <MapImage isBuildRouteClicked={isBuildRouteClicked} categories={categories} source={source} destination={destination} />
             </MapContainer>
         </div>
     )
