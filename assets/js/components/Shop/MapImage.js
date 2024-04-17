@@ -8,7 +8,13 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
-export default function MapImage({ isBuildRouteClicked, categories, source, destination }) {
+export default function MapImage({
+    isBuildRouteClicked,
+    categories,
+    source,
+    destination,
+    afterClick
+}) {
     const map = useMap();
 
     const bounds = [[-30.68, -30.68], [1048.86, 1048.86]];
@@ -50,6 +56,7 @@ export default function MapImage({ isBuildRouteClicked, categories, source, dest
             .then(response => response.json())
             .then(data => {
                 addRoute(map, data);
+                afterClick();
             });
     }
 

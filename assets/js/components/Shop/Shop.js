@@ -37,12 +37,16 @@ export default function Shop() {
         setBuildRouteClicked(true);
     }
 
+    function afterClick() {
+        setBuildRouteClicked(false);
+    }
+
     function handleSourceCategoryChange(source) {
         setSource(source);
     }
 
     function handleDestinationCategoryChange(destination) {
-        setDestination(destination)
+        setDestination(destination);
     }
 
     let buildRouteButton = '';
@@ -58,10 +62,20 @@ export default function Shop() {
                     <h2 className="col-12 tm-text-primary">{shop.title}</h2>
                 </div>
                 <div className="row tm-mb-90">
-                    <Map isBuildRouteClicked={isBuildRouteClicked} categories={categories} source={source} destination={destination} />
+                    <Map
+                        isBuildRouteClicked={isBuildRouteClicked}
+                        categories={categories}
+                        source={source}
+                        destination={destination}
+                        afterClick={afterClick}
+                    />
                     <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
                         <div className="tm-bg-gray tm-video-details">
-                            <CategoryList categories={categories} onSourceCategoryChange={handleSourceCategoryChange} onDestinationCategoryChange={handleDestinationCategoryChange} />
+                            <CategoryList
+                                categories={categories}
+                                onSourceCategoryChange={handleSourceCategoryChange}
+                                onDestinationCategoryChange={handleDestinationCategoryChange}
+                            />
                             <div className="text-center mb-5 mt-5">
                                 {buildRouteButton}
                             </div>
