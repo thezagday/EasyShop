@@ -1,6 +1,6 @@
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -20,6 +20,8 @@ export default function MapImage({
 
     const bounds = [[-30.68, -30.68], [1048.86, 1048.86]];
     const image = L.imageOverlay("/img/map.png", bounds).addTo(map);
+
+    const [route, setRoute] = useState(null);
 
     let yx = L.latLng;
     let xy = function(x, y) {
@@ -57,6 +59,10 @@ export default function MapImage({
             let response = await fetch(`http://easy:8080/api/build-route/${source}/${destination}`);
             let data = await response.json();
 
+            if (route != null) {
+                map.removeLayer(route);
+            }
+
             addRoute(map, data);
             afterClick();
         } catch (error) {
@@ -71,16 +77,20 @@ export default function MapImage({
         });
 
         let travel = L.polyline(pointsToMap).addTo(map);
+
+        setRoute(travel);
     }
+
+    useEffect(() => {
+        if (isBuildRouteClicked) {
+            buildRoute();
+        }
+    }, [isBuildRouteClicked]);
 
     map.fitBounds(image.getBounds());
     map.setMaxBounds(map.getBounds());
 
     addShopCategoriesToMapAndReturn(map, categories);
-
-    if (isBuildRouteClicked) {
-        buildRoute();
-    }
 
     return null;
 }
