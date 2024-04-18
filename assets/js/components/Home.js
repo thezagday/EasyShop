@@ -10,11 +10,14 @@ export default function Home() {
     }, []);
 
     async function fetchShops() {
-        await fetch('http://easy:8080/api/shops')
-            .then(response => response.json())
-            .then(data => {
-                setShops(data['hydra:member']);
-            });
+        try {
+            let response = await fetch(`http://easy:8080/api/shops`);
+            let data = await response.json();
+
+            setShops(data['hydra:member']);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     function updateShopList(shops) {

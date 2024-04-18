@@ -1,5 +1,6 @@
 import { useMap } from "react-leaflet";
 import L from "leaflet";
+import {useState} from "react";
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -52,12 +53,15 @@ export default function MapImage({
     }
 
     async function buildRoute() {
-        await fetch(`http://easy:8080/api/build-route/${source}/${destination}`)
-            .then(response => response.json())
-            .then(data => {
-                addRoute(map, data);
-                afterClick();
-            });
+        try {
+            let response = await fetch(`http://easy:8080/api/build-route/${source}/${destination}`);
+            let data = await response.json();
+
+            addRoute(map, data);
+            afterClick();
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     function addRoute(map, categories) {

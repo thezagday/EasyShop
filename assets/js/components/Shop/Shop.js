@@ -18,19 +18,25 @@ export default function Shop() {
     }, []);
 
     async function fetchShop() {
-        await fetch(`http://easy:8080/api/shops/${id}`)
-            .then(response => response.json())
-            .then(data => {
-                setShop(data)
-            });
+        try {
+            let response = await fetch(`http://easy:8080/api/shops/${id}`);
+            let data = await response.json();
+
+            setShop(data);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     async function fetchCategories() {
-        await fetch(`http://easy:8080/api/shop_categories?shop=${id}`)
-            .then(response => response.json())
-            .then(data => {
-                setCategories(data['hydra:member'])
-            });
+        try {
+            let response = await fetch(`http://easy:8080/api/shop_categories?shop=${id}`);
+            let data = await response.json();
+
+            setCategories(data['hydra:member']);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     function handleOnClick() {
