@@ -4,6 +4,7 @@ import Map from "./Map"
 import CategoryList from "./CategoryList"
 
 export default function Shop() {
+    // To avoid repetitive "prop drilling", see https://react.dev/learn/scaling-up-with-reducer-and-context
     const [shop, setShop] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isBuildRouteClicked, setBuildRouteClicked] = useState(false);
