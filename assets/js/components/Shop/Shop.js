@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from "react-router-dom";
 import Map from "./Map"
 import CategoryList from "./CategoryList"
@@ -8,10 +8,11 @@ export default function Shop() {
     const [shop, setShop] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isBuildRouteClicked, setBuildRouteClicked] = useState(false);
-    const [source, setSource] = useState('Бакалея');
-    const [destination, setDestination] = useState('Бакалея');
 
     let { id } = useParams();
+
+    let sourceRef = useRef('Бакалея');
+    let destinationRef = useRef('Бакалея');
 
     useEffect(() => {
         fetchShop();
@@ -49,11 +50,11 @@ export default function Shop() {
     }
 
     function handleSourceCategoryChange(source) {
-        setSource(source);
+        sourceRef.current = source;
     }
 
     function handleDestinationCategoryChange(destination) {
-        setDestination(destination);
+        destinationRef.current = destination;
     }
 
     let buildRouteButton = '';
@@ -72,8 +73,8 @@ export default function Shop() {
                     <Map
                         isBuildRouteClicked={isBuildRouteClicked}
                         categories={categories}
-                        source={source}
-                        destination={destination}
+                        source={sourceRef}
+                        destination={destinationRef}
                         afterClick={afterClick}
                     />
                     <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
