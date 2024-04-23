@@ -1,6 +1,6 @@
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-import {useEffect, useState} from "react";
+import {useEffect, useRef} from "react";
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -14,14 +14,18 @@ export default function MapImage({
     categories,
     source,
     destination,
-    afterClick
+    afterBuildRoute
 }) {
     const map = useMap();
 
     const bounds = [[-30.68, -30.68], [1048.86, 1048.86]];
     const image = L.imageOverlay("/img/map.png", bounds).addTo(map);
 
-    const [route, setRoute] = useState(null);
+    let routeRef = useRef(null);
+
+    function handleAppendRoute(route) {
+        routeRef.current = route;
+    }
 
     let yx = L.latLng;
     let xy = function(x, y) {
@@ -59,18 +63,18 @@ export default function MapImage({
             let response = await fetch(`http://easy:8080/api/build-route/${source.current}/${destination.current}`);
             let data = await response.json();
 
-            if (route != null) {
-                map.removeLayer(route);
+            if (routeRef.current != null) {
+                map.removeLayer(routeRef.current);
             }
 
-            addRoute(map, data);
-            afterClick();
+            appendRouteToMap(map, data);
+            afterBuildRoute();
         } catch (error) {
             console.error(error);
         }
     }
 
-    function addRoute(map, categories) {
+    function appendRouteToMap(map, categories) {
         let pointsToMap = [];
         categories.forEach(function(category) {
             pointsToMap.push(xy(category.x_coordinate, category.y_coordinate));
@@ -78,19 +82,19 @@ export default function MapImage({
 
         let travel = L.polyline(pointsToMap).addTo(map);
 
-        setRoute(travel);
+        handleAppendRoute(travel);
     }
+
+    map.fitBounds(image.getBounds());
+    map.setMaxBounds(map.getBounds());
+
+    addShopCategoriesToMapAndReturn(map, categories);
 
     useEffect(() => {
         if (isBuildRouteClicked) {
             buildRoute();
         }
     }, [isBuildRouteClicked]);
-
-    map.fitBounds(image.getBounds());
-    map.setMaxBounds(map.getBounds());
-
-    addShopCategoriesToMapAndReturn(map, categories);
 
     return null;
 }

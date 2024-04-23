@@ -10,7 +10,7 @@ export default function Map({
     categories,
     source,
     destination,
-    afterClick
+    afterBuildRoute
 }) {
     return (
         <div className="col-xl-8 col-lg-7 col-md-6 col-sm-12">
@@ -26,7 +26,7 @@ export default function Map({
                     categories={categories}
                     source={source}
                     destination={destination}
-                    afterClick={afterClick}
+                    afterBuildRoute={afterBuildRoute}
                 />
             </MapContainer>
         </div>
