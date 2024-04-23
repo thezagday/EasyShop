@@ -1,6 +1,6 @@
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-import {useEffect, useRef} from "react";
+import { useRef } from "react";
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -90,11 +90,9 @@ export default function MapImage({
 
     addShopCategoriesToMapAndReturn(map, categories);
 
-    useEffect(() => {
-        if (isBuildRouteClicked) {
-            buildRoute();
-        }
-    }, [isBuildRouteClicked]);
+    if (isBuildRouteClicked) {
+        buildRoute();
+    }
 
     return null;
 }
