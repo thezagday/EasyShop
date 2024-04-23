@@ -60,7 +60,7 @@ export default function MapImage({
 
     async function buildRoute() {
         try {
-            let response = await fetch(`http://easy:8080/api/build-route/${source.current}/${destination.current}`);
+            let response = await fetch(`http://easy:8080/api/build-route/${source}/${destination}`);
             let data = await response.json();
 
             if (routeRef.current != null) {

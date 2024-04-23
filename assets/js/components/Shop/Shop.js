@@ -73,8 +73,8 @@ export default function Shop() {
                     <Map
                         isBuildRouteClicked={isBuildRouteClicked}
                         categories={categories}
-                        source={sourceRef}
-                        destination={destinationRef}
+                        source={sourceRef.current}
+                        destination={destinationRef.current}
                         afterBuildRoute={afterBuildRoute}
                     />
                     <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
