@@ -45,7 +45,7 @@ export default function Shop() {
         setBuildRouteClicked(true);
     }
 
-    function afterBuildRoute() {
+    function postBuildRoute() {
         setBuildRouteClicked(false);
     }
 
@@ -75,7 +75,7 @@ export default function Shop() {
                         categories={categories}
                         source={sourceRef.current}
                         destination={destinationRef.current}
-                        afterBuildRoute={afterBuildRoute}
+                        postBuildRoute={postBuildRoute}
                     />
                     <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
                         <div className="tm-bg-gray tm-video-details">

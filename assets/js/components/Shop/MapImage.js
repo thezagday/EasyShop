@@ -1,6 +1,6 @@
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-import { useRef } from "react";
+import {useEffect, useRef} from "react";
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -14,7 +14,7 @@ export default function MapImage({
     categories,
     source,
     destination,
-    afterBuildRoute
+    postBuildRoute
 }) {
     const map = useMap();
 
@@ -23,10 +23,6 @@ export default function MapImage({
 
     let routeRef = useRef(null);
 
-    function handleAppendRoute(route) {
-        routeRef.current = route;
-    }
-
     let yx = L.latLng;
     let xy = function(x, y) {
         if (Array.isArray(x)) {    // When doing xy([x, y]);
@@ -34,6 +30,25 @@ export default function MapImage({
         }
         return yx(y, x);  // When doing xy(x, y);
     };
+
+    map.fitBounds(image.getBounds());
+    map.setMaxBounds(map.getBounds());
+
+    addShopCategoriesToMapAndReturn(map, categories);
+
+    useEffect(() => {
+        if (isBuildRouteClicked) {
+            preBuildRoute();
+            buildRoute();
+        }
+        return () => postBuildRoute();
+    }, [isBuildRouteClicked]);
+
+    function preBuildRoute() {
+        if (routeRef.current != null) {
+            map.removeLayer(routeRef.current);
+        }
+    }
 
     function addShopCategoriesToMapAndReturn(map, categories) {
         let categoryPoints = [];
@@ -63,12 +78,7 @@ export default function MapImage({
             let response = await fetch(`http://easy:8080/api/build-route/${source}/${destination}`);
             let data = await response.json();
 
-            if (routeRef.current != null) {
-                map.removeLayer(routeRef.current);
-            }
-
             appendRouteToMap(map, data);
-            afterBuildRoute();
         } catch (error) {
             console.error(error);
         }
@@ -85,13 +95,8 @@ export default function MapImage({
         handleAppendRoute(travel);
     }
 
-    map.fitBounds(image.getBounds());
-    map.setMaxBounds(map.getBounds());
-
-    addShopCategoriesToMapAndReturn(map, categories);
-
-    if (isBuildRouteClicked) {
-        buildRoute();
+    function handleAppendRoute(route) {
+        routeRef.current = route;
     }
 
     return null;
