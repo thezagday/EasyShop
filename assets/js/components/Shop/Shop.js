@@ -64,20 +64,21 @@ export default function Shop() {
 
     return (
         <div>
-            <div className="tm-hero d-flex justify-content-center align-items-center" data-parallax="scroll" data-image-src="img/hero.jpg"></div>
             <div className="container-fluid tm-container-content tm-mt-60">
                 <div className="row mb-4">
                     <h2 className="col-12 tm-text-primary">{shop.title}</h2>
                 </div>
                 <div className="row tm-mb-90">
-                    <Map
-                        isBuildRouteClicked={isBuildRouteClicked}
-                        categories={categories}
-                        source={sourceRef.current}
-                        destination={destinationRef.current}
-                        postBuildRoute={postBuildRoute}
-                    />
-                    <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
+                    <div className="col-xl-9 col-lg-8 col-md-7 col-sm-12">
+                        <Map
+                            isBuildRouteClicked={isBuildRouteClicked}
+                            categories={categories}
+                            source={sourceRef.current}
+                            destination={destinationRef.current}
+                            postBuildRoute={postBuildRoute}
+                        />
+                    </div>
+                    <div className="col-xl-3 col-lg-4 col-md-5 col-sm-12">
                         <div className="tm-bg-gray tm-video-details">
                             <CategoryList
                                 categories={categories}
