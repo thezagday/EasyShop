@@ -24,7 +24,7 @@ export default function MapImage({
     let routeRef = useRef(null);
 
     let yx = L.latLng;
-    let xy = function(x, y) {
+    let xy = function (x, y) {
         if (Array.isArray(x)) {    // When doing xy([x, y]);
             return yx(x[1], x[0]);
         }
@@ -52,7 +52,7 @@ export default function MapImage({
 
     function addShopCategoriesToMapAndReturn(map, categories) {
         let categoryPoints = [];
-        categories.forEach(function(shopCategory) {
+        categories.forEach(function (shopCategory) {
             if (shopCategory.id == 17 || shopCategory.id == 18) {
                 return;
             }
@@ -86,7 +86,7 @@ export default function MapImage({
 
     function appendRouteToMap(map, categories) {
         let pointsToMap = [];
-        categories.forEach(function(category) {
+        categories.forEach(function (category) {
             pointsToMap.push(xy(category.x_coordinate, category.y_coordinate));
         });
 

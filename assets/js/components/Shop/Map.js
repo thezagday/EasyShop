@@ -18,7 +18,7 @@ export default function Map({
                 crs={CRS.Simple}
                 maxBoundsViscosity={1}
                 boundsOptions={{ padding: [50, 50] }}
-                style={{ height: "70vh" }}
+                style={{ height: "110vh" }}
             >
                 <MapImage
                     isBuildRouteClicked={isBuildRouteClicked}
