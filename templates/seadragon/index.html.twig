@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('seadragon') }}
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.1/openseadragon.min.js" integrity="sha512-LbaoUnRCul2C+I4cdS/EMnMbynmZMU58AApBnZkhMzp/r8rOS7htjTsox7g6rf5ZXkSx56F5dDYmhLwqV1Zt4A==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    {{ encore_entry_script_tags('seadragon') }}
+{% endblock %}
+
+{% block title %}Seadragon{% endblock %}
+
+{% block body %}
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-film mr-2"></i>
+                EasyShop
+            </a>
+            <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+            >
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a aria-current="page" class="nav-link nav-link-1 active" href="/seadragon">Seadragon</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="viewer"></div>
+{% endblock %}

@@ -36,6 +36,9 @@ export default function Navbar() {
                             <li className="nav-item">
                                 <a aria-current="page" className="nav-link nav-link-1" href="/leaflet">Leaflet</a>
                             </li>
+                            <li className="nav-item">
+                                <a aria-current="page" className="nav-link nav-link-1" href="/seadragon">Seadragon</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
