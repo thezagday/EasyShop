@@ -1,10 +1,10 @@
 import React from 'react';
 import {useParams} from "react-router-dom";
 
-export default function ShopSearchCategoryInput({onChange}) {
+export default function CommoditySearchInput({onChange}) {
     let { id } = useParams();
     function handleChange (event) {
-        fetch(`http://easy:8080/api/shop_categories?shop=${id}&category.title=${event.target.value}`)
+        fetch(`http://easy:8080/api/commodities?title=${event.target.value}`)
             .then(response => response.json())
             .then(data => {
                 onChange(data['hydra:member']);
@@ -17,7 +17,7 @@ export default function ShopSearchCategoryInput({onChange}) {
                 <input className="form-control tm-search-input"
                        type="text"
                        onChange={handleChange}
-                       placeholder="Поиск по категориям"
+                       placeholder="Поиск по товарам"
                        aria-label="Search"
                 />
             </form>

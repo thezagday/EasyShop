@@ -4,6 +4,7 @@ import {useEffect, useRef} from "react";
 import {SetupMap} from "./SetupMap";
 import {CategorySearch} from "./CategorySearch";
 import {CategoryRouteGeneration} from "./CategoryRouteGeneration";
+import {CommoditySearch} from "./CommoditySearch";
 delete L.Icon.Default.prototype._getIconUrl;
 
 export default function MapImage({
@@ -13,11 +14,13 @@ export default function MapImage({
     destination,
     postBuildRoute,
     searchedCategories,
+    searchedCommodities,
 }) {
     const map = useMap();
 
-    CategorySearch(map, searchedCategories);
-    CategoryRouteGeneration(map, isBuildRouteClicked, categories, source, destination, postBuildRoute);
+    CommoditySearch(map, searchedCommodities);
+    // CategorySearch(map, searchedCategories);
+    // CategoryRouteGeneration(map, isBuildRouteClicked, categories, source, destination, postBuildRoute);
 
     useEffect(() => {
         SetupMap(map);
