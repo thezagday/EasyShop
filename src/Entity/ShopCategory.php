@@ -11,7 +11,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ShopCategoryRepository::class)]
 #[ApiResource(normalizationContext: ['groups' => ['shop_category']])] // https://github.com/dunglas/vulcain
-#[ApiFilter(SearchFilter::class, properties: ['shop' => 'exact', 'category' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: [
+    'shop' => 'exact',
+    'category' => 'exact',
+    'category.title' => 'ipartial',
+])]
 class ShopCategory
 {
     #[ORM\Id]

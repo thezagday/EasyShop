@@ -1,11 +1,13 @@
 import React from "react";
 import "leaflet";
 import 'leaflet/dist/leaflet.css';
+import ShopSearchInput from "./ShopSearchInput";
 
 export default function CategoryList({
     categories,
     onSourceCategoryChange,
-    onDestinationCategoryChange
+    onDestinationCategoryChange,
+    onSearchCategories,
 }) {
     const emptyMessage = 'В этом магазине пока нет категорий.';
     const categoryList = categories.map((shopCategory) =>
@@ -22,10 +24,15 @@ export default function CategoryList({
         onDestinationCategoryChange(destination);
     }
 
+    function handleSearchedCategories(searchedCategories) {
+        onSearchCategories(searchedCategories);
+    }
+
     return (
         categoryList.length ? (
             <div>
-                <h3 className="tm-text-gray-dark mb-3">Поиск:</h3>
+                <ShopSearchInput onChange={handleSearchedCategories} />
+                <h3 className="tm-text-gray-dark mb-3">Категории:</h3>
                 <select onChange={handleSourceChange} className="form-control" id="contact-select" name="inquiry">
                     {categories.map(shopCategory => (
                         <option key={shopCategory.category.id}
