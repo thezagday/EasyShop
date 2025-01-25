@@ -523,29 +523,34 @@ $gfx->endpath();
 progress("Drawing racks...\n");
 
 # Line 1
-draw_rect($gfx, 500, 9500);
-draw_rect($gfx, 3000, 9500);
-draw_rect($gfx, 5500, 9500);
-draw_rect($gfx, 8000, 9500);
+draw_rect($gfx, 1000, 9000);
+draw_rect($gfx, 3500, 9000);
+draw_rect($gfx, 6000, 9000);
+draw_small_rect($gfx, 8500, 9000);
 
-# Line 2
-draw_rect($gfx, 500, 7000);
-draw_rect($gfx, 3000, 7000);
-draw_rect($gfx, 5500, 7000);
-draw_rect($gfx, 8000, 7000);
+## Line 2
+draw_rect($gfx, 1000, 7000);
+draw_rect($gfx, 3500, 7000);
+draw_rect($gfx, 6000, 7000);
+draw_small_rect($gfx, 8500, 7000);
 
-# Line 3
-draw_rect($gfx, 500, 4500);
-draw_rect($gfx, 3000, 4500);
-draw_rect($gfx, 5500, 4500);
-draw_rect($gfx, 8000, 4500);
+#
+## Line 3
+draw_rect($gfx, 1000, 5000);
+draw_rect($gfx, 3500, 5000);
+draw_rect($gfx, 6000, 5000);
+draw_small_rect($gfx, 8500, 5000);
+#
+## Line 4
+draw_rect($gfx, 1000, 3000);
+draw_rect($gfx, 3500, 3000);
+draw_rect($gfx, 6000, 3000);
+draw_small_rect($gfx, 8500, 3000);
 
-# Line 4
-draw_rect($gfx, 500, 2000);
-draw_rect($gfx, 3000, 2000);
-draw_rect($gfx, 5500, 2000);
-draw_rect($gfx, 8000, 2000);
-
+draw_rect($gfx, 3000, 1000);
+draw_small_rect($gfx, 5500, 1000);
+draw_small_rect($gfx, 7000, 1000);
+draw_small_rect($gfx, 8500, 1000);
 
 # Spheres
 # We do this after grid because we want it on top of the grid, but before 
@@ -790,27 +795,27 @@ draw_border($gfx,$mapstartx-1, $mapstarty-1, $mapsize+2, $mapsize+2);
 #}
 #
 progress("Drawing stars...\n");
-foreach (keys %stars) {
-	my %star = %{$stars{$_}};
-
-	my ($x, $y) = unitomap($star{'x'}, $star{'y'});
-	my $sizes = $star{'size'};
-	my $col = $star{'color'};
-
-	my $interest = $star{'interest'};
-	my $interesting = 0;
-	my $rainbow = 0;
-	if ($interest ne '0' && !($interest =~ /MELNORME._DEFINED/)) {
-		$interesting = 1;
-		$rainbow = $interest eq 'RAINBOW_DEFINED';
-	}
-	drawstar($gfx, $x, $y, $sizes, $col, $interesting, $rainbow);
-
-	if ($star{'pre'}) {
-		my $size = size_string_to_size($sizes);
-		$gfx->textlabel($x+($size/3), $y+.25, $font, 3, $symbols[$star{'pre'}-1], -color=> $colors{greek_label});
-	}
-}
+#foreach (keys %stars) {
+#	my %star = %{$stars{$_}};
+#
+#	my ($x, $y) = unitomap($star{'x'}, $star{'y'});
+#	my $sizes = $star{'size'};
+#	my $col = $star{'color'};
+#
+#	my $interest = $star{'interest'};
+#	my $interesting = 0;
+#	my $rainbow = 0;
+#	if ($interest ne '0' && !($interest =~ /MELNORME._DEFINED/)) {
+#		$interesting = 1;
+#		$rainbow = $interest eq 'RAINBOW_DEFINED';
+#	}
+#	drawstar($gfx, $x, $y, $sizes, $col, $interesting, $rainbow);
+#
+#	if ($star{'pre'}) {
+#		my $size = size_string_to_size($sizes);
+#		$gfx->textlabel($x+($size/3), $y+.25, $font, 3, $symbols[$star{'pre'}-1], -color=> $colors{greek_label});
+#	}
+#}
 
 #
 #progress("Labelling constellations and repelling labels...\n");
@@ -1105,11 +1110,39 @@ sub draw_rect {
     $gfx->line($dx,$dy);
 
     $gfx->move($dx,$dy);
-    ($dx,$dy) = unitomap($x + 1500, $y - 1500);
+    ($dx,$dy) = unitomap($x + 1500, $y - 1000);
     $gfx->line($dx,$dy);
 
     $gfx->move($dx,$dy);
-    ($dx,$dy) = unitomap($x, $y - 1500);
+    ($dx,$dy) = unitomap($x, $y - 1000);
+    $gfx->line($dx,$dy);
+
+    $gfx->move($dx,$dy);
+    ($dx,$dy) = unitomap($x, $y);
+    $gfx->line($dx,$dy);
+
+	$gfx->stroke();
+	$gfx->endpath();
+}
+
+sub draw_small_rect {
+    my($gfx, $x, $y) = @_;
+
+    $gfx->linewidth(0.9);
+	$gfx->strokecolor(@{$colors{route}});
+
+    my ($dx,$dy) = unitomap($x, $y);
+
+    $gfx->move($dx,$dy);
+    ($dx,$dy) = unitomap($x + 500, $y);
+    $gfx->line($dx,$dy);
+
+    $gfx->move($dx,$dy);
+    ($dx,$dy) = unitomap($x + 500, $y - 1000);
+    $gfx->line($dx,$dy);
+
+    $gfx->move($dx,$dy);
+    ($dx,$dy) = unitomap($x, $y - 1000);
     $gfx->line($dx,$dy);
 
     $gfx->move($dx,$dy);
