@@ -1,6 +1,6 @@
 import L from "leaflet";
 import {useRef} from "react";
-import {xy} from "../../Utils/coordinateUtils"
+import {xy} from "../../../Utils/coordinateUtils"
 
 export function CategorySearch(map, searchedCategories) {
     let markers = useRef(null);

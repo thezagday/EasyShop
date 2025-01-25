@@ -3,7 +3,7 @@ import "leaflet";
 import { CRS } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer } from 'react-leaflet';
-import MapImage from "./MapImage";
+import MapImage from "./MapImage/MapImage";
 
 export default function Map({
     isBuildRouteClicked,

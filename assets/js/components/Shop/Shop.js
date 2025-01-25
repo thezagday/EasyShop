@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from "react-router-dom";
-import Map from "./Map"
-import CategoryList from "./CategoryList"
+import Map from "./Map/Map"
+import CategoryList from "./CategoryList/CategoryList"
 
 export default function Shop() {
     // To avoid repetitive "prop drilling", see https://react.dev/learn/scaling-up-with-reducer-and-context

@@ -1,9 +1,9 @@
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import {useEffect, useRef} from "react";
-import {SetupMap} from "./Map/SetupMap";
-import {CategorySearch} from "./Map/CategorySearch";
-import {CategoryRouteGeneration} from "./Map/CategoryRouteGeneration";
+import {SetupMap} from "./SetupMap";
+import {CategorySearch} from "./CategorySearch";
+import {CategoryRouteGeneration} from "./CategoryRouteGeneration";
 delete L.Icon.Default.prototype._getIconUrl;
 
 export default function MapImage({

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import ShopList from "./Shop/ShopList";
-import SearchInput from "./Search/SearchInput";
+import ShopList from "./ShopList/ShopList";
+import SearchInput from "./SearchInput/SearchInput";
 
 export default function Home() {
     const [shops, setShops] = useState([]);

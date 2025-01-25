@@ -1,5 +1,5 @@
 import React from "react";
-import ShopListItem from "./ShopListItem";
+import ShopListItem from "./ShopListItem/ShopListItem";
 
 export default function ShopList({shops}) {
     const emptyMessage = 'К сожалению, такой магазин мы еще не добавили.';

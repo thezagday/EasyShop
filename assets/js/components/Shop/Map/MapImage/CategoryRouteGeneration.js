@@ -1,6 +1,6 @@
 import {useEffect, useRef} from "react";
 import L from "leaflet";
-import {xy} from "../../Utils/coordinateUtils"
+import {xy} from "../../../Utils/coordinateUtils"
 
 export function CategoryRouteGeneration(map, isBuildRouteClicked, categories, source, destination, postBuildRoute) {
     let routeRef = useRef(null);
