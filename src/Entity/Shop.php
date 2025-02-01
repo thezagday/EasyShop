@@ -9,8 +9,6 @@ use App\Repository\ShopRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: ShopRepository::class)]
@@ -29,8 +27,8 @@ class Shop
     #[ORM\Column(length: 255)]
     private string $avatar;
 
-    #[ManyToOne(targetEntity: Retailer::class)]
-    #[JoinColumn(name: 'retailer_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Retailer::class)]
+    #[ORM\JoinColumn(name: 'retailer_id', referencedColumnName: 'id')]
     private Retailer|null $retailer = null;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: ShopCategory::class, orphanRemoval: true)]
@@ -83,15 +81,12 @@ class Shop
         return $this;
     }
 
-    /**
-     * @return Collection<int, ShopCategory>
-     */
     public function getShopCategories(): Collection
     {
         return $this->shopCategories;
     }
 
-    public function addShopCategory(ShopCategory $shopCategory): static
+    public function addShopCategory(ShopCategory $shopCategory): self
     {
         if (!$this->shopCategories->contains($shopCategory)) {
             $this->shopCategories->add($shopCategory);
@@ -101,7 +96,7 @@ class Shop
         return $this;
     }
 
-    public function removeShopCategory(ShopCategory $shopCategory): static
+    public function removeShopCategory(ShopCategory $shopCategory): self
     {
         if ($this->shopCategories->removeElement($shopCategory)) {
             // set the owning side to null (unless already changed)

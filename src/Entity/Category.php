@@ -7,8 +7,6 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
@@ -18,15 +16,15 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['shop_category'])]
+    #[Groups(['shopCategory:read', 'commodity:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop_category'])]
+    #[Groups(['shopCategory:read', 'commodity:read'])]
     private ?string $title = null;
 
-    #[ManyToOne(targetEntity: Retailer::class)]
-    #[JoinColumn(name: 'retailer_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Retailer::class)]
+    #[ORM\JoinColumn(name: 'retailer_id', referencedColumnName: 'id')]
     private Retailer|null $retailer = null;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: ShopCategory::class, orphanRemoval: true)]
@@ -47,7 +45,7 @@ class Category
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
@@ -66,15 +64,12 @@ class Category
         return $this;
     }
 
-    /**
-     * @return Collection<int, ShopCategory>
-     */
     public function getShops(): Collection
     {
         return $this->shops;
     }
 
-    public function addShop(ShopCategory $shop): static
+    public function addShop(ShopCategory $shop): self
     {
         if (!$this->shops->contains($shop)) {
             $this->shops->add($shop);
@@ -84,7 +79,7 @@ class Category
         return $this;
     }
 
-    public function removeShop(ShopCategory $shop): static
+    public function removeShop(ShopCategory $shop): self
     {
         if ($this->shops->removeElement($shop)) {
             // set the owning side to null (unless already changed)
