@@ -1,26 +1,55 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
+import Select from 'react-select'
 
 export default function ShopSearchCategoryInput({onChange}) {
     let { id } = useParams();
-    function handleChange (event) {
-        fetch(`http://easy:8080/api/shop_categories?shop=${id}&category.title=${event.target.value}`)
+    const [categories, setCategories] = useState([]);
+
+    async function fetchCategories() {
+        try {
+            let response = await fetch(`http://easy:8080/api/categories?retailer=1`); // TODO Retailer
+            let data = await response.json();
+
+            setCategories(data['hydra:member']);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function handleSelectChange (event) {
+        if (!event) {
+            return;
+        }
+
+        fetch(`http://easy:8080/api/shop_categories?shop=${id}&category.title=${event.label}`)
             .then(response => response.json())
             .then(data => {
                 onChange(data['hydra:member']);
             });
     }
 
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    const transformToOptions = (categories) => {
+        return categories.map(category => ({
+            value: category.id.toString(),
+            label: category.title
+        }));
+    };
+
+    const options = transformToOptions(categories);
+
     return (
-        <div className="tm-hero d-flex justify-content-center align-items-center">
-            <form className="d-flex tm-search-form">
-                <input className="form-control tm-search-input"
-                       type="text"
-                       onChange={handleChange}
-                       placeholder="Поиск по категориям"
-                       aria-label="Search"
-                />
-            </form>
+        <div>
+            <Select
+                options={options}
+                onChange={handleSelectChange}
+                isClearable={true}
+                placeholder={'Поиск по категориям'}
+            />
         </div>
     );
 }
