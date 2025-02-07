@@ -5,6 +5,7 @@ import ShopSearchInput from "./ShopSearchInput";
 import CommoditySearchInput from "./CommoditySearchInput";
 
 export default function CategoryList({
+    shop,
     categories,
     onSourceCategoryChange,
     onDestinationCategoryChange,
@@ -37,7 +38,7 @@ export default function CategoryList({
     return (
         categoryList.length ? (
             <div>
-                <ShopSearchInput onChange={handleSearchedCategories} />
+                <ShopSearchInput shop={shop} onChange={handleSearchedCategories} />
                 <CommoditySearchInput onChange={handleSearchedCommodities} />
                 <h3 className="tm-text-gray-dark mb-3">Категории:</h3>
                 <select onChange={handleSourceChange} className="form-control" id="contact-select" name="inquiry">

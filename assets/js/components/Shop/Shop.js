@@ -93,6 +93,7 @@ export default function Shop() {
                     <div className="col-xl-3 col-lg-4 col-md-5 col-sm-12">
                         <div className="tm-bg-gray tm-video-details">
                             <CategoryList
+                                shop={shop}
                                 categories={categories}
                                 onSourceCategoryChange={handleSourceCategoryChange}
                                 onDestinationCategoryChange={handleDestinationCategoryChange}
