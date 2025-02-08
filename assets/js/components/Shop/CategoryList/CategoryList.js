@@ -1,7 +1,7 @@
 import React from "react";
 import "leaflet";
 import 'leaflet/dist/leaflet.css';
-import ShopSearchInput from "./ShopSearchInput";
+import CategorySearchInput from "./CategorySearchInput";
 import CommoditySearchInput from "./CommoditySearchInput";
 
 export default function CategoryList({
@@ -37,7 +37,7 @@ export default function CategoryList({
     return (
         categoryList.length ? (
             <div>
-                <ShopSearchInput categories={categories} onChange={handleSearchedCategory}/>
+                <CategorySearchInput categories={categories} onChange={handleSearchedCategory}/>
                 <br/>
                 <CommoditySearchInput categories={categories} onChange={handleSearchedCategoryByCommodity}/>
                 <br/>

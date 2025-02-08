@@ -1,7 +1,7 @@
 import React from 'react';
 import Select from 'react-select'
 
-export default function ShopSearchCategoryInput({categories, onChange}) {
+export default function CategorySearchInput({categories, onChange}) {
     function handleSelectChange (event) {
         if (!event) {
             return;
