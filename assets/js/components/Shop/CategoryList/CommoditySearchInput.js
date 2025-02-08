@@ -1,26 +1,52 @@
-import React from 'react';
-import {useParams} from "react-router-dom";
+import React, {useEffect, useState} from 'react';
+import Select from "react-select";
 
 export default function CommoditySearchInput({onChange}) {
-    let { id } = useParams();
-    function handleChange (event) {
-        fetch(`http://easy:8080/api/commodities?title=${event.target.value}`)
+    const [commodities, setCommodities] = useState([]);
+
+    async function fetchCommodities() {
+        try {
+            let response = await fetch(`http://easy:8080/api/commodities`);
+            let data = await response.json();
+
+            setCommodities(data['hydra:member']);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    function handleSelectChange (event) {
+        if (!event) {
+            return;
+        }
+
+        fetch(`http://easy:8080/api/commodities?title=${event.label}`)
             .then(response => response.json())
             .then(data => {
                 onChange(data['hydra:member']);
             });
     }
 
+    useEffect(() => {
+        fetchCommodities();
+    }, []);
+
+    const transformToOptions = (commodities) => {
+        return commodities.map(commodity => ({
+            value: commodity.id.toString(),
+            label: commodity.title
+        }));
+    };
+
+    const options = transformToOptions(commodities);
+
     return (
-        <div className="tm-hero d-flex justify-content-center align-items-center">
-            <form className="d-flex tm-search-form">
-                <input className="form-control tm-search-input"
-                       type="text"
-                       onChange={handleChange}
-                       placeholder="Поиск по товарам"
-                       aria-label="Search"
-                />
-            </form>
+        <div>
+            <Select
+                options={options}
+                onChange={handleSelectChange}
+                isClearable={true}
+                placeholder={'Поиск по товарам'}
+            />
         </div>
     );
 }

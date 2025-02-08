@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CommodityRepository::class)]
-#[ApiResource(normalizationContext: ['groups' => ['commodity:read']])]
+#[ApiResource(normalizationContext: ['groups' => ['commodity:read']], paginationEnabled: false)]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'ipartial'])]
 class Commodity
 {

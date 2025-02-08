@@ -38,8 +38,10 @@ export default function CategoryList({
     return (
         categoryList.length ? (
             <div>
-                <ShopSearchInput shop={shop} onChange={handleSearchedCategories} />
-                <CommoditySearchInput onChange={handleSearchedCommodities} />
+                <ShopSearchInput shop={shop} onChange={handleSearchedCategories}/>
+                <br/>
+                <CommoditySearchInput onChange={handleSearchedCommodities}/>
+                <br/>
                 <h3 className="tm-text-gray-dark mb-3">Категории:</h3>
                 <select onChange={handleSourceChange} className="form-control" id="contact-select" name="inquiry">
                     {categories.map(shopCategory => (
