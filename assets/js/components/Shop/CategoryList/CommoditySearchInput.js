@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Select from "react-select";
+import {transformToOptions} from "../../Utils/transformToOptionsUtils"
 
 export default function CommoditySearchInput({onChange}) {
     const [commodities, setCommodities] = useState([]);
@@ -29,13 +30,6 @@ export default function CommoditySearchInput({onChange}) {
     useEffect(() => {
         fetchCommodities();
     }, []);
-
-    const transformToOptions = (commodities) => {
-        return commodities.map(commodity => ({
-            value: commodity.id.toString(),
-            label: commodity.title
-        }));
-    };
 
     const options = transformToOptions(commodities);
 

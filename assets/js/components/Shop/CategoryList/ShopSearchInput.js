@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import Select from 'react-select'
+import {transformToOptions} from "../../Utils/transformToOptionsUtils"
 
 export default function ShopSearchCategoryInput({shop, onChange}) {
     let { id } = useParams();
@@ -32,13 +33,6 @@ export default function ShopSearchCategoryInput({shop, onChange}) {
     useEffect(() => {
         fetchCategories();
     }, []);
-
-    const transformToOptions = (categories) => {
-        return categories.map(category => ({
-            value: category.id.toString(),
-            label: category.title
-        }));
-    };
 
     const options = transformToOptions(categories);
 
