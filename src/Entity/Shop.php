@@ -28,6 +28,7 @@ class Shop
     private string $title;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['shop:read'])]
     private string $avatar;
 
     #[ORM\ManyToOne(targetEntity: Retailer::class)]
