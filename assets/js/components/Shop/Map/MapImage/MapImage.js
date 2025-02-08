@@ -13,13 +13,13 @@ export default function MapImage({
     source,
     destination,
     postBuildRoute,
-    searchedCategories,
-    searchedCommodities,
+    searchedCategory,
+    searchedCategoryByCommodity,
 }) {
     const map = useMap();
 
-    CommoditySearch(map, searchedCommodities);
-    CategorySearch(map, searchedCategories);
+    CategorySearch(map, searchedCategory);
+    CommoditySearch(map, searchedCategoryByCommodity);
     // CategoryRouteGeneration(map, isBuildRouteClicked, categories, source, destination, postBuildRoute);
 
     useEffect(() => {

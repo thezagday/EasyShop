@@ -5,12 +5,11 @@ import ShopSearchInput from "./ShopSearchInput";
 import CommoditySearchInput from "./CommoditySearchInput";
 
 export default function CategoryList({
-    shop,
     categories,
     onSourceCategoryChange,
     onDestinationCategoryChange,
-    onSearchCategories,
-    onSearchCommodities,
+    onSearchCategory,
+    onSearchCategoryByCommodity,
 }) {
     const emptyMessage = 'В этом магазине пока нет категорий.';
     const categoryList = categories.map((shopCategory) =>
@@ -27,20 +26,20 @@ export default function CategoryList({
         onDestinationCategoryChange(destination);
     }
 
-    function handleSearchedCategories(searchedCategories) {
-        onSearchCategories(searchedCategories);
+    function handleSearchedCategory(searchedCategory) {
+        onSearchCategory(searchedCategory);
     }
 
-    function handleSearchedCommodities(searchedCommodities) {
-        onSearchCommodities(searchedCommodities);
+    function handleSearchedCategoryByCommodity(searchedCategoryByCommodity) {
+        onSearchCategoryByCommodity(searchedCategoryByCommodity);
     }
 
     return (
         categoryList.length ? (
             <div>
-                <ShopSearchInput shop={shop} onChange={handleSearchedCategories}/>
+                <ShopSearchInput categories={categories} onChange={handleSearchedCategory}/>
                 <br/>
-                <CommoditySearchInput onChange={handleSearchedCommodities}/>
+                <CommoditySearchInput categories={categories} onChange={handleSearchedCategoryByCommodity}/>
                 <br/>
                 <h3 className="tm-text-gray-dark mb-3">Категории:</h3>
                 <select onChange={handleSourceChange} className="form-control" id="contact-select" name="inquiry">

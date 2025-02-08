@@ -8,8 +8,8 @@ export default function Shop() {
     const [shop, setShop] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isBuildRouteClicked, setBuildRouteClicked] = useState(false);
-    const [searchedCategories, setSearchedCategories] = useState([]);
-    const [searchedCommodities, setSearchedCommodities] = useState([]);
+    const [searchedCategory, setSearchedCategory] = useState([]);
+    const [searchedCategoryByCommodity, setSearchedCategoryByCommodity] = useState([]);
 
     let { id } = useParams();
 
@@ -59,12 +59,12 @@ export default function Shop() {
         destinationRef.current = destination;
     }
 
-    function handleSearchedCategories(searchedCategories) {
-        setSearchedCategories(searchedCategories);
+    function handleSearchedCategory(searchedCategory) {
+        setSearchedCategory(searchedCategory);
     }
 
-    function handleSearchedCommodities(searchedCommodities) {
-        setSearchedCommodities(searchedCommodities);
+    function handleSearchedCategoryByCommodity(searchedCategoryByCommodity) {
+        setSearchedCategoryByCommodity(searchedCategoryByCommodity);
     }
 
     let buildRouteButton = '';
@@ -86,19 +86,18 @@ export default function Shop() {
                             source={sourceRef.current}
                             destination={destinationRef.current}
                             postBuildRoute={postBuildRoute}
-                            searchedCategories={searchedCategories}
-                            searchedCommodities={searchedCommodities}
+                            searchedCategory={searchedCategory}
+                            searchedCategoryByCommodity={searchedCategoryByCommodity}
                         />
                     </div>
                     <div className="col-xl-3 col-lg-4 col-md-5 col-sm-12">
                         <div className="tm-bg-gray tm-video-details">
                             <CategoryList
-                                shop={shop}
                                 categories={categories}
                                 onSourceCategoryChange={handleSourceCategoryChange}
                                 onDestinationCategoryChange={handleDestinationCategoryChange}
-                                onSearchCategories={handleSearchedCategories}
-                                onSearchCommodities={handleSearchedCommodities}
+                                onSearchCategory={handleSearchedCategory}
+                                onSearchCategoryByCommodity={handleSearchedCategoryByCommodity}
                             />
                             <div className="text-center mb-5 mt-5">
                                 {buildRouteButton}

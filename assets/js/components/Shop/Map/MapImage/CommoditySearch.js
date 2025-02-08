@@ -2,7 +2,7 @@ import L from "leaflet";
 import {useRef} from "react";
 import {xy} from "../../../Utils/coordinateUtils"
 
-export function CommoditySearch(map, searchedCommodities) {
+export function CommoditySearch(map, searchedCategoryByCommodity) {
     let markers = useRef(null);
     function removeAllMarkers() {
         if (markers.current != null) {
@@ -18,17 +18,13 @@ export function CommoditySearch(map, searchedCommodities) {
 
     let tempMarkers = [];
 
-    searchedCommodities.forEach(function (commodity) {
-        if (commodity.shopCategories) {
-            commodity.shopCategories.forEach(function (shopCategory) {
-                let categoryPoint = xy(shopCategory.x_coordinate, shopCategory.y_coordinate);
-                let marker = L.marker(categoryPoint).addTo(map).bindTooltip(shopCategory.category.title).openTooltip();
+    if (searchedCategoryByCommodity && searchedCategoryByCommodity.category) {
+        let categoryPoint = xy(searchedCategoryByCommodity.x_coordinate, searchedCategoryByCommodity.y_coordinate);
+        let marker = L.marker(categoryPoint).addTo(map).bindTooltip(searchedCategoryByCommodity.category.title).openTooltip();
+        tempMarkers.push(marker);
+    }
 
-                tempMarkers.push(marker);
-            });
-        }
-
-
+    // searchedCommodities.forEach(function (commodity) {
         // if (commodity.title == 'Рыба свежемороженая') {
         //     let categoryPoint = xy(100, 100);
         //     let marker = L.marker(categoryPoint).addTo(map).bindTooltip(commodity.title).openTooltip();
@@ -70,7 +66,7 @@ export function CommoditySearch(map, searchedCommodities) {
         //
         //     tempMarkers.push(marker);
         // }
-    });
+    // });
 
     markers.current = tempMarkers;
 }

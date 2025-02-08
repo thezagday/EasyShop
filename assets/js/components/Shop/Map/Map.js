@@ -11,8 +11,8 @@ export default function Map({
     source,
     destination,
     postBuildRoute,
-    searchedCategories,
-    searchedCommodities,
+    searchedCategory,
+    searchedCategoryByCommodity,
 }) {
     return (
             <MapContainer
@@ -28,8 +28,8 @@ export default function Map({
                     source={source}
                     destination={destination}
                     postBuildRoute={postBuildRoute}
-                    searchedCategories={searchedCategories}
-                    searchedCommodities={searchedCommodities}
+                    searchedCategory={searchedCategory}
+                    searchedCategoryByCommodity={searchedCategoryByCommodity}
                 />
             </MapContainer>
     )

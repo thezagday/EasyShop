@@ -9,31 +9,27 @@ use App\Repository\ShopRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: ShopRepository::class)]
-#[ApiResource(normalizationContext: ['groups' => ['shop:read']])]
+#[ApiResource]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'ipartial'])]
 class Shop
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['shop:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:read'])]
     private string $title;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shop:read'])]
     private string $avatar;
 
     #[ORM\ManyToOne(targetEntity: Retailer::class)]
     #[ORM\JoinColumn(name: 'retailer_id', referencedColumnName: 'id')]
-    #[Groups(['shop:read'])]
+    #[Ignore]
     private Retailer|null $retailer = null;
 
     #[ORM\OneToMany(mappedBy: 'shop', targetEntity: ShopCategory::class, orphanRemoval: true)]

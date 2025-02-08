@@ -1,38 +1,21 @@
-import React, {useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
+import React from 'react';
 import Select from 'react-select'
-import {transformToOptions} from "../../Utils/transformToOptionsUtils"
 
-export default function ShopSearchCategoryInput({shop, onChange}) {
-    let { id } = useParams();
-    const [categories, setCategories] = useState([]);
-
-    async function fetchCategories() {
-        try {
-            let response = await fetch(`http://easy:8080/api/categories?retailer=${shop.retailer.id}`);
-            let data = await response.json();
-
-            setCategories(data['hydra:member']);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
+export default function ShopSearchCategoryInput({categories, onChange}) {
     function handleSelectChange (event) {
         if (!event) {
             return;
         }
 
-        fetch(`http://easy:8080/api/shop_categories?shop=${id}&category.title=${event.label}`)
-            .then(response => response.json())
-            .then(data => {
-                onChange(data['hydra:member']);
-            });
+        onChange(categories.find(category => category.id === event.value));
     }
 
-    useEffect(() => {
-        fetchCategories();
-    }, []);
+    const transformToOptions = (entities) => {
+        return entities.map(entity => ({
+            value: entity.id,
+            label: entity.category.title
+        }));
+    };
 
     const options = transformToOptions(categories);
 

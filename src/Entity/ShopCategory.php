@@ -13,17 +13,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ShopCategoryRepository::class)]
 #[ApiResource(normalizationContext: ['groups' => ['shopCategory:read']])] // https://github.com/dunglas/vulcain
-#[ApiFilter(SearchFilter::class, properties: [
-    'shop' => 'exact',
-    'category' => 'exact',
-    'category.title' => 'ipartial',
-])]
+#[ApiFilter(SearchFilter::class, properties: ['shop' => 'exact'])]
 class ShopCategory
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['shopCategory:read', 'commodity:read'])]
+    #[Groups(['shopCategory:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'shopCategories')]
@@ -33,18 +29,19 @@ class ShopCategory
 
     #[ORM\ManyToOne(inversedBy: 'shops')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['shopCategory:read', 'commodity:read'])]
+    #[Groups(['shopCategory:read'])]
     private ?Category $category = null;
 
     #[ORM\Column]
-    #[Groups(['shopCategory:read', 'commodity:read'])]
+    #[Groups(['shopCategory:read'])]
     private ?float $x_coordinate = null;
 
     #[ORM\Column]
-    #[Groups(['shopCategory:read', 'commodity:read'])]
+    #[Groups(['shopCategory:read'])]
     private ?float $y_coordinate = null;
 
     #[ORM\ManyToMany(targetEntity: Commodity::class, mappedBy: 'shopCategories')]
+    #[Groups(['shopCategory:read'])]
     private Collection $commodities;
 
     public function __construct()

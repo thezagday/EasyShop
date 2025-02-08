@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,19 +11,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ApiResource]
-#[ApiFilter(SearchFilter::class, properties: [
-    'retailer' => 'exact',
-])]
 class Category
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['shopCategory:read', 'commodity:read'])]
+    #[Groups(['shopCategory:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shopCategory:read', 'commodity:read'])]
+    #[Groups(['shopCategory:read'])]
     private ?string $title = null;
 
     #[ORM\ManyToOne(targetEntity: Retailer::class)]
