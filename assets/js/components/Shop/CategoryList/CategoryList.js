@@ -3,6 +3,7 @@ import "leaflet";
 import 'leaflet/dist/leaflet.css';
 import CategorySearchInput from "./CategorySearchInput";
 import CommoditySearchInput from "./CommoditySearchInput";
+import CommodityMultiSearchInput from "./CommodityMultiSearchInput";
 
 export default function CategoryList({
     categories,
@@ -40,6 +41,8 @@ export default function CategoryList({
                 <CategorySearchInput categories={categories} onChange={handleSearchedCategory}/>
                 <br/>
                 <CommoditySearchInput categories={categories} onChange={handleSearchedCategoryByCommodity}/>
+                <br/>
+                <CommodityMultiSearchInput categories={categories} onChange={handleSearchedCategoryByCommodity}/>
                 <br/>
                 <h3 className="tm-text-gray-dark mb-3">Категории:</h3>
                 <select onChange={handleSourceChange} className="form-control" id="contact-select" name="inquiry">
