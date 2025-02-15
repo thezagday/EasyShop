@@ -10,6 +10,7 @@ export default function Shop() {
     const [isBuildRouteClicked, setBuildRouteClicked] = useState(false);
     const [searchedCategory, setSearchedCategory] = useState([]);
     const [searchedCategoryByCommodity, setSearchedCategoryByCommodity] = useState([]);
+    const [multiSearch, setMultiSearch] = useState([]);
 
     let { id } = useParams();
 
@@ -67,6 +68,10 @@ export default function Shop() {
         setSearchedCategoryByCommodity(searchedCategoryByCommodity);
     }
 
+    function handleMultiSearch(commodities) {
+        setMultiSearch(commodities);
+    }
+
     let buildRouteButton = '';
     if (categories.length) {
         buildRouteButton = <a className="btn btn-primary tm-btn-big" onClick={handleOnClick}>Построить маршрут</a>
@@ -88,6 +93,7 @@ export default function Shop() {
                             postBuildRoute={postBuildRoute}
                             searchedCategory={searchedCategory}
                             searchedCategoryByCommodity={searchedCategoryByCommodity}
+                            multiSearch={multiSearch}
                         />
                     </div>
                     <div className="col-xl-3 col-lg-4 col-md-5 col-sm-12">
@@ -98,6 +104,7 @@ export default function Shop() {
                                 onDestinationCategoryChange={handleDestinationCategoryChange}
                                 onSearchCategory={handleSearchedCategory}
                                 onSearchCategoryByCommodity={handleSearchedCategoryByCommodity}
+                                onMultiSearch={handleMultiSearch}
                             />
                             <div className="text-center mb-5 mt-5">
                                 {buildRouteButton}

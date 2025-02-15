@@ -9,8 +9,10 @@ export default function CommodityMultiSearchInput({categories, onChange}) {
             return;
         }
 
-        onChange(categories.find(category =>
-            category.commodities.some(commodity => commodity.id === event.value)
+        const selectedCommodities = event.map(commodity => commodity.value);
+
+        onChange(categories.filter(category =>
+            category.commodities.some(commodity => selectedCommodities.includes(commodity.id))
         ));
     }
 

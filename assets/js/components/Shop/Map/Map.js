@@ -13,6 +13,7 @@ export default function Map({
     postBuildRoute,
     searchedCategory,
     searchedCategoryByCommodity,
+    multiSearch,
 }) {
     return (
             <MapContainer
@@ -30,6 +31,7 @@ export default function Map({
                     postBuildRoute={postBuildRoute}
                     searchedCategory={searchedCategory}
                     searchedCategoryByCommodity={searchedCategoryByCommodity}
+                    multiSearch={multiSearch}
                 />
             </MapContainer>
     )

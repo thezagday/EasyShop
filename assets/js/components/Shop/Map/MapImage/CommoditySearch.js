@@ -7,7 +7,6 @@ export function CommoditySearch(map, searchedCategoryByCommodity) {
     function removeAllMarkers() {
         if (markers.current != null) {
             markers.current.forEach(marker => {
-                console.log('remove');
                 map.removeLayer(marker);
             });
             markers.current = null;

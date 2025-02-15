@@ -11,6 +11,7 @@ export default function CategoryList({
     onDestinationCategoryChange,
     onSearchCategory,
     onSearchCategoryByCommodity,
+    onMultiSearch,
 }) {
     const emptyMessage = 'В этом магазине пока нет категорий.';
     const categoryList = categories.map((shopCategory) =>
@@ -35,6 +36,10 @@ export default function CategoryList({
         onSearchCategoryByCommodity(searchedCategoryByCommodity);
     }
 
+    function handleMultiSearch(commodities) {
+        onMultiSearch(commodities);
+    }
+
     return (
         categoryList.length ? (
             <div>
@@ -42,7 +47,7 @@ export default function CategoryList({
                 <br/>
                 <CommoditySearchInput categories={categories} onChange={handleSearchedCategoryByCommodity}/>
                 <br/>
-                <CommodityMultiSearchInput categories={categories} onChange={handleSearchedCategoryByCommodity}/>
+                <CommodityMultiSearchInput categories={categories} onChange={handleMultiSearch}/>
                 <br/>
                 <h3 className="tm-text-gray-dark mb-3">Категории:</h3>
                 <select onChange={handleSourceChange} className="form-control" id="contact-select" name="inquiry">
