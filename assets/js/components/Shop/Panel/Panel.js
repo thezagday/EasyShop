@@ -5,7 +5,7 @@ import CategorySearchInput from "./CategorySearchInput";
 import CommoditySearchInput from "./CommoditySearchInput";
 import CommodityMultiSearchInput from "./CommodityMultiSearchInput";
 
-export default function CategoryList({
+export default function Panel({
     categories,
     onSourceCategoryChange,
     onDestinationCategoryChange,

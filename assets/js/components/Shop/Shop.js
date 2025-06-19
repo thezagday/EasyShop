@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from "react-router-dom";
 import Map from "./Map/Map"
-import CategoryList from "./CategoryList/CategoryList"
+import Panel from "./Panel/Panel"
 
 export default function Shop() {
     // To avoid repetitive "prop drilling", see https://react.dev/learn/scaling-up-with-reducer-and-context
@@ -98,7 +98,7 @@ export default function Shop() {
                     </div>
                     <div className="col-xl-3 col-lg-4 col-md-5 col-sm-12">
                         <div className="tm-bg-gray tm-video-details">
-                            <CategoryList
+                            <Panel
                                 categories={categories}
                                 onSourceCategoryChange={handleSourceCategoryChange}
                                 onDestinationCategoryChange={handleDestinationCategoryChange}
