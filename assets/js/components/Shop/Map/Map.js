@@ -14,14 +14,16 @@ export default function Map({
     searchedCategory,
     searchedCategoryByCommodity,
     multiSearch,
+    height = 620
 }) {
     return (
+        <div style={{ height: height + 'px', width: '100%' }}>
             <MapContainer
                 minZoom={0}
                 crs={CRS.Simple}
                 maxBoundsViscosity={1}
                 boundsOptions={{ padding: [50, 50] }}
-                style={{ height: "110vh" }}
+                style={{ height: '100%', width: '100%' }}
             >
                 <MapImage
                     isBuildRouteClicked={isBuildRouteClicked}
@@ -34,5 +36,6 @@ export default function Map({
                     multiSearch={multiSearch}
                 />
             </MapContainer>
+        </div>
     )
 }

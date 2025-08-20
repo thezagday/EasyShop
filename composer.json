@@ -1,10 +1,10 @@
 {
     "type": "project",
     "license": "proprietary",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "^3.0",
@@ -15,7 +15,8 @@
         "fisharebest/algorithm": "^1.6",
         "nelmio/cors-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^5.3",
-        "phpstan/phpdoc-parser": "^1.9",
+        "phpstan/phpdoc-parser": "^2.1",
+        "symfony/ai-bundle": "dev-main",
         "symfony/asset": "7.3.*",
         "symfony/console": "7.3.*",
         "symfony/doctrine-messenger": "7.3.*",

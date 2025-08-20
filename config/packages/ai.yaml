@@ -1,0 +1,9 @@
+ai:
+    platform:
+        openai:
+            api_key: '%env(OPENAI_API_KEY)%'
+    agent:
+        default:
+            model:
+                class: 'Symfony\AI\Platform\Bridge\OpenAi\Gpt'
+                name: !php/const Symfony\AI\Platform\Bridge\OpenAi\Gpt::GPT_4O_MINI

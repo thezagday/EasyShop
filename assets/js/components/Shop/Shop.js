@@ -1,7 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from "react-router-dom";
 import Map from "./Map/Map"
-import Panel from "./Panel/Panel"
+import Chat from "./Chat/Chat";
+
+const SIDEBLOCK_HEIGHT = 620;
 
 export default function Shop() {
     // To avoid repetitive "prop drilling", see https://react.dev/learn/scaling-up-with-reducer-and-context
@@ -78,39 +80,32 @@ export default function Shop() {
     }
 
     return (
-        <div>
-            <div className="container-fluid tm-container-content tm-mt-60">
-                <div className="row mb-4">
-                    <h2 className="col-12 tm-text-primary">{shop.title}</h2>
+        <div className="container-fluid tm-container-content tm-mt-60">
+            <div className="row mb-4">
+                <h2 className="col-12 tm-text-primary">{shop.title}</h2>
+            </div>
+            <div className="row tm-mb-90" style={{ alignItems: 'flex-start' }}>
+                <div
+                    className="col-xl-9 col-lg-8 col-md-7 col-sm-12 mb-4"
+                    style={{ height: SIDEBLOCK_HEIGHT + 'px', display: 'flex', flexDirection: 'column' }}
+                >
+                    <Map
+                        isBuildRouteClicked={isBuildRouteClicked}
+                        categories={categories}
+                        source={sourceRef.current}
+                        destination={destinationRef.current}
+                        postBuildRoute={postBuildRoute}
+                        searchedCategory={searchedCategory}
+                        searchedCategoryByCommodity={searchedCategoryByCommodity}
+                        multiSearch={multiSearch}
+                        height={SIDEBLOCK_HEIGHT}
+                    />
                 </div>
-                <div className="row tm-mb-90">
-                    <div className="col-xl-9 col-lg-8 col-md-7 col-sm-12">
-                        <Map
-                            isBuildRouteClicked={isBuildRouteClicked}
-                            categories={categories}
-                            source={sourceRef.current}
-                            destination={destinationRef.current}
-                            postBuildRoute={postBuildRoute}
-                            searchedCategory={searchedCategory}
-                            searchedCategoryByCommodity={searchedCategoryByCommodity}
-                            multiSearch={multiSearch}
-                        />
-                    </div>
-                    <div className="col-xl-3 col-lg-4 col-md-5 col-sm-12">
-                        <div className="tm-bg-gray tm-video-details">
-                            <Panel
-                                categories={categories}
-                                onSourceCategoryChange={handleSourceCategoryChange}
-                                onDestinationCategoryChange={handleDestinationCategoryChange}
-                                onSearchCategory={handleSearchedCategory}
-                                onSearchCategoryByCommodity={handleSearchedCategoryByCommodity}
-                                onMultiSearch={handleMultiSearch}
-                            />
-                            <div className="text-center mb-5 mt-5">
-                                {buildRouteButton}
-                            </div>
-                        </div>
-                    </div>
+                <div
+                    className="col-xl-3 col-lg-4 col-md-5 col-sm-12"
+                    style={{ height: SIDEBLOCK_HEIGHT + 'px', display: 'flex', flexDirection: 'column' }}
+                >
+                    <Chat containerHeight={SIDEBLOCK_HEIGHT + 'px'} />
                 </div>
             </div>
         </div>
