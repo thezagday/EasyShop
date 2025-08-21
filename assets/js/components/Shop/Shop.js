@@ -74,6 +74,10 @@ export default function Shop() {
         setMultiSearch(commodities);
     }
 
+    function handleAICategories(categories) {
+        setSearchedCategoryByCommodity(categories);
+    }
+
     let buildRouteButton = '';
     if (categories.length) {
         buildRouteButton = <a className="btn btn-primary tm-btn-big" onClick={handleOnClick}>Построить маршрут</a>
@@ -105,7 +109,7 @@ export default function Shop() {
                     className="col-xl-3 col-lg-4 col-md-5 col-sm-12"
                     style={{ height: SIDEBLOCK_HEIGHT + 'px', display: 'flex', flexDirection: 'column' }}
                 >
-                    <Chat containerHeight={SIDEBLOCK_HEIGHT + 'px'} />
+                    <Chat containerHeight={SIDEBLOCK_HEIGHT + 'px'} shopId={id} onCategoriesFound={handleAICategories} />
                 </div>
             </div>
         </div>

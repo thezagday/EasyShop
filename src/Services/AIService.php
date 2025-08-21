@@ -19,7 +19,6 @@ final readonly class AIService
     public function submit(string $message): ResultInterface
     {
         $messages = new MessageBag(
-            Message::forSystem('Speak like a pirate.'),
             Message::ofUser($message),
         );
 

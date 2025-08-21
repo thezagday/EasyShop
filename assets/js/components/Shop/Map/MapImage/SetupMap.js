@@ -7,7 +7,7 @@ L.Icon.Default.mergeOptions({
 });
 
 export function SetupMap(map) {
-    const bounds = [[-30.68, -30.68], [1048.86, 1048.86]];
+    const bounds = [[0, 0], [993, 1653]];
     const image = L.imageOverlay("/img/map.svg", bounds).addTo(map);
 
     map.fitBounds(image.getBounds());

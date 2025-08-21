@@ -19,7 +19,7 @@ export default function Map({
     return (
         <div style={{ height: height + 'px', width: '100%' }}>
             <MapContainer
-                minZoom={0}
+                minZoom={-1}
                 crs={CRS.Simple}
                 maxBoundsViscosity={1}
                 boundsOptions={{ padding: [50, 50] }}

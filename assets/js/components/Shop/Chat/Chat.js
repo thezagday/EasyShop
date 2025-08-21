@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-export default function Chat({ containerHeight = "620px" }) {
+export default function Chat({ containerHeight = "620px", shopId, onCategoriesFound }) {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -24,13 +24,17 @@ export default function Chat({ containerHeight = "620px" }) {
             const response = await fetch('/api/ai', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: trimmed }),
+                body: JSON.stringify({ message: trimmed, shopId: shopId }),
             });
             const data = await response.json();
 
             setMessages(msgs =>
                 [...msgs, { user: 'AI', text: data.answer }]
             );
+
+            if (data.categories && onCategoriesFound) {
+                onCategoriesFound(data.categories);
+            }
         } catch (e) {
             setMessages(msgs =>
                 [...msgs, { user: 'AI', text: 'Ошибка при общении с сервером.' }]

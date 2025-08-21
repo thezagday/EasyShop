@@ -5,27 +5,46 @@ import {xy} from "../../../Utils/coordinateUtils"
 export function CommoditySearch(map, searchedCategoryByCommodity) {
     let markers = useRef([]);
     function removeAllMarkers() {
-        if (markers.current != null) {
+        if (markers.current) {
             markers.current.forEach(marker => {
-                map.removeLayer(marker);
+                map.removeLayer(marker.marker);
             });
-            markers.current = null;
+            markers.current = [];
         }
     }
 
-    if (searchedCategoryByCommodity && searchedCategoryByCommodity.category) {
-        let categoryPoint = xy(searchedCategoryByCommodity.x_coordinate, searchedCategoryByCommodity.y_coordinate);
-        let marker = L.marker(categoryPoint).addTo(map);
+    removeAllMarkers();
 
-        marker.bindPopup(searchedCategoryByCommodity.category.title, {autoClose: false, closeOnClick: false}).openPopup();
+    if (Array.isArray(searchedCategoryByCommodity)) {
+        searchedCategoryByCommodity.forEach(categoryData => {
+            const categoryPoint = xy(categoryData.x_coordinate, categoryData.y_coordinate);
+            const marker = L.marker(categoryPoint).addTo(map);
+            marker.bindPopup(categoryData.title, {
+                autoClose: false, closeOnClick: false
+            }).openPopup();
+            markers.current.push({
+                marker: marker,
+                coordinates: categoryPoint
+            });
+        });
+    } else if (searchedCategoryByCommodity && searchedCategoryByCommodity.x_coordinate !== undefined) {
+        const categoryPoint = xy(
+            searchedCategoryByCommodity.x_coordinate,
+            searchedCategoryByCommodity.y_coordinate
+        );
+        const marker = L.marker(categoryPoint).addTo(map);
+        marker.bindPopup(
+            searchedCategoryByCommodity.title ?? searchedCategoryByCommodity.category.title,
+            { autoClose: false, closeOnClick: false }
+        ).openPopup();
         markers.current.push({
             marker: marker,
             coordinates: categoryPoint
         });
     }
 
-    if (markers.current.length > 0) {
-        let allCoordinates = markers.current.map(item => item.coordinates);
+    if (markers.current && markers.current.length > 0) {
+        const allCoordinates = markers.current.map(item => item.coordinates);
         L.polyline(allCoordinates, {color: 'blue'}).addTo(map);
     }
 }

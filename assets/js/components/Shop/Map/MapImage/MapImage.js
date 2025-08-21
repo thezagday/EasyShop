@@ -20,9 +20,9 @@ export default function MapImage({
 }) {
     const map = useMap();
 
-    CategorySearch(map, searchedCategory);
+    // CategorySearch(map, searchedCategory);
     CommoditySearch(map, searchedCategoryByCommodity);
-    MultiCommoditySearch(map, multiSearch);
+    // MultiCommoditySearch(map, multiSearch);
     // CategoryRouteGeneration(map, isBuildRouteClicked, categories, source, destination, postBuildRoute);
 
     useEffect(() => {
