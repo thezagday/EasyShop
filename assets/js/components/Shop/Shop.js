@@ -26,7 +26,7 @@ export default function Shop() {
 
     async function fetchShop() {
         try {
-            let response = await fetch(`http://easy:8080/api/shops/${id}`);
+            let response = await fetch(`/api/shops/${id}`);
             let data = await response.json();
 
             setShop(data);
@@ -37,7 +37,7 @@ export default function Shop() {
 
     async function fetchCategories() {
         try {
-            let response = await fetch(`http://easy:8080/api/shop_categories?shop=${id}`);
+            let response = await fetch(`/api/shop_categories?shop=${id}`);
             let data = await response.json();
 
             setCategories(data['hydra:member']);

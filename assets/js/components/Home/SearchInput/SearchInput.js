@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function SearchInput({onChange}) {
     function handleChange (event) {
-        fetch(`http://easy:8080/api/shops?title=${event.target.value}`)
+        fetch(`/api/shops?title=${event.target.value}`)
             .then(response => response.json())
             .then(data => {
                 onChange(data['hydra:member']);

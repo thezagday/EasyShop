@@ -1,3 +1,9 @@
-controllers:
+controllers_public:
     resource: ../src/Controller/
     type: attribute
+    exclude: '../src/Controller/Admin/'
+
+admin:
+    resource: ../src/Controller/Admin/
+    type: attribute
+    host: '%admin_host%'

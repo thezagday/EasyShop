@@ -33,7 +33,7 @@ export function CategoryRouteGeneration(map, isBuildRouteClicked, categories, so
 
     async function buildRoute() {
         try {
-            let response = await fetch(`http://easy:8080/api/build-route/${source}/${destination}`);
+            let response = await fetch(`/api/build-route/${source}/${destination}`);
             let data = await response.json();
 
             appendRouteToMap(map, data);

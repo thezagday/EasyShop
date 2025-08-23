@@ -4,6 +4,7 @@ import {Route, Routes} from "react-router-dom";
 import Home from "./Home/Home";
 import Shop from "./Shop/Shop";
 import Contact from "./Contact/Contact";
+import NotFound from "./NotFound/NotFound";
 
 export default function App() {
     return (
@@ -13,7 +14,7 @@ export default function App() {
                 <Route exact path="/" element={<Home />} />
                 <Route exact path="/shop/:id" element={<Shop />} />
                 <Route path="/contact" element={<Contact />} />
-                {/*<Route path="*" element={<NotFound />} />*/}
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </>
     );
