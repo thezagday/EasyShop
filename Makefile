@@ -29,6 +29,16 @@ help:
 build:
 	docker compose build
 
+# Build production assets (on host via container)
+build-assets-prod:
+	docker compose run --rm node yarn install
+	docker compose run --rm node yarn build
+
+# Build production PHP image
+# Requires assets to be built first
+build-prod: build-assets-prod
+	docker build --target prod -t easyshop-php:prod -f docker/php/Dockerfile .
+
 # Start containers
 up:
 	docker compose up -d

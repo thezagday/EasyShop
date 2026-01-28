@@ -18,13 +18,13 @@
 /.env.*.local
 
 # Build artifacts
-/public/build
+# /public/build (Removed to allow COPY in Dockerfile)
 
 # Docker
 Dockerfile
 docker-compose*.yml
 .dockerignore
-/docker/nginx
+# /docker/nginx
 
 # Tests
 /tests

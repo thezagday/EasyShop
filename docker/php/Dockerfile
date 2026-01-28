@@ -44,19 +44,6 @@ EXPOSE 9000
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]
 
-# Node stage for building assets
-FROM node:20-alpine AS node-builder
-
-WORKDIR /app
-
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
-
-COPY webpack.config.js ./
-COPY assets ./assets
-
-RUN yarn build
-
 # Production stage
 FROM base AS prod
 
@@ -73,8 +60,9 @@ RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 
 COPY . .
 
-# Copy built assets from node stage
-COPY --from=node-builder /app/public/build ./public/build
+# In production, we assume assets are already built in public/build
+# This preserves the separation of concerns for the application
+COPY public/build ./public/build
 
 RUN composer dump-autoload --optimize \
     && composer run-script post-install-cmd

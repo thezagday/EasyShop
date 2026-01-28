@@ -1,35 +1,86 @@
 # EasyShop - Optimal routes for shopping
+
 EasyShop is a young startup that helps people to spend their time efficiently inside a big store.
 
-The idea is simple: we create store maps and add them to the project. A person logs into the app, selects the store they are currently in and enters their grocery list. EasyShop builds an optimal route based on this list. As a result: a person does not spend a lot of time to find this or that product in a store he is unfamiliar with.
+## Quick Start (Docker)
 
+The project is fully containerized. To get started, you only need **Docker** and **Make**.
 
-**Functionality**
+### 1. Initial Installation
+This command will build images, start containers, install dependencies, and run database migrations with fixtures:
+```bash
+make install
+```
 
-Create and maintain store maps: using [Symfony](https://symfony.com/) framework, [Leaflet](https://leafletjs.com/) library, and [React-Leaflet](https://react-leaflet.js.org/) I want to create maps and add them to the system.  
+### 2. Standard Launch
+If the project is already installed, just run:
+```bash
+make up
+```
+The application will be available at: **http://localhost**
 
-Search and optimal route planning: EasyShop application allows customers to find the optimal shopping route according to their needs. Users can specify the products they are interested in and select a store, and the app will automatically create an optimal route, taking into account the location of the products in the store.
+### 3. Credentials
+Two users are created by default via fixtures:
+*   **Admin**: `admin@example.com` / `password`
+*   **User**: `user@example.com` / `password`
 
-In-store navigation: EasyShop provides in-store navigation to make it easy for shoppers to find the right departments and products.
+Login page: **http://localhost/login**
 
+---
 
-**Perspectives**
+## Frontend Development & Build
 
-Functionality development: Our team is actively working on the development of EasyShop application functionality. We plan to add new features, improve routing and navigation algorithms, and introduce innovative technologies to improve user experience.
+We use **Symfony Webpack Encore** (React, Leaflet).
 
-Expansion of partner network: We aim to cooperate with various stores to provide users with more options and up-to-date information about product locations.
+### Development Mode
+By default, `make up` starts a Node container in **watch** mode. Any changes in `assets/` will automatically trigger a rebuild.
 
-Support for different platforms: We plan to create an EasyShop app for different platforms, including a web version, iOS and Android mobile apps, and integration with smart devices and virtual reality.
+To see Node logs:
+```bash
+make logs-node
+```
 
+### Manual Commands
+*   **Install JS dependencies**: `make yarn`
+*   **Production Build (into public/build)**: `make build-assets-prod`
 
-**Contribution to development**
+---
 
-Looking for like-minded people. If you are interested in this idea, welcome to the team. 
+## Production Build (Extreme Separation)
 
-**License**
+Our PHP image is completely agnostic of Node.js. To build a production-ready PHP image:
 
-EasyShop is distributed under the MIT License.
+1.  **Build assets in a temporary container**:
+    ```bash
+    make build-assets-prod
+    ```
+    This will place the compiled assets into the `public/build` folder on your host.
 
-**Contacts**
+2.  **Build the PHP production image**:
+    ```bash
+    make build-prod
+    ```
+    The PHP Dockerfile will copy the pre-built assets from `public/build` into the image.
 
-If you have any questions or suggestions, please contact me at [roman.zagday@gmail.com].
+---
+
+## Useful Makefile Commands
+
+| Command | Description |
+| :--- | :--- |
+| `make up` | Start all containers |
+| `make down` | Stop all containers |
+| `make shell` | Open shell inside PHP container |
+| `make db-shell` | Open MySQL shell |
+| `make migrate` | Run database migrations |
+| `make fixtures` | Load data fixtures |
+| `make logs-php` | View PHP-FPM logs |
+| `make clean` | Remove all containers, volumes, and images |
+
+---
+
+## Technical Stack
+*   **Backend**: PHP 8.2 (Symfony 7.3)
+*   **Database**: MySQL 8.0
+*   **Frontend**: React, Leaflet
+*   **Infrastructure**: Docker, Nginx, Makefile
