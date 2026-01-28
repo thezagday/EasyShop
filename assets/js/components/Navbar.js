@@ -2,6 +2,9 @@ import React from 'react';
 import {NavLink} from 'react-router-dom';
 
 export default function Navbar() {
+    const rootElement = document.getElementById('root');
+    const username = rootElement ? rootElement.getAttribute('data-user') : '';
+
     return (
         <>
             <nav className="navbar navbar-expand-lg">
@@ -10,6 +13,11 @@ export default function Navbar() {
                         <i className="fas fa-film mr-2"></i>
                         EasyShop
                     </a>
+                    {username && (
+                        <span className="navbar-text ml-3 d-none d-sm-inline-block" style={{color: '#666'}}>
+                            {username}
+                        </span>
+                    )}
                     <button
                         className="navbar-toggler"
                         type="button"
@@ -41,6 +49,9 @@ export default function Navbar() {
                             </li>
                             <li className="nav-item">
                                 <a aria-current="page" className="nav-link nav-link-1" href="/ai">AI</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link nav-link-1" href="/logout">Выход</a>
                             </li>
                         </ul>
                     </div>
