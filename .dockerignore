@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Dependencies (installed in container)
+/vendor
+/node_modules
+
+# Symfony
+/var
+/.env.local
+/.env.*.local
+
+# Build artifacts
+/public/build
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+/docker/nginx
+
+# Tests
+/tests
+phpunit.xml.dist
+
+# Documentation
+README.md
+*.md
+
+# Misc
+Makefile
+.editorconfig
