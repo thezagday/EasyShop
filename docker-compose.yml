@@ -10,11 +10,11 @@ services:
     environment:
       APP_ENV: ${APP_ENV:-dev}
       APP_SECRET: ${APP_SECRET:-secret}
-      DATABASE_URL: mysql://easyshop:easyshop@database:3306/easyshop?serverVersion=8.0&charset=utf8mb4
-      MESSENGER_TRANSPORT_DSN: doctrine://default?auto_setup=0
+      DATABASE_URL: ${DATABASE_URL}
+      MESSENGER_TRANSPORT_DSN: ${MESSENGER_TRANSPORT_DSN}
       ADMIN_HOST: localhost
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      VAR_DUMPER_SERVER: host.docker.internal:9912
+      VAR_DUMPER_SERVER: ${VAR_DUMPER_SERVER:-host.docker.internal:9912}
       MAILER_DSN: null://null
     depends_on:
       database:
@@ -39,16 +39,16 @@ services:
     image: mysql:8.0
     container_name: easyshop-db
     environment:
-      MYSQL_DATABASE: easyshop
-      MYSQL_USER: easyshop
-      MYSQL_PASSWORD: easyshop
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
     ports:
       - "3306:3306"
     healthcheck:
-      test: ["CMD", "mysql", "-h", "localhost", "-ueasyshop", "-peasyshop", "-e", "SELECT 1"]
+      test: [ "CMD", "mysql", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}", "-e", "SELECT 1" ]
       interval: 2s
       timeout: 5s
       retries: 30
@@ -71,6 +71,7 @@ volumes:
   db_data:
   vendor:
   node_modules:
+
 
 networks:
   easyshop:

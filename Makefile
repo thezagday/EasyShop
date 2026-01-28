@@ -56,9 +56,9 @@ logs-node:
 shell:
 	docker compose exec php sh
 
-# Open PostgreSQL shell
+# Open MySQL shell
 db-shell:
-	docker compose exec database psql -U easyshop -d easyshop
+	docker compose exec database mysql -u easyshop -peasyshop easyshop
 
 # Run database migrations
 migrate:
@@ -102,7 +102,6 @@ install: build env
 # Create .env file from example if it doesn't exist
 env:
 	@test -f .env || cp .env.example .env
-	@sed -i 's|postgresql://app:!ChangeMe!@127.0.0.1:5432/app|postgresql://easyshop:easyshop@database:5432/easyshop|g' .env
 
 # Clean up everything
 clean:
