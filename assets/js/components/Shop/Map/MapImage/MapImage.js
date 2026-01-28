@@ -6,6 +6,7 @@ import {CategorySearch} from "./CategorySearch";
 import {CategoryRouteGeneration} from "./CategoryRouteGeneration";
 import {CommoditySearch} from "./CommoditySearch";
 import {MultiCommoditySearch} from "./MultiCommoditySearch";
+import {ShowAllCategories} from "./ShowAllCategories";
 delete L.Icon.Default.prototype._getIconUrl;
 
 export default function MapImage({
@@ -20,6 +21,9 @@ export default function MapImage({
 }) {
     const map = useMap();
 
+    // Показываем все категории магазина красными маркерами при загрузке
+    ShowAllCategories(map, categories);
+    
     // CategorySearch(map, searchedCategory);
     CommoditySearch(map, searchedCategoryByCommodity);
     // MultiCommoditySearch(map, multiSearch);

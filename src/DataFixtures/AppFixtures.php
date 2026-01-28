@@ -90,6 +90,34 @@ class AppFixtures extends Fixture
 
             if (!$targetShop) continue;
 
+            // Координаты для каждого магазина
+            $coordinates = [
+                'Корона' => [
+                    'Бакалея' => [220, 680],
+                    'Сладкое' => [1100, 160],
+                    'Молочная продукция' => [220, 590],
+                    'Мясные изделия' => [220, 780],
+                    'Рыба' => [1000, 240],
+                    'Овощи и фрукты' => [520, 350],
+                    'Напитки' => [700, 480],
+                    'Замороженные продукты' => [650, 800],
+                    'Бытовая химия' => [1150, 450],
+                    'Хлебобулочные изделия' => [650, 180],
+                ],
+                'Green' => [
+                    'Бакалея' => [220, 680],
+                    'Сладкое' => [1100, 160],
+                    'Молочная продукция' => [220, 590],
+                    'Мясные изделия' => [220, 780],
+                    'Рыба' => [1000, 240],
+                    'Овощи и фрукты' => [520, 350],
+                    'Напитки' => [700, 480],
+                    'Замороженные продукты' => [650, 800],
+                    'Бытовая химия' => [1150, 450],
+                    'Хлебобулочные изделия' => [650, 180],
+                ],
+            ];
+
             foreach (self::CATEGORIES as $index => $catTitle) {
                 $category = new Category();
                 $category->setTitle($catTitle);
@@ -101,9 +129,16 @@ class AppFixtures extends Fixture
                 $shopCategory->setShop($targetShop);
                 $shopCategory->setCategory($category);
                 
-                $angle = ($index / count(self::CATEGORIES)) * 2 * M_PI;
-                $shopCategory->setXCoordinate(50 + 40 * cos($angle));
-                $shopCategory->setYCoordinate(50 + 40 * sin($angle));
+                // Используем координаты из базы данных
+                if (isset($coordinates[$rTitle][$catTitle])) {
+                    $coords = $coordinates[$rTitle][$catTitle];
+                    $shopCategory->setXCoordinate($coords[0]);
+                    $shopCategory->setYCoordinate($coords[1]);
+                } else {
+                    // Fallback на центр карты если координаты не найдены
+                    $shopCategory->setXCoordinate(50);
+                    $shopCategory->setYCoordinate(50);
+                }
                 
                 $manager->persist($shopCategory);
 
