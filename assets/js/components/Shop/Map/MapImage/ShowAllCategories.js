@@ -1,20 +1,21 @@
 import L from "leaflet";
-import {useRef} from "react";
 import {xy} from "../../../Utils/coordinateUtils"
 
-export function ShowAllCategories(map, categories) {
-    let markers = useRef([]);
-    
-    function removeAllMarkers() {
-        if (markers.current) {
-            markers.current.forEach(marker => {
-                map.removeLayer(marker);
-            });
-            markers.current = [];
-        }
-    }
+// Хранилище маркеров для каждой карты
+const markersStorage = new WeakMap();
 
-    removeAllMarkers();
+export function ShowAllCategories(map, categories) {
+    // Получаем или создаем массив маркеров для этой карты
+    if (!markersStorage.has(map)) {
+        markersStorage.set(map, []);
+    }
+    const markers = markersStorage.get(map);
+    
+    // Удаляем старые маркеры
+    markers.forEach(marker => {
+        map.removeLayer(marker);
+    });
+    markers.length = 0;
 
     // Создаем красную иконку для маркеров
     const redIcon = L.icon({
@@ -38,7 +39,7 @@ export function ShowAllCategories(map, categories) {
                     closeOnClick: false
                 });
                 
-                markers.current.push(marker);
+                markers.push(marker);
             }
         });
     }
