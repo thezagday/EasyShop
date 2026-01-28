@@ -20,11 +20,15 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
+                default_target_path: admin
+                always_use_default_target_path: false
             logout:
                 path: /logout
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider
+            logout:
+                path: /logout
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -35,6 +39,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
         - { host: '%admin_host%', route: app_login, roles: PUBLIC_ACCESS }
         - { host: '%admin_host%', path: ^/, roles: IS_AUTHENTICATED_FULLY }
 

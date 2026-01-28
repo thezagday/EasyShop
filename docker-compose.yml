@@ -14,7 +14,8 @@ services:
       APP_SECRET: ${APP_SECRET:-secret}
       DATABASE_URL: ${DATABASE_URL}
       MESSENGER_TRANSPORT_DSN: ${MESSENGER_TRANSPORT_DSN}
-      ADMIN_HOST: localhost
+      ADMIN_HOST: admin.localhost
+      MAIN_HOST: localhost
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       VAR_DUMPER_SERVER: ${VAR_DUMPER_SERVER:-host.docker.internal:9912}
       MAILER_DSN: null://null

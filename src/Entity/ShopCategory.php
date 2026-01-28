@@ -129,4 +129,9 @@ class ShopCategory
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return sprintf('%s (%s)', $this->category?->getTitle() ?? 'N/A', $this->shop?->getTitle() ?? 'N/A');
+    }
 }
