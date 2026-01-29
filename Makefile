@@ -118,5 +118,5 @@ env:
 
 # Clean up everything
 clean:
-	docker compose down -v --rmi local
+	docker compose down -v --rmi all
 	@echo "Cleaned up all containers, volumes, and images"
