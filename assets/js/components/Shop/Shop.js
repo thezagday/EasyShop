@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from "react-router-dom";
-import Map from "./Map/Map"
-import Chat from "./Chat/Chat";
+import Map from "./Map/Map";
 
 const SIDEBLOCK_HEIGHT = 620;
 
@@ -16,8 +15,8 @@ export default function Shop() {
 
     let { id } = useParams();
 
-    let sourceRef = useRef('Бакалея');
-    let destinationRef = useRef('Бакалея');
+    let sourceRef = useRef(null);
+    let destinationRef = useRef(null);
 
     useEffect(() => {
         fetchShop();
@@ -88,12 +87,10 @@ export default function Shop() {
             <div className="row mb-4">
                 <h2 className="col-12 tm-text-primary">{shop.title}</h2>
             </div>
-            <div className="row tm-mb-90" style={{ alignItems: 'flex-start' }}>
-                <div
-                    className="col-xl-9 col-lg-8 col-md-7 col-sm-12 mb-4"
-                    style={{ height: SIDEBLOCK_HEIGHT + 'px', display: 'flex', flexDirection: 'column' }}
-                >
+            <div className="row tm-mb-90">
+                <div className="col-12">
                     <Map
+                        shopId={id}
                         isBuildRouteClicked={isBuildRouteClicked}
                         categories={categories}
                         source={sourceRef.current}
@@ -104,12 +101,6 @@ export default function Shop() {
                         multiSearch={multiSearch}
                         height={SIDEBLOCK_HEIGHT}
                     />
-                </div>
-                <div
-                    className="col-xl-3 col-lg-4 col-md-5 col-sm-12"
-                    style={{ height: SIDEBLOCK_HEIGHT + 'px', display: 'flex', flexDirection: 'column' }}
-                >
-                    <Chat containerHeight={SIDEBLOCK_HEIGHT + 'px'} shopId={id} onCategoriesFound={handleAICategories} />
                 </div>
             </div>
         </div>

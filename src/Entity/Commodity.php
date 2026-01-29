@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Repository\CommodityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CommodityRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['commodity:read']]
+)]
+#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'shopCategories.shop' => 'exact'])]
 class Commodity
 {
     #[ORM\Id]
@@ -20,11 +25,12 @@ class Commodity
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['shopCategory:read'])]
+    #[Groups(['shopCategory:read', 'commodity:read'])]
     private ?string $title = null;
 
     #[ORM\ManyToMany(targetEntity: ShopCategory::class, inversedBy: 'commodities')]
     #[ORM\JoinTable(name: 'commodities_shop_categories')]
+    #[Groups(['commodity:read'])]
     private Collection $shopCategories;
 
     public function __construct() {

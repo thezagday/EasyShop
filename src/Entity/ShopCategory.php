@@ -19,7 +19,7 @@ class ShopCategory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['shopCategory:read'])]
+    #[Groups(['shopCategory:read', 'commodity:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'shopCategories')]
@@ -29,15 +29,15 @@ class ShopCategory
 
     #[ORM\ManyToOne(inversedBy: 'shops')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['shopCategory:read'])]
+    #[Groups(['shopCategory:read', 'commodity:read'])]
     private ?Category $category = null;
 
     #[ORM\Column]
-    #[Groups(['shopCategory:read'])]
+    #[Groups(['shopCategory:read', 'commodity:read'])]
     private ?float $x_coordinate = null;
 
     #[ORM\Column]
-    #[Groups(['shopCategory:read'])]
+    #[Groups(['shopCategory:read', 'commodity:read'])]
     private ?float $y_coordinate = null;
 
     #[ORM\ManyToMany(targetEntity: Commodity::class, mappedBy: 'shopCategories')]

@@ -23,8 +23,12 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@turf/turf": "^7.3.3",
         "leaflet": "^1.9.3",
+        "leaflet-geometryutil": "^0.10.3",
         "leaflet-trackplayer": "^2.0.3",
+        "leaflet.markercluster": "^1.5.3",
+        "pathfinding": "^0.4.18",
         "prop-types": "^15.8.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
