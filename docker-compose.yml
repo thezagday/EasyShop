@@ -17,6 +17,8 @@ services:
       ADMIN_HOST: admin.localhost
       MAIN_HOST: localhost
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      AI_PROVIDER: ${AI_PROVIDER:-}
       VAR_DUMPER_SERVER: ${VAR_DUMPER_SERVER:-host.docker.internal:9912}
       MAILER_DSN: null://null
     depends_on:

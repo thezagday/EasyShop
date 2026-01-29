@@ -2,8 +2,24 @@ ai:
     platform:
         openai:
             api_key: '%env(OPENAI_API_KEY)%'
+        openrouter:
+            api_key: '%env(OPENROUTER_API_KEY)%'
+
     agent:
         default:
+            platform: 'ai.platform.openrouter'
             model:
                 class: 'Symfony\AI\Platform\Bridge\OpenAi\Gpt'
-                name: !php/const Symfony\AI\Platform\Bridge\OpenAi\Gpt::GPT_4O_MINI
+                name: 'google/gemini-2.5-flash'
+
+        openai:
+            platform: 'ai.platform.openai'
+            model:
+                class: 'Symfony\AI\Platform\Bridge\OpenAi\Gpt'
+                name: 'gpt-4o-mini'
+
+        openrouter:
+            platform: 'ai.platform.openrouter'
+            model:
+                class: 'Symfony\AI\Platform\Bridge\OpenAi\Gpt'
+                name: 'google/gemini-2.5-flash'
