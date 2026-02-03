@@ -1,0 +1,12 @@
+api_platform:
+    title: 'EasyShop API'
+    version: '1.0.0'
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/Domain/Entity'
+    patch_formats:
+        json: ['application/merge-patch+json']
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+        html: ['text/html']

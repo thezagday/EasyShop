@@ -1,16 +1,19 @@
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {SetupMap} from "./SetupMap";
 import {ShowAllCategories} from "./ShowAllCategories";
 import {CategorySearch} from "./CategorySearch";
 import {CommoditySearch} from "./CommoditySearch";
 import {MultiCommoditySearch} from "./MultiCommoditySearch";
 import {DirectRouteBuilder} from "./DirectRouteBuilder";
+import {visualizeObstacles, OBSTACLE_MAP, loadObstaclesForShop} from "./ObstacleMap";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
 export default function MapImage({
+    shopId,
+    mapImageUrl,
     isBuildRouteClicked,
     categories,
     source,
@@ -26,6 +29,21 @@ export default function MapImage({
 }) {
     const map = useMap();
     const routeBuilderRef = useRef(null);
+    const [obstaclesLoaded, setObstaclesLoaded] = useState(false);
+
+    // Load obstacles from API when component mounts
+    useEffect(() => {
+        if (shopId) {
+            loadObstaclesForShop(shopId).then(() => {
+                setObstaclesLoaded(true);
+                
+                // Re-initialize route builder after obstacles are loaded
+                if (routeBuilderRef.current) {
+                    routeBuilderRef.current.initializePathfinding();
+                }
+            });
+        }
+    }, [shopId]);
 
     // Initialize route builder
     useEffect(() => {
@@ -61,7 +79,14 @@ export default function MapImage({
     }, [source, destination, map]);
 
     useEffect(() => {
-        SetupMap(map);
+        SetupMap(map, mapImageUrl);
+        
+        // Визуализация препятствий в режиме отладки
+        if (OBSTACLE_MAP.debugMode) {
+            visualizeObstacles(map);
+            console.log('🔴 Obstacle visualization enabled - red rectangles show obstacles');
+            console.log('📍 Obstacles:', OBSTACLE_MAP.obstacles);
+        }
     }, [map]);
 
     // Обработка кликов по кнопкам "Построить маршрут" в popup

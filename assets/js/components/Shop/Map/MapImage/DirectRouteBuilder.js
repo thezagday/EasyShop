@@ -12,6 +12,12 @@ export class DirectRouteBuilder {
         this.initializePathfinding();
     }
 
+    // Метод для переинициализации pathfinding после загрузки препятствий
+    reinitializePathfinding() {
+        console.log('🔄 Reinitializing pathfinding with loaded obstacles');
+        this.pathfinding = new PathfindingService();
+    }
+
     initializePathfinding() {
         const gridData = generateWalkableGrid();
         this.pathfinding = new PathfindingService(gridData.gridWidth, gridData.gridHeight);
@@ -90,8 +96,15 @@ export class DirectRouteBuilder {
         // Add pulsing effect to the route
         this.animateRoute(routeLine);
 
-        // Add waypoint markers
-        routePoints.forEach((point, index) => {
+        // Add waypoint markers - only for named waypoints (start, end, and explicit waypoints)
+        // Don't add markers for every point in the pathfinding result
+        const explicitWaypoints = Array.isArray(sourceCoords) ? sourceCoords : [sourceCoords, destCoords];
+        
+        explicitWaypoints.forEach((wp, index) => {
+            const wpPoint = Array.isArray(sourceCoords) ? 
+                routePoints.find(p => Math.abs(p[0] - wp.y) < 1 && Math.abs(p[1] - wp.x) < 1) || [wp.y, wp.x] :
+                (index === 0 ? routePoints[0] : routePoints[routePoints.length - 1]);
+            
             let markerIcon;
             
             if (index === 0) {
@@ -101,33 +114,33 @@ export class DirectRouteBuilder {
                     html: `
                         <div class="route-marker">
                             <div class="route-marker-icon start">🚪</div>
-                            <div class="route-marker-label">${waypointNames[index]}</div>
+                            <div class="route-marker-label">${waypointNames[0]}</div>
                         </div>
                     `,
                     iconSize: [60, 60],
                     iconAnchor: [30, 30]
                 });
-            } else if (index === routePoints.length - 1) {
+            } else if (index === explicitWaypoints.length - 1) {
                 // End marker
                 markerIcon = L.divIcon({
                     className: 'route-marker-end',
                     html: `
                         <div class="route-marker">
-                            <div class="route-marker-icon end">🚶</div>
-                            <div class="route-marker-label">${waypointNames[index]}</div>
+                            <div class="route-marker-icon end">🎯</div>
+                            <div class="route-marker-label">${waypointNames[waypointNames.length - 1]}</div>
                         </div>
                     `,
                     iconSize: [60, 60],
                     iconAnchor: [30, 30]
                 });
             } else {
-                // Intermediate waypoint
+                // Intermediate explicit waypoint (for multi-point routes)
                 markerIcon = L.divIcon({
                     className: 'route-marker-waypoint',
                     html: `
                         <div class="route-marker">
                             <div class="route-marker-icon waypoint">${index}</div>
-                            <div class="route-marker-label">${waypointNames[index]}</div>
+                            <div class="route-marker-label">${wp.name}</div>
                         </div>
                     `,
                     iconSize: [60, 60],
@@ -135,7 +148,7 @@ export class DirectRouteBuilder {
                 });
             }
 
-            const marker = L.marker(point, { icon: markerIcon }).addTo(this.map);
+            const marker = L.marker(wpPoint, { icon: markerIcon }).addTo(this.map);
             this.markers.push(marker);
         });
 
@@ -155,28 +168,63 @@ export class DirectRouteBuilder {
     }
 
     findPathWithObstacles(start, end) {
-        // Convert map coordinates to grid coordinates
+        const { gridCellSize } = OBSTACLE_MAP;
+        
+        // Extract coordinates - handle both array [lat, lng] and Leaflet LatLng object
+        const getCoords = (point) => {
+            if (Array.isArray(point)) {
+                return { lat: point[0], lng: point[1] };
+            } else if (point && typeof point === 'object' && 'lat' in point) {
+                // Leaflet LatLng object
+                return { lat: point.lat, lng: point.lng };
+            } else {
+                console.error('Invalid coordinate format:', point);
+                return { lat: 0, lng: 0 };
+            }
+        };
+
+        const startCoords = getCoords(start);
+        const endCoords = getCoords(end);
+        
+        // Convert Leaflet coordinates to grid coordinates
+        // PathfindingService expects [y, x] format (note: different from typical [x, y])
         const startGrid = [
-            start[0],
-            start[1]
+            Math.floor(startCoords.lat / gridCellSize),   // y = lat / cellSize
+            Math.floor(startCoords.lng / gridCellSize)    // x = lng / cellSize
         ];
         const endGrid = [
-            end[0],
-            end[1]
+            Math.floor(endCoords.lat / gridCellSize),     // y = lat / cellSize
+            Math.floor(endCoords.lng / gridCellSize)      // x = lng / cellSize
         ];
+
+        console.log('🗺️ Pathfinding coordinates:');
+        console.log('  Start: lat=' + startCoords.lat + ', lng=' + startCoords.lng + ' → Grid[y,x]: [' + startGrid[0] + ', ' + startGrid[1] + ']');
+        console.log('  End: lat=' + endCoords.lat + ', lng=' + endCoords.lng + ' → Grid[y,x]: [' + endGrid[0] + ', ' + endGrid[1] + ']');
+        console.log('  Grid size: ' + this.pathfinding.gridWidth + ' x ' + this.pathfinding.gridHeight);
 
         // Find path using A*
         const path = this.pathfinding.findPath(startGrid, endGrid);
         
         if (!path || path.length === 0) {
-            console.warn('No path found, using direct line');
-            return [start, end];
+            console.warn('⚠️ No path found by A*, using direct line');
+            // Return coordinates in proper array format [lat, lng]
+            return [[startCoords.lat, startCoords.lng], [endCoords.lat, endCoords.lng]];
         }
 
+        console.log('✅ Path found with', path.length, 'points');
+
+        // Convert grid path back to Leaflet coordinates
+        // PathfindingService returns [y, x], convert to Leaflet [lat, lng]
+        const leafletPath = path.map(([gridY, gridX]) => [
+            gridY * gridCellSize,  // lat = gridY * cellSize
+            gridX * gridCellSize   // lng = gridX * cellSize
+        ]);
+
         // Smooth the path for better visual appearance
-        const smoothedPath = this.pathfinding.smoothPath(path, 3);
+        // More iterations = smoother but potentially less accurate path
+        const smoothedPath = this.pathfinding.smoothPath(leafletPath, 5);
         
-        return smoothedPath || [start, end];
+        return smoothedPath || leafletPath;
     }
 
     buildMultiWaypointPath(waypoints) {

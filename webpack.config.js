@@ -24,6 +24,7 @@ Encore
     .addEntry('home', './assets/js/home.js')
     .addEntry('leaflet', './assets/js/leaflet.js')
     .addEntry('seadragon', './assets/js/seadragon.js')
+    .addEntry('admin-map-editor', './assets/js/admin-map-editor.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

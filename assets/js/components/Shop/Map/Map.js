@@ -26,6 +26,7 @@ function MapControls({ shopId, categories, onCategorySelect, onProductSelect, on
 
 export default function Map({
     shopId,
+    shop,
     isBuildRouteClicked,
     categories,
     source,
@@ -119,6 +120,8 @@ export default function Map({
                 zoomControl={false}
             >
                 <MapImage
+                    shopId={shopId}
+                    mapImageUrl={shop?.mapImage ? `/img/${shop.mapImage}` : '/img/map.svg'}
                     isBuildRouteClicked={isBuildRouteClicked}
                     categories={categories}
                     source={routeSource || source}

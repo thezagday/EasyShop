@@ -1,33 +1,55 @@
 // Определение препятствий (стеллажи, стены) и проходимых зон для магазина
 // Координаты в пикселях относительно карты
 
+import L from "leaflet";
+
 export const OBSTACLE_MAP = {
+    // Режим отладки - показывает препятствия на карте красными прямоугольниками
+    debugMode: true,
     // Размеры карты
     mapWidth: 1653,
     mapHeight: 993,
     
     // Размер сетки для pathfinding (чем меньше - тем точнее, но медленнее)
-    gridCellSize: 10, // 10 пикселей = 1 клетка сетки
+    // Увеличен для более плавных маршрутов
+    gridCellSize: 20, // 20 пикселей = 1 клетка сетки
     
-    // Препятствия (стеллажи, стены) - области которые нельзя пересекать
-    obstacles: [
-        // Пример: стеллаж в центре магазина
-        { x: 400, y: 200, width: 200, height: 100 },
-        { x: 700, y: 300, width: 150, height: 120 },
-        { x: 200, y: 500, width: 300, height: 80 },
-        { x: 900, y: 400, width: 180, height: 150 },
-        
-        // Стены по периметру (опционально)
-        // { x: 0, y: 0, width: 10, height: 993 }, // Левая стена
-        // { x: 1643, y: 0, width: 10, height: 993 }, // Правая стена
-        // { x: 0, y: 0, width: 1653, height: 10 }, // Верхняя стена
-        // { x: 0, y: 983, width: 1653, height: 10 }, // Нижняя стена
-    ],
+    // Препятствия (стеллажи, стены) - загружаются из API
+    obstacles: [],
     
     // Проходимые зоны (коридоры между стеллажами)
     // Если не указаны - вся карта проходима кроме obstacles
     walkableAreas: null // null = вся карта проходима (кроме obstacles)
 };
+
+// Загрузить препятствия из API для конкретного магазина
+export async function loadObstaclesForShop(shopId) {
+    try {
+        const response = await fetch(`/api/shops/${shopId}/obstacles`);
+        if (!response.ok) {
+            console.warn('Failed to load obstacles from API, using empty array');
+            OBSTACLE_MAP.obstacles = [];
+            return [];
+        }
+        
+        const obstacles = await response.json();
+        
+        // Преобразуем данные из API в формат для pathfinding
+        OBSTACLE_MAP.obstacles = obstacles.map(obs => ({
+            x: obs.x,
+            y: obs.y,
+            width: obs.width,
+            height: obs.height
+        }));
+        
+        console.log('✅ Loaded', obstacles.length, 'obstacles from API');
+        return OBSTACLE_MAP.obstacles;
+    } catch (error) {
+        console.error('Error loading obstacles:', error);
+        OBSTACLE_MAP.obstacles = [];
+        return [];
+    }
+}
 
 // Функция для генерации сетки с учетом препятствий
 export function generateWalkableGrid() {

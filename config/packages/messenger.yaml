@@ -2,6 +2,12 @@ framework:
     messenger:
         failure_transport: failed
 
+        # Multiple buses for CQRS
+        default_bus: messenger.bus.command.bus
+        buses:
+            messenger.bus.command.bus: ~
+            messenger.bus.query.bus: ~
+
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             async:

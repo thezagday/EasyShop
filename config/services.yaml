@@ -13,14 +13,53 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+    # Автоматическое тегирование Handler по интерфейсам
+    _instanceof:
+        App\Application\Contract\CommandHandlerInterface:
+            tags:
+                - { name: messenger.message_handler, bus: messenger.bus.command.bus }
+        
+        App\Application\Contract\QueryHandlerInterface:
+            tags:
+                - { name: messenger.message_handler, bus: messenger.bus.query.bus }
+
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            - '../src/Entity/'
+            - '../src/Domain/Entity/'
             - '../src/Kernel.php'
+
+    # ArgumentResolver для автоматической валидации DTO
+    App\Infrastructure\ArgumentResolver\RequestDtoResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 150 }
+
+    # Alias для удобства использования в контроллерах
+    command.bus: '@messenger.bus.command.bus'
+    query.bus: '@messenger.bus.query.bus'
+
+    App\Infrastructure\Bus\MessengerCommandBus:
+        arguments:
+            $commandBus: '@messenger.bus.command.bus'
+
+    App\Infrastructure\Bus\MessengerQueryBus:
+        arguments:
+            $queryBus: '@messenger.bus.query.bus'
+
+    App\Application\Contract\CommandBusInterface: '@App\Infrastructure\Bus\MessengerCommandBus'
+    App\Application\Contract\QueryBusInterface: '@App\Infrastructure\Bus\MessengerQueryBus'
+
+    # Repositories mapping
+    App\Domain\Repository\ShopRepositoryInterface: '@App\Infrastructure\Persistence\Repository\ShopRepository'
+    App\Domain\Repository\ObstacleRepositoryInterface: '@App\Infrastructure\Persistence\Repository\ObstacleRepository'
+    App\Domain\Repository\CategoryRepositoryInterface: '@App\Infrastructure\Persistence\Repository\CategoryRepository'
+    App\Domain\Repository\CommodityRepositoryInterface: '@App\Infrastructure\Persistence\Repository\CommodityRepository'
+    App\Domain\Repository\RetailerRepositoryInterface: '@App\Infrastructure\Persistence\Repository\RetailerRepository'
+    App\Domain\Repository\ShopCategoryRepositoryInterface: '@App\Infrastructure\Persistence\Repository\ShopCategoryRepository'
+    App\Domain\Repository\UserRepositoryInterface: '@App\Infrastructure\Persistence\Repository\UserRepository'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

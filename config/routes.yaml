@@ -1,9 +1,12 @@
-controllers_public:
-    resource: ../src/Controller/
+controllers_api:
+    resource: ../src/Infrastructure/Ui/Controller/Api/
     type: attribute
-    exclude: '../src/Controller/Admin/'
+
+controllers_home:
+    resource: ../src/Infrastructure/Ui/Controller/Home/
+    type: attribute
 
 admin:
-    resource: ../src/Controller/Admin/
+    resource: ../src/Infrastructure/Ui/Controller/Admin/
     type: attribute
     host: '%admin_host%'

@@ -1,0 +1,119 @@
+.obstacle-editor {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.editor-toolbar {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.editor-toolbar h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+}
+
+.toolbar-section {
+    display: inline-block;
+    margin-right: 20px;
+    vertical-align: middle;
+}
+
+.toolbar-section label {
+    display: inline-block;
+    margin-right: 10px;
+    font-weight: 600;
+    color: #555;
+}
+
+.toolbar-section select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.toolbar-section .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-right: 10px;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #333;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toolbar-info {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.toolbar-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.toolbar-info strong {
+    color: #333;
+}
+
+.drawing-hint {
+    color: #007bff !important;
+    font-weight: 600;
+}
+
+.edit-hint {
+    color: #28a745 !important;
+    font-weight: 600;
+}
+
+.map-container {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.leaflet-container {
+    background: #f8f9fa;
+}

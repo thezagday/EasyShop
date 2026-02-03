@@ -91,6 +91,7 @@ export default function Shop() {
                 <div className="col-12">
                     <Map
                         shopId={id}
+                        shop={shop}
                         isBuildRouteClicked={isBuildRouteClicked}
                         categories={categories}
                         source={sourceRef.current}
