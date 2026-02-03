@@ -15,8 +15,8 @@ final class BuildRouteHandler implements QueryHandlerInterface
     public function __invoke(BuildRouteQuery $query): array
     {
         return $this->routeService->getRoute(
-            $query->getSource(),
-            $query->getDestination()
+            $query->source,
+            $query->destination
         );
     }
 }

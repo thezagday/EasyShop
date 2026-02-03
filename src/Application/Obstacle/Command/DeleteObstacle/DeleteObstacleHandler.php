@@ -17,15 +17,15 @@ final class DeleteObstacleHandler implements CommandHandlerInterface
 
     public function __invoke(DeleteObstacleCommand $command): mixed
     {
-        $obstacle = $this->obstacleRepository->findById($command->getId());
+        $obstacle = $this->obstacleRepository->findById($command->id);
 
-        if (!$obstacle || $obstacle->getShop()->getId() !== $command->getShopId()) {
+        if (!$obstacle || $obstacle->getShop()->getId() !== $command->shopId) {
             throw new NotFoundHttpException('Obstacle not found');
         }
 
         $this->entityManager->remove($obstacle);
         $this->entityManager->flush();
-        
+
         return null;
     }
 }

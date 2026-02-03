@@ -20,7 +20,7 @@ final class CreateObstacleHandler implements CommandHandlerInterface
 
     public function __invoke(CreateObstacleCommand $command): Obstacle
     {
-        $shop = $this->shopRepository->findById($command->getShopId());
+        $shop = $this->shopRepository->findById($command->shopId);
 
         if (!$shop) {
             throw new NotFoundHttpException('Shop not found');

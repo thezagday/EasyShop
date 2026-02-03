@@ -19,7 +19,7 @@ final class ChatWithAIHandler implements QueryHandlerInterface
 
     public function __invoke(ChatWithAIQuery $query): array
     {
-        $shop = $this->shopRepository->findById($query->getShopId());
+        $shop = $this->shopRepository->findById($query->shopId);
 
         if (!$shop) {
             throw new NotFoundHttpException('Shop not found');
@@ -46,7 +46,7 @@ final class ChatWithAIHandler implements QueryHandlerInterface
 
         $prompt = <<<PROMPT
             Ты консультант интернет-магазина. Вот список товаров и их категорий: $productList.
-            Пользователь спрашивает: "{$query->getMessage()}"
+            Пользователь спрашивает: "{$query->message}"
             
             Выбери из этого списка подходящие товары к запросу пользователя и запиши их с категориями в JSON-массив, ОБЯЗАТЕЛЬНО без каких-либо дополнительных символов (например, без ``` или подписи json!). Массив должен быть вот так:
             selected_commodities: [{"commodityTitle":"Яблоко","categoryId":41}, ...]

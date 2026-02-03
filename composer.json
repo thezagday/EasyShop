@@ -13,6 +13,7 @@
         "doctrine/orm": "^2.13",
         "easycorp/easyadmin-bundle": "^4.27",
         "fisharebest/algorithm": "^1.6",
+        "fusonic/http-kernel-bundle": "^1.5",
         "nelmio/cors-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpstan/phpdoc-parser": "^2.1",

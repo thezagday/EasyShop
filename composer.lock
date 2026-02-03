@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fba65d475bd3d1700eb1e974f458bf3f",
+    "content-hash": "963ab3a9562e1547f534b2693d4658b9",
     "packages": [
         {
             "name": "api-platform/core",
@@ -1773,6 +1773,68 @@
                 "source": "https://github.com/fisharebest/algorithm/tree/1.6.0"
             },
             "time": "2021-09-03T12:13:28+00:00"
+        },
+        {
+            "name": "fusonic/http-kernel-bundle",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fusonic/php-http-kernel-bundle.git",
+                "reference": "163645705b99c3d4f20322b7680990c787f4d8fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fusonic/php-http-kernel-bundle/zipball/163645705b99c3d4f20322b7680990c787f4d8fa",
+                "reference": "163645705b99c3d4f20322b7680990c787f4d8fa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "phpdocumentor/reflection-docblock": "^5.3",
+                "symfony/config": "^6.4 || ^7.3 || ^8.0",
+                "symfony/dependency-injection": "^6.4 || ^7.3 || ^8.0",
+                "symfony/http-kernel": "^6.4 || ^7.3 || ^8.0",
+                "symfony/property-access": "^6.4 || ^7.3 || ^8.0",
+                "symfony/property-info": "^6.4 || ^7.3 || ^8.0",
+                "symfony/serializer": "^6.4 || ^7.3 || ^8.0",
+                "symfony/validator": "^6.4 || ^7.3 || ^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.91",
+                "infection/infection": "^0.31",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpstan/phpstan-symfony": "^2.0",
+                "phpunit/phpunit": "^12.4",
+                "rector/rector": "^2.2",
+                "symfony/cache": "^6.4 || ^7.3 || ^8.0",
+                "tomasvotruba/type-coverage": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Fusonic\\HttpKernelBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fusonic GmbH",
+                    "email": "php@fusonic.net",
+                    "homepage": "https://www.fusonic.net/"
+                }
+            ],
+            "description": "Symfony bundle with extensions for Symfony's HttpKernel",
+            "support": {
+                "issues": "https://github.com/fusonic/php-http-kernel-bundle/issues",
+                "source": "https://github.com/fusonic/php-http-kernel-bundle/tree/1.5.0"
+            },
+            "time": "2025-12-04T08:45:33+00:00"
         },
         {
             "name": "monolog/monolog",

@@ -17,14 +17,14 @@ final class GetObstaclesHandler implements QueryHandlerInterface
 
     public function __invoke(GetObstaclesQuery $query): array
     {
-        $shop = $this->shopRepository->findById($query->getShopId());
+        $shop = $this->shopRepository->findById($query->shopId);
 
         if (!$shop) {
             throw new NotFoundHttpException('Shop not found');
         }
 
-        if ($query->getType() !== null) {
-            return $this->obstacleRepository->findByShopAndType($shop, $query->getType());
+        if ($query->type !== null) {
+            return $this->obstacleRepository->findByShopAndType($shop, $query->type);
         }
 
         return $this->obstacleRepository->findByShop($shop);

@@ -72,6 +72,9 @@
             "config/routes/easyadmin.yaml"
         ]
     },
+    "fusonic/http-kernel-bundle": {
+        "version": "1.5.0"
+    },
     "nelmio/cors-bundle": {
         "version": "2.2",
         "recipe": {

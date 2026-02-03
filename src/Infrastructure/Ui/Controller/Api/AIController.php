@@ -4,7 +4,7 @@ namespace App\Infrastructure\Ui\Controller\Api;
 
 use App\Application\AI\Query\ChatWithAI\ChatWithAIQuery;
 use App\Infrastructure\AI\AIService;
-use App\Infrastructure\Attribute\FromRequest;
+use Fusonic\HttpKernelBundle\Attribute\FromRequest;
 use App\Infrastructure\Trait\CommandQueryTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

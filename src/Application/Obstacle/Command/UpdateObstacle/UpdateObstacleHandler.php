@@ -18,26 +18,26 @@ final class UpdateObstacleHandler implements CommandHandlerInterface
 
     public function __invoke(UpdateObstacleCommand $command): Obstacle
     {
-        $obstacle = $this->obstacleRepository->findById($command->getId());
+        $obstacle = $this->obstacleRepository->findById($command->id);
 
-        if (!$obstacle || $obstacle->getShop()->getId() !== $command->getShopId()) {
+        if (!$obstacle || $obstacle->getShop()->getId() !== $command->shopId) {
             throw new NotFoundHttpException('Obstacle not found');
         }
 
-        if ($command->getX() !== null) {
-            $obstacle->setX($command->getX());
+        if ($command->x !== null) {
+            $obstacle->setX($command->x);
         }
-        if ($command->getY() !== null) {
-            $obstacle->setY($command->getY());
+        if ($command->y !== null) {
+            $obstacle->setY($command->y);
         }
-        if ($command->getWidth() !== null) {
-            $obstacle->setWidth($command->getWidth());
+        if ($command->width !== null) {
+            $obstacle->setWidth($command->width);
         }
-        if ($command->getHeight() !== null) {
-            $obstacle->setHeight($command->getHeight());
+        if ($command->height !== null) {
+            $obstacle->setHeight($command->height);
         }
-        if ($command->getType() !== null) {
-            $obstacle->setType($command->getType());
+        if ($command->type !== null) {
+            $obstacle->setType($command->type);
         }
 
         $this->entityManager->flush();

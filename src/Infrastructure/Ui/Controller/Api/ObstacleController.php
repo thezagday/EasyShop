@@ -6,7 +6,7 @@ use App\Application\Obstacle\Command\CreateObstacle\CreateObstacleCommand;
 use App\Application\Obstacle\Command\DeleteObstacle\DeleteObstacleCommand;
 use App\Application\Obstacle\Query\GetObstacles\GetObstaclesQuery;
 use App\Application\Obstacle\Command\UpdateObstacle\UpdateObstacleCommand;
-use App\Infrastructure\Attribute\FromRequest;
+use Fusonic\HttpKernelBundle\Attribute\FromRequest;
 use App\Infrastructure\Trait\CommandQueryTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

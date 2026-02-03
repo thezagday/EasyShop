@@ -12,11 +12,11 @@ class ObstacleFactory
     {
         $obstacle = new Obstacle();
         $obstacle->setShop($shop);
-        $obstacle->setX($command->getX());
-        $obstacle->setY($command->getY());
-        $obstacle->setWidth($command->getWidth());
-        $obstacle->setHeight($command->getHeight());
-        $obstacle->setType($command->getType());
+        $obstacle->setX($command->x);
+        $obstacle->setY($command->y);
+        $obstacle->setWidth($command->width);
+        $obstacle->setHeight($command->height);
+        $obstacle->setType($command->type);
 
         return $obstacle;
     }

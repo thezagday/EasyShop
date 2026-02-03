@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Ui\Controller\Api;
 
 use App\Application\Route\Query\BuildRoute\BuildRouteQuery;
-use App\Infrastructure\Attribute\FromRequest;
+use Fusonic\HttpKernelBundle\Attribute\FromRequest;
 use App\Infrastructure\Trait\CommandQueryTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

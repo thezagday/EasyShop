@@ -32,10 +32,6 @@ services:
             - '../src/Domain/Entity/'
             - '../src/Kernel.php'
 
-    # ArgumentResolver для автоматической валидации DTO
-    App\Infrastructure\ArgumentResolver\RequestDtoResolver:
-        tags:
-            - { name: controller.argument_value_resolver, priority: 150 }
 
     # Alias для удобства использования в контроллерах
     command.bus: '@messenger.bus.command.bus'
