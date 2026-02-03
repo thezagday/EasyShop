@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\AI;
 
+use Psr\Log\LoggerInterface;
 use Symfony\AI\Agent\AgentInterface;
 use Symfony\AI\Platform\Message\Message;
 use Symfony\AI\Platform\Message\MessageBag;
@@ -12,7 +13,10 @@ final readonly class AIService
 {
     public function __construct(
         #[Autowire(service: 'ai.agent.default')]
-        private AgentInterface $agent,
+        private AgentInterface $primaryAgent,
+        #[Autowire(service: 'ai.agent.openai_fallback')]
+        private AgentInterface $fallbackAgent,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -22,6 +26,15 @@ final readonly class AIService
             Message::ofUser($message),
         );
 
-        return $this->agent->call($messages);
+        try {
+            return $this->primaryAgent->call($messages);
+        } catch (\Throwable $e) {
+            $this->logger->warning('Primary AI agent (OpenRouter) failed, falling back to OpenAI', [
+                'error' => $e->getMessage(),
+                'message' => $message,
+            ]);
+            
+            return $this->fallbackAgent->call($messages);
+        }
     }
 }

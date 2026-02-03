@@ -7,20 +7,16 @@ if [ ! -d "vendor" ] || [ -z "$(ls -A vendor 2>/dev/null)" ]; then
     composer install --no-interaction --optimize-autoloader
 fi
 
-# Database is guaranteed to be ready by Docker's depends_on + healthcheck
 echo "Database is ready (guaranteed by Docker healthcheck)"
 
-# Run migrations
-echo "Running database migrations..."
+# Create database and run migrations
+echo "Setting up database..."
+php bin/console doctrine:database:create --if-not-exists
 php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 
-# Load fixtures only if database is empty (check for users)
-USER_COUNT=$(php bin/console doctrine:query:sql "SELECT COUNT(*) FROM user" 2>/dev/null | grep -oE '[0-9]+' | tail -1 || echo "0")
-if [ "$USER_COUNT" = "0" ] || [ -z "$USER_COUNT" ]; then
-    echo "Initializing database and loading fixtures..."
-    php bin/console doctrine:database:drop --force --if-exists
-    php bin/console doctrine:database:create
-    php bin/console doctrine:migrations:migrate --no-interaction
+# Load fixtures if DB is fresh (no users table or empty)
+if ! php bin/console doctrine:query:sql "SELECT COUNT(*) FROM user" 2>/dev/null | grep -q "1"; then
+    echo "Loading fixtures..."
     php bin/console doctrine:fixtures:load --no-interaction
 fi
 

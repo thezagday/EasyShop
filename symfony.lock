@@ -101,6 +101,42 @@
     "symfony/ai-bundle": {
         "version": "dev-main"
     },
+    "symfony/ai-generic-platform": {
+        "version": "0.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "caf14516010eb8e0c284f1264322b2af6a012723"
+        },
+        "files": [
+            "config/packages/ai_generic_platform.yaml"
+        ]
+    },
+    "symfony/ai-open-ai-platform": {
+        "version": "0.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "4f925d48b69c145cde2286e2cabfc7bd5eb4aca9"
+        },
+        "files": [
+            "config/packages/ai_open_ai_platform.yaml"
+        ]
+    },
+    "symfony/ai-open-router-platform": {
+        "version": "0.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "c39a146c6ec3df8b874accf6ce1cccbda431a688"
+        },
+        "files": [
+            "config/packages/ai_open_router_platform.yaml"
+        ]
+    },
     "symfony/console": {
         "version": "6.1",
         "recipe": {

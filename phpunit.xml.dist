@@ -19,6 +19,18 @@
         <!-- ###+ nelmio/cors-bundle ### -->
         <env name="CORS_ALLOW_ORIGIN" value="'^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'"/>
         <!-- ###- nelmio/cors-bundle ### -->
+
+        <!-- ###+ symfony/ai-open-ai-platform ### -->
+        <env name="OPENAI_API_KEY" value=""/>
+        <!-- ###- symfony/ai-open-ai-platform ### -->
+
+        <!-- ###+ symfony/ai-generic-platform ### -->
+        <!-- GENERIC_BASE_URL=https://api.example.com/v1 -->
+        <!-- ###- symfony/ai-generic-platform ### -->
+
+        <!-- ###+ symfony/ai-open-router-platform ### -->
+        <env name="OPENROUTER_API_KEY" value=""/>
+        <!-- ###- symfony/ai-open-router-platform ### -->
     </php>
 
     <testsuites>

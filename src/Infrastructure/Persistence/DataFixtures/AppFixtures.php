@@ -70,6 +70,7 @@ class AppFixtures extends Fixture
             $shop = new Shop();
             $shop->setTitle($title . ' - ' . $data['address']);
             $shop->setAvatar($data['avatar']);
+            $shop->setMapImage('map.svg');
             $shop->setRetailer($data['entity']);
             $manager->persist($shop);
             $shops[] = $shop;

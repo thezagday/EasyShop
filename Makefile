@@ -5,11 +5,13 @@ help:
 	@echo "EasyShop Docker Commands"
 	@echo "========================"
 	@echo ""
-	@echo "  make install    - First time setup (build, start, install deps, migrate)"
-	@echo "  make up         - Start all containers"
-	@echo "  make down       - Stop all containers"
-	@echo "  make restart    - Restart all containers"
-	@echo "  make build      - Build Docker images"
+	@echo "  make install       - First time setup (build, start, install deps, migrate)"
+	@echo "  make up            - Start all containers"
+	@echo "  make down          - Stop all containers"
+	@echo "  make down-clean    - Stop containers and remove database"
+	@echo "  make restart       - Restart with fresh database"
+	@echo "  make restart-quick - Restart without removing database"
+	@echo "  make build         - Build Docker images"
 	@echo "  make logs       - View logs (all containers)"
 	@echo "  make logs-php   - View PHP logs"
 	@echo "  make logs-node  - View Node logs"
@@ -47,8 +49,15 @@ up:
 down:
 	docker compose down
 
-# Restart containers
-restart: down up
+# Stop containers and remove volumes (database)
+down-clean:
+	docker compose down -v
+
+# Restart containers (with fresh database)
+restart: down-clean up
+
+# Quick restart without removing database
+restart-quick: down up
 
 # View all logs
 logs:
