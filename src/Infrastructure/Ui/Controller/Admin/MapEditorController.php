@@ -26,24 +26,14 @@ class MapEditorController extends AbstractController
             throw $this->createNotFoundException('Shop not found');
         }
 
-        $mapImage = $shop->getMapImage();
-        
-        if (!$mapImage) {
-            $this->addFlash('warning', 'Для этого магазина не загружена карта. Пожалуйста, загрузите карту в поле "Имя файла карты магазина".');
-            return $this->redirect(
-                $this->adminUrlGenerator
-                    ->setController('App\\Infrastructure\\Ui\\Controller\\Admin\\ShopCrudController')
-                    ->setAction('edit')
-                    ->setEntityId($id)
-                    ->generateUrl()
-            );
-        }
-
-        return $this->render('admin/map_editor/edit.html.twig', [
-            'shop' => $shop,
-            'mapImageUrl' => '/img/' . $mapImage,
-            'mapWidth' => 1653,
-            'mapHeight' => 993,
-        ]);
+        // Backwards-compatible entrypoint: redirect to the EasyAdmin CRUD custom action.
+        // This ensures a real AdminContext is created, fixing the i18n error.
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setController(ShopCrudController::class)
+                ->setAction('editMap')
+                ->setEntityId($id)
+                ->generateUrl()
+        );
     }
 }
