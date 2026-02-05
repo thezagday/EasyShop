@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mapHeight = parseInt(container.dataset.mapHeight, 10);
 
     const root = createRoot(container);
+    // Don't wrap in StrictMode to avoid double mount/unmount
     root.render(
         <ObstacleMapEditor
             shopId={shopId}

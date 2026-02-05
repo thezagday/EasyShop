@@ -9,6 +9,16 @@ export function AIAssistant({ shopId, onResult }) {
         const trimmed = input.trim();
         if (trimmed === '') return;
 
+        const parsedShopId = Number.parseInt(shopId, 10);
+        if (!Number.isInteger(parsedShopId) || parsedShopId <= 0) {
+            setLastResult({
+                question: trimmed,
+                answer: 'Ошибка: некорректный идентификатор магазина.',
+                categories: []
+            });
+            return;
+        }
+
         setLoading(true);
         setLastResult(null);
 
@@ -16,7 +26,7 @@ export function AIAssistant({ shopId, onResult }) {
             const response = await fetch('/api/ai', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: trimmed, shopId: shopId }),
+                body: JSON.stringify({ message: trimmed, shopId: parsedShopId }),
             });
             const data = await response.json();
 

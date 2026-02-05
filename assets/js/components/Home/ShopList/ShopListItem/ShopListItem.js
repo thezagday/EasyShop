@@ -27,9 +27,9 @@ export default function ShopListItem({avatar, id, title}) {
             <div className="d-flex justify-content-between tm-text-gray">
                 <span>{title}</span>
                 {isAdmin && (
-                    <a href={`${adminUrl}?crudAction=edit&crudControllerFqcn=App%5CController%5CAdmin%5CShopCrudController&entityId=${id}`} 
-                       className="tm-text-primary" 
-                       title="Редактировать">
+                    <a href={`${adminUrl}/map-editor/${id}`}
+                       className="tm-text-primary"
+                       title="Редактировать карту">
                         <i className="fas fa-pen"></i>
                     </a>
                 )}

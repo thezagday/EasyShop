@@ -36,11 +36,6 @@ export default function MapImage({
         if (shopId) {
             loadObstaclesForShop(shopId).then(() => {
                 setObstaclesLoaded(true);
-                
-                // Re-initialize route builder after obstacles are loaded
-                if (routeBuilderRef.current) {
-                    routeBuilderRef.current.initializePathfinding();
-                }
             });
         }
     }, [shopId]);
@@ -80,14 +75,23 @@ export default function MapImage({
 
     useEffect(() => {
         SetupMap(map, mapImageUrl);
-        
+    }, [map, mapImageUrl]);
+
+    useEffect(() => {
+        if (!obstaclesLoaded) return;
+
+        // Re-initialize route builder after obstacles are loaded
+        if (routeBuilderRef.current) {
+            routeBuilderRef.current.initializePathfinding();
+        }
+
         // Визуализация препятствий в режиме отладки
         if (OBSTACLE_MAP.debugMode) {
             visualizeObstacles(map);
             console.log('🔴 Obstacle visualization enabled - red rectangles show obstacles');
             console.log('📍 Obstacles:', OBSTACLE_MAP.obstacles);
         }
-    }, [map]);
+    }, [obstaclesLoaded, map]);
 
     // Обработка кликов по кнопкам "Построить маршрут" в popup
     useEffect(() => {

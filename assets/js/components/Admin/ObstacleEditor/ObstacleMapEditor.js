@@ -1,98 +1,61 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './ObstacleEditor.css';
 
+// Global map instance to survive React StrictMode
+let globalMapInstance = null;
+let globalMapContainer = null;
+
 const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
-    const mapRef = useRef(null);
-    const [map, setMap] = useState(null);
+    const mapContainerRef = useRef(null);
     const [obstacles, setObstacles] = useState([]);
-    const [isDrawing, setIsDrawing] = useState(false);
     const [drawingMode, setDrawingMode] = useState(false);
-    const [currentRect, setCurrentRect] = useState(null);
-    const [startPoint, setStartPoint] = useState(null);
     const [selectedType, setSelectedType] = useState('shelf');
     const [layers, setLayers] = useState([]);
     const [saving, setSaving] = useState(false);
+    const [mapReady, setMapReady] = useState(false);
+
+    const isDrawingRef = useRef(false);
+    const startPointRef = useRef(null);
+    const currentRectRef = useRef(null);
+    const imageBoundsRef = useRef([[0, 0], [mapHeight, mapWidth]]);
+
+    console.log('🗺️ ObstacleMapEditor render:', { shopId, mapImageUrl, mapWidth, mapHeight, mapReady, globalMapInstance: !!globalMapInstance });
 
     useEffect(() => {
-        if (!mapRef.current || map) return;
+        const prevBodyOverflowX = document.body.style.overflowX;
+        const prevHtmlOverflowX = document.documentElement.style.overflowX;
 
-        // Coordinate system: Top-Left is [0, 0], Bottom-Right is [-mapHeight, mapWidth]
-        const imageBounds = [[-mapHeight, 0], [0, mapWidth]];
-        
-        const leafletMap = L.map(mapRef.current, {
-            crs: L.CRS.Simple,
-            minZoom: -2,
-            maxZoom: 1,
-            // Start centered on the image
-            center: [-mapHeight / 2, mapWidth / 2],
-            zoom: 0,
-            zoomControl: true,
-            // Increased viscosity for smoother bounds
-            maxBoundsViscosity: 1.0,
-            // Allow a bit of padding so markers are visible
-            maxBounds: [[-mapHeight - 100, -100], [100, mapWidth + 100]]
-        });
-
-        L.imageOverlay(mapImageUrl, imageBounds, {
-            interactive: true,
-            opacity: 1
-        }).addTo(leafletMap);
-        
-        // Debug: Add corner markers to visualize coordinate system
-        // Red: Top-Left (DB: 0,0) - SHOULD BE TOP LEFT OF IMAGE
-        L.circleMarker([0, 0], {
-            radius: 8,
-            color: 'red',
-            fillColor: 'red',
-            fillOpacity: 1
-        }).addTo(leafletMap).bindPopup('Top Left (DB: 0,0)');
-        
-        // Green: Top-Right (DB: 0,W) - SHOULD BE TOP RIGHT OF IMAGE
-        L.circleMarker([0, mapWidth], {
-            radius: 8,
-            color: 'green',
-            fillColor: 'green',
-            fillOpacity: 1
-        }).addTo(leafletMap).bindPopup(`Top Right (DB: 0,${mapWidth})`);
-        
-        // Blue: Bottom-Left (DB: H,0) - SHOULD BE BOTTOM LEFT OF IMAGE
-        L.circleMarker([-mapHeight, 0], {
-            radius: 8,
-            color: 'blue',
-            fillColor: 'blue',
-            fillOpacity: 1
-        }).addTo(leafletMap).bindPopup(`Bottom Left (DB: ${mapHeight},0)`);
-        
-        // Yellow: Bottom-Right (DB: H,W) - SHOULD BE BOTTOM RIGHT OF IMAGE
-        L.circleMarker([-mapHeight, mapWidth], {
-            radius: 8,
-            color: 'yellow',
-            fillColor: 'yellow',
-            fillOpacity: 1
-        }).addTo(leafletMap).bindPopup(`Bottom Right (DB: ${mapHeight},${mapWidth})`);
-        
-        leafletMap.fitBounds(imageBounds);
-
-        // Force refresh size and bounds after a short delay
-        setTimeout(() => {
-            leafletMap.invalidateSize();
-            leafletMap.fitBounds(imageBounds, { animate: false });
-        }, 100);
-
-        setMap(leafletMap);
+        document.body.style.overflowX = 'hidden';
+        document.documentElement.style.overflowX = 'hidden';
 
         return () => {
-            leafletMap.remove();
+            document.body.style.overflowX = prevBodyOverflowX;
+            document.documentElement.style.overflowX = prevHtmlOverflowX;
         };
+    }, []);
+
+    // Cleanup map on actual component unmount
+    useEffect(() => {
+        return () => {
+            console.log('🧹 Component unmounting - keeping global map');
+            // Don't remove global map - it should survive React StrictMode
+        };
+    }, []);
+
+    useLayoutEffect(() => {
+        if (!mapContainerRef.current) return;
+        
+        console.log('✅ Map initialized without Leaflet');
+        setMapReady(true);
     }, [mapImageUrl, mapWidth, mapHeight]);
 
     useEffect(() => {
-        if (!map) return;
+        if (!mapReady) return;
 
         loadObstacles();
-    }, [map, shopId]);
+    }, [mapReady, shopId]);
 
     const loadObstacles = async () => {
         try {
@@ -109,33 +72,67 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
     };
 
     const addObstacleToMap = (obstacle) => {
-        // Transform DB coords (Y=0 at top) to Leaflet coords (negative Y space)
-        // DB: Y=0 is top -> Leaflet: Y=-mapHeight is top
-        const leafletY = -obstacle.y;
-        const bounds = [
-            [leafletY - obstacle.height, obstacle.x],
-            [leafletY, obstacle.x + obstacle.width]
-        ];
-
-        const color = getColorByType(obstacle.type);
-
-        const rectangle = L.rectangle(bounds, {
-            color: color,
-            weight: 2,
-            fillColor: color,
-            fillOpacity: 0.3
-        }).addTo(map);
-
-        rectangle.obstacleId = obstacle.id;
-        rectangle.obstacleData = obstacle;
-
-        rectangle.on('click', () => {
+        if (!mapContainerRef.current) return;
+        
+        console.log('🟦 Adding obstacle to map:', obstacle);
+        
+        // Get the actual displayed image element
+        const container = mapContainerRef.current;
+        const img = container.querySelector('img');
+        if (!img) return;
+        
+        // Calculate the actual displayed dimensions and position of the image
+        const imgRect = img.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        
+        // Calculate scale based on actual displayed image vs original dimensions
+        const scaleX = imgRect.width / mapWidth;
+        const scaleY = imgRect.height / mapHeight;
+        const scale = Math.min(scaleX, scaleY); // Should be the same for both axes
+        
+        // Calculate offset of image within container
+        const offsetX = imgRect.left - containerRect.left;
+        const offsetY = imgRect.top - containerRect.top;
+        
+        console.log('🟦 Image dimensions:', {
+            displayed: { width: imgRect.width, height: imgRect.height },
+            original: { width: mapWidth, height: mapHeight },
+            scale,
+            offset: { x: offsetX, y: offsetY }
+        });
+        
+        // Create obstacle element
+        const obstacleEl = document.createElement('div');
+        obstacleEl.className = 'obstacle-absolute';
+        obstacleEl.style.position = 'absolute';
+        obstacleEl.style.left = `${offsetX + obstacle.x * scale}px`;
+        obstacleEl.style.top = `${offsetY + obstacle.y * scale}px`;
+        obstacleEl.style.width = `${obstacle.width * scale}px`;
+        obstacleEl.style.height = `${obstacle.height * scale}px`;
+        obstacleEl.style.border = `3px solid ${getColorByType(obstacle.type)}`;
+        obstacleEl.style.backgroundColor = getColorByType(obstacle.type);
+        obstacleEl.style.opacity = '0.5';
+        obstacleEl.style.pointerEvents = 'auto';
+        obstacleEl.style.cursor = 'pointer';
+        obstacleEl.style.zIndex = '10';
+        obstacleEl.dataset.obstacleId = obstacle.id;
+        
+        // Add click handler
+        obstacleEl.addEventListener('click', () => {
             if (!drawingMode) {
-                handleObstacleClick(obstacle, rectangle);
+                handleObstacleClick(obstacle, obstacleEl);
             }
         });
-
-        setLayers(prev => [...prev, rectangle]);
+        
+        container.appendChild(obstacleEl);
+        
+        console.log('🟦 Obstacle positioned at:', {
+            left: obstacleEl.style.left,
+            top: obstacleEl.style.top,
+            width: obstacleEl.style.width,
+            height: obstacleEl.style.height,
+            scale
+        });
     };
 
     const getColorByType = (type) => {
@@ -154,16 +151,17 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
         }
     };
 
-    const deleteObstacle = async (obstacleId, layer) => {
+    const deleteObstacle = async (obstacleId, element) => {
         try {
             const response = await fetch(`/api/shops/${shopId}/obstacles/${obstacleId}`, {
                 method: 'DELETE'
             });
 
             if (response.ok) {
-                map.removeLayer(layer);
+                if (element && element.remove) {
+                    element.remove();
+                }
                 setObstacles(prev => prev.filter(o => o.id !== obstacleId));
-                setLayers(prev => prev.filter(l => l !== layer));
             }
         } catch (error) {
             console.error('Failed to delete obstacle:', error);
@@ -173,160 +171,131 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
 
     const toggleDrawingMode = () => {
         setDrawingMode(!drawingMode);
-        if (!drawingMode) {
-            map.dragging.disable();
-            map.scrollWheelZoom.disable();
-            map.doubleClickZoom.disable();
-            map.getContainer().style.cursor = 'crosshair';
-        } else {
-            map.dragging.enable();
-            map.scrollWheelZoom.enable();
-            map.doubleClickZoom.enable();
-            map.getContainer().style.cursor = '';
-            if (currentRect) {
-                map.removeLayer(currentRect);
-                setCurrentRect(null);
-            }
-        }
     };
 
-    // Ctrl key requirement for map navigation when not in drawing mode
     useEffect(() => {
-        if (!map || drawingMode) return;
+        if (!mapContainerRef.current || !drawingMode) return;
 
-        const handleKeyDown = (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                map.scrollWheelZoom.enable();
-                map.dragging.enable();
-            }
+        const container = mapContainerRef.current;
+        const img = container.querySelector('img');
+        if (!img) return;
+
+        // Get image dimensions and calculate scale
+        const imgRect = img.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const scaleX = imgRect.width / mapWidth;
+        const scaleY = imgRect.height / mapHeight;
+        const scale = Math.min(scaleX, scaleY);
+        const offsetX = imgRect.left - containerRect.left;
+        const offsetY = imgRect.top - containerRect.top;
+
+        const getMapCoordinates = (clientX, clientY) => {
+            const x = Math.round((clientX - containerRect.left - offsetX) / scale);
+            const y = Math.round((clientY - containerRect.top - offsetY) / scale);
+            return { x: Math.max(0, Math.min(mapWidth, x)), y: Math.max(0, Math.min(mapHeight, y)) };
         };
 
-        const handleKeyUp = (e) => {
-            if (!e.ctrlKey && !e.metaKey) {
-                map.scrollWheelZoom.disable();
-                map.dragging.disable();
-            }
+        const createPreviewRect = (x1, y1, x2, y2) => {
+            const rect = document.createElement('div');
+            rect.className = 'drawing-preview';
+            rect.style.position = 'absolute';
+            rect.style.border = `2px dashed ${getColorByType(selectedType)}`;
+            rect.style.backgroundColor = getColorByType(selectedType);
+            rect.style.opacity = '0.3';
+            rect.style.pointerEvents = 'none';
+            rect.style.zIndex = '20';
+            container.appendChild(rect);
+            return rect;
         };
-
-        // Disable by default
-        map.scrollWheelZoom.disable();
-        map.dragging.disable();
-
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('keyup', handleKeyUp);
-
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-            window.removeEventListener('keyup', handleKeyUp);
-        };
-    }, [map, drawingMode]);
-
-    useEffect(() => {
-        if (!map || !drawingMode) return;
 
         const handleMouseDown = (e) => {
-            e.originalEvent.preventDefault();
-            e.originalEvent.stopPropagation();
-            setIsDrawing(true);
-            setStartPoint(e.latlng);
+            const coords = getMapCoordinates(e.clientX, e.clientY);
+            isDrawingRef.current = true;
+            startPointRef.current = coords;
+
+            // Create preview rectangle
+            currentRectRef.current = createPreviewRect(
+                offsetX + coords.x * scale,
+                offsetY + coords.y * scale,
+                offsetX + coords.x * scale,
+                offsetY + coords.y * scale
+            );
         };
 
         const handleMouseMove = (e) => {
-            if (!isDrawing || !startPoint) return;
-            
-            e.originalEvent.preventDefault();
-            e.originalEvent.stopPropagation();
+            if (!isDrawingRef.current || !startPointRef.current || !currentRectRef.current) return;
 
-            if (currentRect) {
-                map.removeLayer(currentRect);
-            }
+            const coords = getMapCoordinates(e.clientX, e.clientY);
+            const start = startPointRef.current;
 
-            const bounds = [
-                [Math.min(startPoint.lat, e.latlng.lat), Math.min(startPoint.lng, e.latlng.lng)],
-                [Math.max(startPoint.lat, e.latlng.lat), Math.max(startPoint.lng, e.latlng.lng)]
-            ];
+            const x1 = Math.min(start.x, coords.x);
+            const y1 = Math.min(start.y, coords.y);
+            const x2 = Math.max(start.x, coords.x);
+            const y2 = Math.max(start.y, coords.y);
 
-            const rect = L.rectangle(bounds, {
-                color: getColorByType(selectedType),
-                weight: 2,
-                fillColor: getColorByType(selectedType),
-                fillOpacity: 0.3,
-                dashArray: '5, 5'
-            }).addTo(map);
-
-            setCurrentRect(rect);
+            currentRectRef.current.style.left = `${offsetX + x1 * scale}px`;
+            currentRectRef.current.style.top = `${offsetY + y1 * scale}px`;
+            currentRectRef.current.style.width = `${(x2 - x1) * scale}px`;
+            currentRectRef.current.style.height = `${(y2 - y1) * scale}px`;
         };
 
         const handleMouseUp = async (e) => {
-            if (!isDrawing || !startPoint) return;
-            
-            e.originalEvent.preventDefault();
-            e.originalEvent.stopPropagation();
+            if (!isDrawingRef.current || !startPointRef.current) return;
 
-            setIsDrawing(false);
+            const coords = getMapCoordinates(e.clientX, e.clientY);
+            const start = startPointRef.current;
 
-            // Leaflet coords: Y ranges from -mapHeight (top) to 0 (bottom)
-            // DB coords: Y ranges from 0 (top) to mapHeight (bottom)
-            const leafletY1 = Math.max(-mapHeight, Math.min(0, Math.round(startPoint.lat)));
-            const leafletY2 = Math.max(-mapHeight, Math.min(0, Math.round(e.latlng.lat)));
-            const x1 = Math.max(0, Math.min(mapWidth, Math.round(startPoint.lng)));
-            const x2 = Math.max(0, Math.min(mapWidth, Math.round(e.latlng.lng)));
-            
-            // Convert Leaflet Y (negative) to DB Y (positive from top)
-            const dbY1 = -leafletY1;
-            const dbY2 = -leafletY2;
-            
-            const x = Math.min(x1, x2);
-            const y = Math.min(dbY1, dbY2);
-            const width = Math.abs(x2 - x1);
-            const height = Math.abs(dbY2 - dbY1);
+            isDrawingRef.current = false;
 
-            console.log('Mouse coords:', {
-                leaflet: { y1: leafletY1, y2: leafletY2 },
-                db: { y1: dbY1, y2: dbY2 },
-                final: { x, y, width, height }
-            });
-            
-            // Show debug marker where obstacle will be drawn (in Leaflet coords)
-            const debugLeafletY = -y;
-            const debugMarker = L.circleMarker([debugLeafletY, x], {
-                radius: 8,
-                color: '#00ff00',
-                fillColor: '#00ff00',
-                fillOpacity: 0.8
-            }).addTo(map);
-            
-            setTimeout(() => map.removeLayer(debugMarker), 2000);
+            const x1 = Math.min(start.x, coords.x);
+            const y1 = Math.min(start.y, coords.y);
+            const x2 = Math.max(start.x, coords.x);
+            const y2 = Math.max(start.y, coords.y);
 
-            if (width > 10 && height > 10) {
+            const x = x1;
+            const y = y1;
+            const width = x2 - x1;
+            const height = y2 - y1;
+
+            console.log('🟢 mouseup - calculated obstacle:', { x, y, width, height });
+
+            // Remove preview
+            if (currentRectRef.current) {
+                currentRectRef.current.remove();
+                currentRectRef.current = null;
+            }
+
+            if (width > 20 && height > 20) {
                 await createObstacle({ x, y, width, height, type: selectedType });
             } else {
                 console.warn('Obstacle too small:', { width, height });
             }
 
-            if (currentRect) {
-                map.removeLayer(currentRect);
-                setCurrentRect(null);
-            }
-
-            setStartPoint(null);
+            startPointRef.current = null;
         };
 
-        map.on('mousedown', handleMouseDown);
-        map.on('mousemove', handleMouseMove);
-        map.on('mouseup', handleMouseUp);
+        container.addEventListener('mousedown', handleMouseDown);
+        container.addEventListener('mousemove', handleMouseMove);
+        container.addEventListener('mouseup', handleMouseUp);
+        container.addEventListener('mouseleave', handleMouseUp);
 
         return () => {
-            map.off('mousedown', handleMouseDown);
-            map.off('mousemove', handleMouseMove);
-            map.off('mouseup', handleMouseUp);
+            container.removeEventListener('mousedown', handleMouseDown);
+            container.removeEventListener('mousemove', handleMouseMove);
+            container.removeEventListener('mouseup', handleMouseUp);
+            container.removeEventListener('mouseleave', handleMouseUp);
+
+            if (currentRectRef.current) {
+                currentRectRef.current.remove();
+                currentRectRef.current = null;
+            }
         };
-    }, [map, drawingMode, isDrawing, startPoint, currentRect, selectedType]);
+    }, [drawingMode, selectedType, mapWidth, mapHeight]);
 
     const createObstacle = async (obstacleData) => {
         try {
             console.log('Sending obstacle data:', obstacleData);
-            
+
             const response = await fetch(`/api/shops/${shopId}/obstacles`, {
                 method: 'POST',
                 headers: {
@@ -337,17 +306,18 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
 
             if (response.ok) {
                 const newObstacle = await response.json();
-                console.log('Obstacle created:', newObstacle);
-                setObstacles(prev => [...prev, newObstacle]);
+                console.log('✅ Obstacle created successfully:', newObstacle);
                 addObstacleToMap(newObstacle);
+                setObstacles(prev => [...prev, newObstacle]);
             } else {
-                const error = await response.json();
-                console.error('Failed to create obstacle:', error);
-                alert('Failed to create obstacle: ' + JSON.stringify(error));
+                console.error('❌ Failed to create obstacle:', response.status, response.statusText);
+                const errorText = await response.text();
+                console.error('Error response:', errorText);
+                alert(`Failed to create obstacle: ${response.status} ${response.statusText}`);
             }
         } catch (error) {
-            console.error('Failed to create obstacle:', error);
-            alert('Failed to create obstacle: ' + error.message);
+            console.error('❌ Failed to create obstacle:', error);
+            alert('Failed to create obstacle');
         }
     };
 
@@ -362,8 +332,12 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
                 });
             }
 
-            layers.forEach(layer => map.removeLayer(layer));
-            setLayers([]);
+            // Remove all obstacle elements
+            if (mapContainerRef.current) {
+                const obstacleElements = mapContainerRef.current.querySelectorAll('.obstacle-absolute');
+                obstacleElements.forEach(el => el.remove());
+            }
+
             setObstacles([]);
         } catch (error) {
             console.error('Failed to clear obstacles:', error);
@@ -376,7 +350,7 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
         <div className="obstacle-editor">
             <div className="editor-toolbar">
                 <h3>Obstacle Map Editor</h3>
-                
+
                 <div className="toolbar-section">
                     <label>Obstacle Type:</label>
                     <select 
@@ -424,7 +398,22 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
             </div>
 
             <div className="map-container-wrapper" style={{ position: 'relative', maxWidth: '100%', overflow: 'hidden' }}>
-                <div className="map-container" ref={mapRef} style={{ height: '70vh', minHeight: '500px', maxHeight: '800px', width: '100%', overflow: 'hidden', border: '2px solid #ccc', position: 'relative', boxSizing: 'border-box' }}></div>
+                <div className="map-container" ref={mapContainerRef} style={{ height: '70vh', minHeight: '500px', maxHeight: '800px', width: '100%', overflow: 'hidden', border: '2px solid #ccc', position: 'relative', boxSizing: 'border-box' }}>
+                    <img 
+                        src={mapImageUrl} 
+                        alt="Map" 
+                        style={{ 
+                            position: 'absolute', 
+                            top: '0px', 
+                            left: '0px', 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'contain',
+                            pointerEvents: 'none',
+                            zIndex: 1
+                        }} 
+                    />
+                </div>
             </div>
         </div>
     );

@@ -1,0 +1,27 @@
+{% set shop = entity.instance %}
+
+{% if shop.mapImage %}
+    <div id="obstacle-editor-root" 
+         data-shop-id="{{ shop.id }}"
+         data-map-url="/img/{{ shop.mapImage }}"
+         data-map-width="1653"
+         data-map-height="993">
+        <div style="text-align: center; padding: 40px;">
+            <i class="fa fa-spinner fa-spin fa-3x"></i>
+            <p>Loading map editor...</p>
+        </div>
+    </div>
+
+    {% block body_javascript %}
+        {{ encore_entry_script_tags('admin-map-editor') }}
+    {% endblock %}
+
+    {% block body_stylesheets %}
+        {{ encore_entry_link_tags('admin-map-editor') }}
+    {% endblock %}
+{% else %}
+    <div class="alert alert-warning">
+        <i class="fa fa-exclamation-triangle"></i>
+        Для этого магазина не загружена карта. Пожалуйста, загрузите карту в поле "Имя файла карты магазина" выше и сохраните изменения.
+    </div>
+{% endif %}

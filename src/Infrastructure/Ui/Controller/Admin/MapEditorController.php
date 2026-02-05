@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Ui\Controller\Admin;
 
 use App\Domain\Repository\ShopRepositoryInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,7 +12,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class MapEditorController extends AbstractController
 {
     public function __construct(
-        private ShopRepositoryInterface $shopRepository
+        private ShopRepositoryInterface $shopRepository,
+        private AdminUrlGenerator $adminUrlGenerator
     ) {
     }
 
@@ -28,17 +30,19 @@ class MapEditorController extends AbstractController
         
         if (!$mapImage) {
             $this->addFlash('warning', 'Для этого магазина не загружена карта. Пожалуйста, загрузите карту в поле "Имя файла карты магазина".');
-            return $this->redirectToRoute('admin', [
-                'crudAction' => 'edit',
-                'crudControllerFqcn' => 'App\\Infrastructure\\Ui\\Controller\\Admin\\ShopCrudController',
-                'entityId' => $id,
-            ]);
+            return $this->redirect(
+                $this->adminUrlGenerator
+                    ->setController('App\\Infrastructure\\Ui\\Controller\\Admin\\ShopCrudController')
+                    ->setAction('edit')
+                    ->setEntityId($id)
+                    ->generateUrl()
+            );
         }
 
         return $this->render('admin/map_editor/edit.html.twig', [
             'shop' => $shop,
             'mapImageUrl' => '/img/' . $mapImage,
-            'mapWidth' => 1653, // TODO: можно добавить эти параметры в Shop entity
+            'mapWidth' => 1653,
             'mapHeight' => 993,
         ]);
     }
