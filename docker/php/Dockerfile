@@ -7,8 +7,10 @@ RUN apk add --no-cache \
     bash \
     git \
     icu-dev \
+    imagemagick \
     libpq-dev \
     libzip-dev \
+    poppler-utils \
     zip \
     unzip
 

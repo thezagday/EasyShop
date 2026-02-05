@@ -53,6 +53,27 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
 
     useEffect(() => {
         if (!mapReady) return;
+        if (!mapContainerRef.current) return;
+
+        const container = mapContainerRef.current;
+        const bgImg = container.querySelector('img[data-map-editor-bg="true"]');
+
+        container.querySelectorAll('img').forEach((img) => {
+            if (bgImg && img === bgImg) return;
+            img.remove();
+        });
+
+        container.querySelectorAll('svg').forEach((svg) => {
+            svg.remove();
+        });
+
+        container.querySelectorAll('.leaflet-container, .leaflet-pane').forEach((el) => {
+            el.remove();
+        });
+    }, [mapReady, mapImageUrl]);
+
+    useEffect(() => {
+        if (!mapReady) return;
 
         loadObstacles();
     }, [mapReady, shopId]);
@@ -76,26 +97,19 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
         
         console.log('🟦 Adding obstacle to map:', obstacle);
         
-        // Get the actual displayed image element
         const container = mapContainerRef.current;
-        const img = container.querySelector('img');
-        if (!img) return;
-        
-        // Calculate the actual displayed dimensions and position of the image
-        const imgRect = img.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        
-        // Calculate scale based on actual displayed image vs original dimensions
-        const scaleX = imgRect.width / mapWidth;
-        const scaleY = imgRect.height / mapHeight;
-        const scale = Math.min(scaleX, scaleY); // Should be the same for both axes
-        
-        // Calculate offset of image within container
-        const offsetX = imgRect.left - containerRect.left;
-        const offsetY = imgRect.top - containerRect.top;
+
+        // With object-fit: contain the <img> element fills the container, but the actual
+        // rendered image can have internal padding. Calculate the rendered content box.
+        const scale = Math.min(containerRect.width / mapWidth, containerRect.height / mapHeight);
+        const renderedWidth = mapWidth * scale;
+        const renderedHeight = mapHeight * scale;
+        const offsetX = (containerRect.width - renderedWidth) / 2;
+        const offsetY = (containerRect.height - renderedHeight) / 2;
         
         console.log('🟦 Image dimensions:', {
-            displayed: { width: imgRect.width, height: imgRect.height },
+            displayed: { width: renderedWidth, height: renderedHeight },
             original: { width: mapWidth, height: mapHeight },
             scale,
             offset: { x: offsetX, y: offsetY }
@@ -177,17 +191,13 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
         if (!mapContainerRef.current || !drawingMode) return;
 
         const container = mapContainerRef.current;
-        const img = container.querySelector('img');
-        if (!img) return;
-
-        // Get image dimensions and calculate scale
-        const imgRect = img.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        const scaleX = imgRect.width / mapWidth;
-        const scaleY = imgRect.height / mapHeight;
-        const scale = Math.min(scaleX, scaleY);
-        const offsetX = imgRect.left - containerRect.left;
-        const offsetY = imgRect.top - containerRect.top;
+
+        const scale = Math.min(containerRect.width / mapWidth, containerRect.height / mapHeight);
+        const renderedWidth = mapWidth * scale;
+        const renderedHeight = mapHeight * scale;
+        const offsetX = (containerRect.width - renderedWidth) / 2;
+        const offsetY = (containerRect.height - renderedHeight) / 2;
 
         const getMapCoordinates = (clientX, clientY) => {
             const x = Math.round((clientX - containerRect.left - offsetX) / scale);
@@ -400,6 +410,7 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
             <div className="map-container-wrapper" style={{ position: 'relative', maxWidth: '100%', overflow: 'hidden' }}>
                 <div className="map-container" ref={mapContainerRef} style={{ height: '70vh', minHeight: '500px', maxHeight: '800px', width: '100%', overflow: 'hidden', border: '2px solid #ccc', position: 'relative', boxSizing: 'border-box' }}>
                     <img 
+                        data-map-editor-bg="true"
                         src={mapImageUrl} 
                         alt="Map" 
                         style={{ 

@@ -213,18 +213,22 @@ export class DirectRouteBuilder {
 
         console.log('✅ Path found with', path.length, 'points');
 
+        const smoothedGridPath = this.pathfinding.smoothPathOnGrid(path);
+        const finalGridPath = smoothedGridPath || path;
+
         // Convert grid path back to Leaflet coordinates
         // PathfindingService returns [y, x], convert to Leaflet [lat, lng]
-        const leafletPath = path.map(([gridY, gridX]) => [
-            gridY * gridCellSize,  // lat = gridY * cellSize
-            gridX * gridCellSize   // lng = gridX * cellSize
+        const leafletPath = finalGridPath.map(([gridY, gridX]) => [
+            (gridY + 0.5) * gridCellSize,
+            (gridX + 0.5) * gridCellSize
         ]);
 
-        // Smooth the path for better visual appearance
-        // More iterations = smoother but potentially less accurate path
-        const smoothedPath = this.pathfinding.smoothPath(leafletPath, 5);
-        
-        return smoothedPath || leafletPath;
+        if (leafletPath.length > 0) {
+            leafletPath[0] = [startCoords.lat, startCoords.lng];
+            leafletPath[leafletPath.length - 1] = [endCoords.lat, endCoords.lng];
+        }
+
+        return leafletPath;
     }
 
     buildMultiWaypointPath(waypoints) {

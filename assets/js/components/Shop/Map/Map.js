@@ -114,6 +114,8 @@ export default function Map({
             <MapContainer
                 minZoom={-1}
                 crs={CRS.Simple}
+                zoomSnap={0}
+                zoomDelta={0.25}
                 maxBoundsViscosity={1}
                 boundsOptions={{ padding: [50, 50] }}
                 style={{ height: '100%', width: '100%' }}
@@ -121,7 +123,9 @@ export default function Map({
             >
                 <MapImage
                     shopId={shopId}
-                    mapImageUrl={shop?.mapImage ? `/img/${shop.mapImage}` : '/img/map.svg'}
+                    mapImageUrl={shop?.mapImage
+                        ? `/img/${shop.mapImage}`
+                        : '/img/map.svg'}
                     isBuildRouteClicked={isBuildRouteClicked}
                     categories={categories}
                     source={routeSource || source}

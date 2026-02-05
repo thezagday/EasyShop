@@ -9,17 +9,44 @@ L.Icon.Default.mergeOptions({
 
 export function SetupMap(map, mapImageUrl = "/img/map.svg") {
     const bounds = [[0, 0], [993, 1653]];
+
+    if (map.__easyShopBaseImageOverlay) {
+        map.removeLayer(map.__easyShopBaseImageOverlay);
+        map.__easyShopBaseImageOverlay = null;
+    }
+
+    if (map.__easyShopCurrentLocationMarker) {
+        map.removeLayer(map.__easyShopCurrentLocationMarker);
+        map.__easyShopCurrentLocationMarker = null;
+    }
+
     const image = L.imageOverlay(mapImageUrl, bounds, {
-        opacity: 0.85,
+        opacity: 1,
+        className: 'map-image-overlay',
         interactive: false
     }).addTo(map);
 
-    map.fitBounds(image.getBounds());
-    map.setMaxBounds(map.getBounds());
-    
-    // Улучшенные настройки карты
-    map.setMinZoom(-1);
-    map.setMaxZoom(3);
+    map.__easyShopBaseImageOverlay = image;
+
+    const padding = [60, 60];
+
+    const applyInitialView = () => {
+        map.setMaxBounds(bounds);
+        map.fitBounds(image.getBounds(), { padding });
+
+        const fitZoom = map.getBoundsZoom(bounds, false, padding);
+
+        map.setMinZoom(fitZoom - 2);
+        map.setMaxZoom(fitZoom + 4);
+        map.setZoom(fitZoom);
+    };
+
+    applyInitialView();
+
+    setTimeout(() => {
+        map.invalidateSize();
+        applyInitialView();
+    }, 0);
     
     // Добавляем плавную анимацию при перемещении
     map.options.zoomAnimation = true;
@@ -43,6 +70,8 @@ export function SetupMap(map, mapImageUrl = "/img/map.svg") {
         }),
         zIndexOffset: 10000
     }).addTo(map);
+
+    map.__easyShopCurrentLocationMarker = currentLocationMarker;
     
     // Создаем интерактивный слой для будущего использования
     const interactiveLayer = new InteractiveLayer(map);

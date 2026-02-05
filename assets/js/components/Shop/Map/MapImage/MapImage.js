@@ -85,12 +85,7 @@ export default function MapImage({
             routeBuilderRef.current.initializePathfinding();
         }
 
-        // Визуализация препятствий в режиме отладки
-        if (OBSTACLE_MAP.debugMode) {
-            visualizeObstacles(map);
-            console.log('🔴 Obstacle visualization enabled - red rectangles show obstacles');
-            console.log('📍 Obstacles:', OBSTACLE_MAP.obstacles);
-        }
+        visualizeObstacles(map);
     }, [obstaclesLoaded, map]);
 
     // Обработка кликов по кнопкам "Построить маршрут" в popup

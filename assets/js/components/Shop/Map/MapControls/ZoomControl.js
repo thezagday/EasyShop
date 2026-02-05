@@ -16,7 +16,7 @@ export function ZoomControl({ map }) {
     const handleResetView = () => {
         if (map) {
             const bounds = [[0, 0], [993, 1653]];
-            map.fitBounds(bounds);
+            map.fitBounds(bounds, { padding: [60, 60] });
         }
     };
 

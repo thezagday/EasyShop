@@ -65,6 +65,25 @@ export class PathfindingService {
         return this.grid.isWalkableAt(x, y);
     }
 
+    smoothPathOnGrid(pathYX) {
+        if (!pathYX || pathYX.length < 3) {
+            return pathYX;
+        }
+        if (!this.grid) {
+            return pathYX;
+        }
+
+        const pathXY = pathYX.map(([y, x]) => [x, y]);
+        const gridCopy = this.grid.clone();
+        const smoothedXY = PF.Util.smoothenPath(gridCopy, pathXY);
+
+        if (!smoothedXY || smoothedXY.length === 0) {
+            return pathYX;
+        }
+
+        return smoothedXY.map(([x, y]) => [y, x]);
+    }
+
     smoothPath(path, iterations = 2) {
         if (!path || path.length < 3) {
             return path;

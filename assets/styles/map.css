@@ -608,6 +608,24 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
+.leaflet-container {
+    background: #ffffff;
+}
+
+.leaflet-container img,
+.leaflet-container svg,
+.leaflet-image-layer,
+.leaflet-overlay-pane svg,
+.map-image-overlay {
+    max-width: none !important;
+    max-height: none !important;
+}
+
+.map-image-overlay {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
 .shop-popup {
     padding: 20px;
     min-width: 250px;

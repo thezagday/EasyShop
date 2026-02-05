@@ -12,7 +12,7 @@ export const OBSTACLE_MAP = {
     
     // Размер сетки для pathfinding (чем меньше - тем точнее, но медленнее)
     // Увеличен для более плавных маршрутов
-    gridCellSize: 20, // 20 пикселей = 1 клетка сетки
+    gridCellSize: 10, // 20 пикселей = 1 клетка сетки
     
     // Препятствия (стеллажи, стены) - загружаются из API
     obstacles: [],
@@ -21,6 +21,20 @@ export const OBSTACLE_MAP = {
     // Если не указаны - вся карта проходима кроме obstacles
     walkableAreas: null // null = вся карта проходима (кроме obstacles)
 };
+
+function getLeafletObstacleBounds(obs) {
+    const y = OBSTACLE_MAP.mapHeight - (obs.y + obs.height);
+    return {
+        x: obs.x,
+        y,
+        width: obs.width,
+        height: obs.height,
+        bounds: [
+            [y, obs.x],
+            [y + obs.height, obs.x + obs.width]
+        ]
+    };
+}
 
 // Загрузить препятствия из API для конкретного магазина
 export async function loadObstaclesForShop(shopId) {
@@ -83,39 +97,51 @@ export function generateWalkableGrid() {
         gridWidth,
         gridHeight,
         walkableAreas,
-        obstacles: OBSTACLE_MAP.obstacles.map(obs => ({
-            x: Math.floor(obs.x / OBSTACLE_MAP.gridCellSize),
-            y: Math.floor(obs.y / OBSTACLE_MAP.gridCellSize),
-            width: Math.ceil(obs.width / OBSTACLE_MAP.gridCellSize),
-            height: Math.ceil(obs.height / OBSTACLE_MAP.gridCellSize)
-        }))
+        obstacles: OBSTACLE_MAP.obstacles.map(obs => {
+            const t = getLeafletObstacleBounds(obs);
+            return {
+                x: Math.floor(t.x / OBSTACLE_MAP.gridCellSize),
+                y: Math.floor(t.y / OBSTACLE_MAP.gridCellSize),
+                width: Math.ceil(t.width / OBSTACLE_MAP.gridCellSize),
+                height: Math.ceil(t.height / OBSTACLE_MAP.gridCellSize)
+            };
+        })
     };
 }
 
 // Функция для проверки есть ли препятствие в точке
 export function hasObstacle(x, y) {
+    const yAdmin = OBSTACLE_MAP.mapHeight - y;
     return OBSTACLE_MAP.obstacles.some(obs => 
         x >= obs.x && x < obs.x + obs.width &&
-        y >= obs.y && y < obs.y + obs.height
+        yAdmin >= obs.y && yAdmin < obs.y + obs.height
     );
 }
 
 // Визуализация препятствий на карте (для отладки)
 export function visualizeObstacles(map) {
+    if (OBSTACLE_MAP._visualLayerGroup) {
+        map.removeLayer(OBSTACLE_MAP._visualLayerGroup);
+        OBSTACLE_MAP._visualLayerGroup = null;
+    }
+
+    const group = L.layerGroup();
+
     OBSTACLE_MAP.obstacles.forEach(obs => {
-        const bounds = [
-            [obs.y, obs.x],
-            [obs.y + obs.height, obs.x + obs.width]
-        ];
+        const { bounds } = getLeafletObstacleBounds(obs);
         
         const rectangle = L.rectangle(bounds, {
             color: '#ff0000',
-            weight: 1,
+            weight: 3,
             fillColor: '#ff0000',
-            fillOpacity: 0.2,
+            fillOpacity: 0.5,
             interactive: false
         });
         
-        rectangle.addTo(map);
+        rectangle.addTo(group);
     });
+
+    group.addTo(map);
+    OBSTACLE_MAP._visualLayerGroup = group;
+    return group;
 }

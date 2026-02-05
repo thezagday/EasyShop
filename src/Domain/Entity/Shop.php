@@ -29,6 +29,9 @@ class Shop
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $mapImage = null;
 
+    #[ORM\Column(name: 'pdf_file', length: 255, nullable: true)]
+    private ?string $pdfFile = null;
+
     #[ORM\ManyToOne(targetEntity: Retailer::class)]
     #[ORM\JoinColumn(name: 'retailer_id', referencedColumnName: 'id')]
     #[Ignore]
@@ -61,6 +64,18 @@ class Shop
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getPdfFile(): ?string
+    {
+        return $this->pdfFile;
+    }
+
+    public function setPdfFile(?string $pdfFile): self
+    {
+        $this->pdfFile = $pdfFile;
 
         return $this;
     }

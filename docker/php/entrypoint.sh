@@ -9,6 +9,10 @@ fi
 
 echo "Database is ready (guaranteed by Docker healthcheck)"
 
+mkdir -p public/img
+chown -R www-data:www-data public/img 2>/dev/null || true
+chmod -R ug+rwX,o+rX public/img 2>/dev/null || true
+
 # Create database and run migrations
 echo "Setting up database..."
 php bin/console doctrine:database:create --if-not-exists
