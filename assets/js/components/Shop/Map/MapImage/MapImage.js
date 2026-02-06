@@ -7,12 +7,13 @@ import {CategorySearch} from "./CategorySearch";
 import {CommoditySearch} from "./CommoditySearch";
 import {MultiCommoditySearch} from "./MultiCommoditySearch";
 import {DirectRouteBuilder} from "./DirectRouteBuilder";
-import {visualizeObstacles, OBSTACLE_MAP, loadObstaclesForShop} from "./ObstacleMap";
+import {OBSTACLE_MAP, loadObstaclesForShop} from "./ObstacleMap";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
 export default function MapImage({
     shopId,
+    shop,
     mapImageUrl,
     isBuildRouteClicked,
     categories,
@@ -48,7 +49,7 @@ export default function MapImage({
     }, [map]);
 
     // Показываем все категории с кастомными маркерами при загрузке
-    ShowAllCategories(map, categories);
+    ShowAllCategories(map, categories, shop);
     
     // CategorySearch(map, searchedCategory);
     CommoditySearch(map, searchedCategoryByCommodity);
@@ -74,7 +75,7 @@ export default function MapImage({
     }, [source, destination, map]);
 
     useEffect(() => {
-        SetupMap(map, mapImageUrl);
+        SetupMap(map, mapImageUrl, shop);
     }, [map, mapImageUrl]);
 
     useEffect(() => {
@@ -84,8 +85,6 @@ export default function MapImage({
         if (routeBuilderRef.current) {
             routeBuilderRef.current.initializePathfinding();
         }
-
-        visualizeObstacles(map);
     }, [obstaclesLoaded, map]);
 
     // Обработка кликов по кнопкам "Построить маршрут" в popup

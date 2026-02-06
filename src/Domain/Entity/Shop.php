@@ -45,6 +45,18 @@ class Shop
     #[Ignore]
     private Collection $obstacles;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $entranceX = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $entranceY = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $exitX = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $exitY = null;
+
     public function __construct()
     {
         $this->shopCategories = new ArrayCollection();
@@ -166,6 +178,50 @@ class Shop
             }
         }
 
+        return $this;
+    }
+
+    public function getEntranceX(): ?float
+    {
+        return $this->entranceX;
+    }
+
+    public function setEntranceX(?float $entranceX): self
+    {
+        $this->entranceX = $entranceX;
+        return $this;
+    }
+
+    public function getEntranceY(): ?float
+    {
+        return $this->entranceY;
+    }
+
+    public function setEntranceY(?float $entranceY): self
+    {
+        $this->entranceY = $entranceY;
+        return $this;
+    }
+
+    public function getExitX(): ?float
+    {
+        return $this->exitX;
+    }
+
+    public function setExitX(?float $exitX): self
+    {
+        $this->exitX = $exitX;
+        return $this;
+    }
+
+    public function getExitY(): ?float
+    {
+        return $this->exitY;
+    }
+
+    public function setExitY(?float $exitY): self
+    {
+        $this->exitY = $exitY;
         return $this;
     }
 

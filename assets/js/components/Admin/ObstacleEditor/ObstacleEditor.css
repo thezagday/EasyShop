@@ -14,13 +14,6 @@
     box-sizing: border-box;
 }
 
-.map-container-wrapper {
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
 .editor-toolbar {
     background: white;
     padding: 20px;
@@ -122,54 +115,47 @@
     font-weight: 600;
 }
 
-.map-container {
+/* Map wrapper — image sizes it, overlay sits on top */
+.obstacle-map-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 100%;
     border: 2px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    max-width: 100%;
     box-sizing: border-box;
+    background: #f8f9fa;
+    line-height: 0;
 }
 
-.obstacle-editor .leaflet-image-layer {
+.obstacle-map-image {
+    display: block;
+    width: 100%;
+    height: auto;
     pointer-events: none;
-    -webkit-user-drag: none;
     user-select: none;
 }
 
-.obstacle-editor .leaflet-container img,
-.obstacle-editor .leaflet-container svg {
-    max-width: none !important;
-    max-height: none !important;
+.obstacle-map-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
 }
 
-.obstacle-editor .leaflet-image-layer,
-.obstacle-editor .leaflet-overlay-pane svg {
-    max-width: none !important;
-    max-height: none !important;
-    width: auto !important;
-    height: auto !important;
+.obstacle-rect {
+    position: absolute;
+    opacity: 0.4;
+    border: 2px solid;
+    cursor: pointer;
+    z-index: 15;
+    box-sizing: border-box;
 }
 
-.obstacle-editor .leaflet-pane,
-.obstacle-editor .leaflet-overlay-pane {
-    z-index: 400;
-}
-
-.obstacle-editor .map-image-overlay {
-    max-width: none !important;
-    max-height: none !important;
-    width: auto !important;
-    height: auto !important;
-}
-
-.leaflet-container {
-    background: #f8f9fa;
-}
-
-/* Force SVG visibility */
-.obstacle-editor .leaflet-image-layer.map-image-overlay {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+.obstacle-rect:hover {
+    opacity: 0.6;
 }

@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { xy } from "../../../Utils/coordinateUtils";
+import { xy, adminToLeaflet } from "../../../Utils/coordinateUtils";
 import { PathfindingService } from "./PathfindingService";
 import { generateWalkableGrid, OBSTACLE_MAP } from "./ObstacleMap";
 
@@ -62,15 +62,15 @@ export class DirectRouteBuilder {
         // Check if sourceCoords is an array (multi-point route)
         if (Array.isArray(sourceCoords)) {
             // Multi-point route with pathfinding between each waypoint
-            const waypoints = sourceCoords.map(wp => xy(wp.x, wp.y));
+            const waypoints = sourceCoords.map(wp => adminToLeaflet(wp.x, wp.y));
             waypointNames = sourceCoords.map(wp => wp.name);
             
             // Build path through all waypoints
             routePoints = this.buildMultiWaypointPath(waypoints);
         } else {
             // Simple two-point route with pathfinding
-            const start = xy(sourceCoords.x, sourceCoords.y);
-            const end = xy(destCoords.x, destCoords.y);
+            const start = adminToLeaflet(sourceCoords.x, sourceCoords.y);
+            const end = adminToLeaflet(destCoords.x, destCoords.y);
             waypointNames = [sourceName, destName];
             
             // Use pathfinding to find route
@@ -101,8 +101,9 @@ export class DirectRouteBuilder {
         const explicitWaypoints = Array.isArray(sourceCoords) ? sourceCoords : [sourceCoords, destCoords];
         
         explicitWaypoints.forEach((wp, index) => {
+            const wpLeaflet = adminToLeaflet(wp.x, wp.y);
             const wpPoint = Array.isArray(sourceCoords) ? 
-                routePoints.find(p => Math.abs(p[0] - wp.y) < 1 && Math.abs(p[1] - wp.x) < 1) || [wp.y, wp.x] :
+                routePoints.find(p => Math.abs(p[0] - wpLeaflet.lat) < 1 && Math.abs(p[1] - wpLeaflet.lng) < 1) || [wpLeaflet.lat, wpLeaflet.lng] :
                 (index === 0 ? routePoints[0] : routePoints[routePoints.length - 1]);
             
             let markerIcon;
@@ -332,11 +333,10 @@ export class DirectRouteBuilder {
 
         this.map.getContainer().appendChild(infoPanel);
 
-        // Close button handler
+        // Close button handler — only hide the info panel, keep the route visible
         const closeBtn = infoPanel.querySelector('.route-info-close');
         closeBtn.addEventListener('click', () => {
             infoPanel.remove();
-            this.clearRoute();
         });
 
         // Auto-hide after 10 seconds

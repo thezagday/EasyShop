@@ -1,152 +1,29 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import React, { useState, useEffect, useRef } from 'react';
 import './ObstacleEditor.css';
 
-// Global map instance to survive React StrictMode
-let globalMapInstance = null;
-let globalMapContainer = null;
-
 const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
-    const mapContainerRef = useRef(null);
+    const overlayRef = useRef(null);
     const [obstacles, setObstacles] = useState([]);
     const [drawingMode, setDrawingMode] = useState(false);
     const [selectedType, setSelectedType] = useState('shelf');
-    const [layers, setLayers] = useState([]);
     const [saving, setSaving] = useState(false);
-    const [mapReady, setMapReady] = useState(false);
 
     const isDrawingRef = useRef(false);
     const startPointRef = useRef(null);
     const currentRectRef = useRef(null);
-    const imageBoundsRef = useRef([[0, 0], [mapHeight, mapWidth]]);
-
-    console.log('🗺️ ObstacleMapEditor render:', { shopId, mapImageUrl, mapWidth, mapHeight, mapReady, globalMapInstance: !!globalMapInstance });
 
     useEffect(() => {
-        const prevBodyOverflowX = document.body.style.overflowX;
-        const prevHtmlOverflowX = document.documentElement.style.overflowX;
-
-        document.body.style.overflowX = 'hidden';
-        document.documentElement.style.overflowX = 'hidden';
-
-        return () => {
-            document.body.style.overflowX = prevBodyOverflowX;
-            document.documentElement.style.overflowX = prevHtmlOverflowX;
-        };
-    }, []);
-
-    // Cleanup map on actual component unmount
-    useEffect(() => {
-        return () => {
-            console.log('🧹 Component unmounting - keeping global map');
-            // Don't remove global map - it should survive React StrictMode
-        };
-    }, []);
-
-    useLayoutEffect(() => {
-        if (!mapContainerRef.current) return;
-        
-        console.log('✅ Map initialized without Leaflet');
-        setMapReady(true);
-    }, [mapImageUrl, mapWidth, mapHeight]);
-
-    useEffect(() => {
-        if (!mapReady) return;
-        if (!mapContainerRef.current) return;
-
-        const container = mapContainerRef.current;
-        const bgImg = container.querySelector('img[data-map-editor-bg="true"]');
-
-        container.querySelectorAll('img').forEach((img) => {
-            if (bgImg && img === bgImg) return;
-            img.remove();
-        });
-
-        container.querySelectorAll('svg').forEach((svg) => {
-            svg.remove();
-        });
-
-        container.querySelectorAll('.leaflet-container, .leaflet-pane').forEach((el) => {
-            el.remove();
-        });
-    }, [mapReady, mapImageUrl]);
-
-    useEffect(() => {
-        if (!mapReady) return;
-
         loadObstacles();
-    }, [mapReady, shopId]);
+    }, [shopId]);
 
     const loadObstacles = async () => {
         try {
             const response = await fetch(`/api/shops/${shopId}/obstacles`);
             const data = await response.json();
             setObstacles(data);
-
-            data.forEach(obstacle => {
-                addObstacleToMap(obstacle);
-            });
         } catch (error) {
             console.error('Failed to load obstacles:', error);
         }
-    };
-
-    const addObstacleToMap = (obstacle) => {
-        if (!mapContainerRef.current) return;
-        
-        console.log('🟦 Adding obstacle to map:', obstacle);
-        
-        const container = mapContainerRef.current;
-        const containerRect = container.getBoundingClientRect();
-
-        // With object-fit: contain the <img> element fills the container, but the actual
-        // rendered image can have internal padding. Calculate the rendered content box.
-        const scale = Math.min(containerRect.width / mapWidth, containerRect.height / mapHeight);
-        const renderedWidth = mapWidth * scale;
-        const renderedHeight = mapHeight * scale;
-        const offsetX = (containerRect.width - renderedWidth) / 2;
-        const offsetY = (containerRect.height - renderedHeight) / 2;
-        
-        console.log('🟦 Image dimensions:', {
-            displayed: { width: renderedWidth, height: renderedHeight },
-            original: { width: mapWidth, height: mapHeight },
-            scale,
-            offset: { x: offsetX, y: offsetY }
-        });
-        
-        // Create obstacle element
-        const obstacleEl = document.createElement('div');
-        obstacleEl.className = 'obstacle-absolute';
-        obstacleEl.style.position = 'absolute';
-        obstacleEl.style.left = `${offsetX + obstacle.x * scale}px`;
-        obstacleEl.style.top = `${offsetY + obstacle.y * scale}px`;
-        obstacleEl.style.width = `${obstacle.width * scale}px`;
-        obstacleEl.style.height = `${obstacle.height * scale}px`;
-        obstacleEl.style.border = `3px solid ${getColorByType(obstacle.type)}`;
-        obstacleEl.style.backgroundColor = getColorByType(obstacle.type);
-        obstacleEl.style.opacity = '0.5';
-        obstacleEl.style.pointerEvents = 'auto';
-        obstacleEl.style.cursor = 'pointer';
-        obstacleEl.style.zIndex = '10';
-        obstacleEl.dataset.obstacleId = obstacle.id;
-        
-        // Add click handler
-        obstacleEl.addEventListener('click', () => {
-            if (!drawingMode) {
-                handleObstacleClick(obstacle, obstacleEl);
-            }
-        });
-        
-        container.appendChild(obstacleEl);
-        
-        console.log('🟦 Obstacle positioned at:', {
-            left: obstacleEl.style.left,
-            top: obstacleEl.style.top,
-            width: obstacleEl.style.width,
-            height: obstacleEl.style.height,
-            scale
-        });
     };
 
     const getColorByType = (type) => {
@@ -159,22 +36,38 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
         return colors[type] || '#ff0000';
     };
 
-    const handleObstacleClick = (obstacle, layer) => {
+    // Convert click position to map coordinates using the overlay
+    const getMapCoordinates = (clientX, clientY) => {
+        if (!overlayRef.current) return null;
+        const rect = overlayRef.current.getBoundingClientRect();
+        const x = Math.round((clientX - rect.left) / rect.width * mapWidth);
+        const y = Math.round((clientY - rect.top) / rect.height * mapHeight);
+        return {
+            x: Math.max(0, Math.min(mapWidth, x)),
+            y: Math.max(0, Math.min(mapHeight, y))
+        };
+    };
+
+    // Percentage helpers for obstacle rectangles
+    const pctLeft = (x) => `${(x / mapWidth) * 100}%`;
+    const pctTop = (y) => `${(y / mapHeight) * 100}%`;
+    const pctWidth = (w) => `${(w / mapWidth) * 100}%`;
+    const pctHeight = (h) => `${(h / mapHeight) * 100}%`;
+
+    const handleObstacleClick = (obstacle) => {
+        if (drawingMode) return;
         if (window.confirm(`Delete obstacle (${obstacle.type})?\nCoordinates: x=${obstacle.x}, y=${obstacle.y}`)) {
-            deleteObstacle(obstacle.id, layer);
+            deleteObstacle(obstacle.id);
         }
     };
 
-    const deleteObstacle = async (obstacleId, element) => {
+    const deleteObstacle = async (obstacleId) => {
         try {
             const response = await fetch(`/api/shops/${shopId}/obstacles/${obstacleId}`, {
                 method: 'DELETE'
             });
 
             if (response.ok) {
-                if (element && element.remove) {
-                    element.remove();
-                }
                 setObstacles(prev => prev.filter(o => o.id !== obstacleId));
             }
         } catch (error) {
@@ -187,25 +80,19 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
         setDrawingMode(!drawingMode);
     };
 
+    // Drawing handlers on the overlay
     useEffect(() => {
-        if (!mapContainerRef.current || !drawingMode) return;
+        if (!overlayRef.current || !drawingMode) return;
 
-        const container = mapContainerRef.current;
-        const containerRect = container.getBoundingClientRect();
+        const overlay = overlayRef.current;
 
-        const scale = Math.min(containerRect.width / mapWidth, containerRect.height / mapHeight);
-        const renderedWidth = mapWidth * scale;
-        const renderedHeight = mapHeight * scale;
-        const offsetX = (containerRect.width - renderedWidth) / 2;
-        const offsetY = (containerRect.height - renderedHeight) / 2;
+        const handleMouseDown = (e) => {
+            const coords = getMapCoordinates(e.clientX, e.clientY);
+            if (!coords) return;
+            isDrawingRef.current = true;
+            startPointRef.current = coords;
 
-        const getMapCoordinates = (clientX, clientY) => {
-            const x = Math.round((clientX - containerRect.left - offsetX) / scale);
-            const y = Math.round((clientY - containerRect.top - offsetY) / scale);
-            return { x: Math.max(0, Math.min(mapWidth, x)), y: Math.max(0, Math.min(mapHeight, y)) };
-        };
-
-        const createPreviewRect = (x1, y1, x2, y2) => {
+            // Create preview rectangle using percentage positioning
             const rect = document.createElement('div');
             rect.className = 'drawing-preview';
             rect.style.position = 'absolute';
@@ -214,28 +101,19 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
             rect.style.opacity = '0.3';
             rect.style.pointerEvents = 'none';
             rect.style.zIndex = '20';
-            container.appendChild(rect);
-            return rect;
-        };
-
-        const handleMouseDown = (e) => {
-            const coords = getMapCoordinates(e.clientX, e.clientY);
-            isDrawingRef.current = true;
-            startPointRef.current = coords;
-
-            // Create preview rectangle
-            currentRectRef.current = createPreviewRect(
-                offsetX + coords.x * scale,
-                offsetY + coords.y * scale,
-                offsetX + coords.x * scale,
-                offsetY + coords.y * scale
-            );
+            rect.style.left = pctLeft(coords.x);
+            rect.style.top = pctTop(coords.y);
+            rect.style.width = '0%';
+            rect.style.height = '0%';
+            overlay.appendChild(rect);
+            currentRectRef.current = rect;
         };
 
         const handleMouseMove = (e) => {
             if (!isDrawingRef.current || !startPointRef.current || !currentRectRef.current) return;
 
             const coords = getMapCoordinates(e.clientX, e.clientY);
+            if (!coords) return;
             const start = startPointRef.current;
 
             const x1 = Math.min(start.x, coords.x);
@@ -243,31 +121,25 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
             const x2 = Math.max(start.x, coords.x);
             const y2 = Math.max(start.y, coords.y);
 
-            currentRectRef.current.style.left = `${offsetX + x1 * scale}px`;
-            currentRectRef.current.style.top = `${offsetY + y1 * scale}px`;
-            currentRectRef.current.style.width = `${(x2 - x1) * scale}px`;
-            currentRectRef.current.style.height = `${(y2 - y1) * scale}px`;
+            currentRectRef.current.style.left = pctLeft(x1);
+            currentRectRef.current.style.top = pctTop(y1);
+            currentRectRef.current.style.width = pctWidth(x2 - x1);
+            currentRectRef.current.style.height = pctHeight(y2 - y1);
         };
 
         const handleMouseUp = async (e) => {
             if (!isDrawingRef.current || !startPointRef.current) return;
 
             const coords = getMapCoordinates(e.clientX, e.clientY);
+            if (!coords) return;
             const start = startPointRef.current;
 
             isDrawingRef.current = false;
 
-            const x1 = Math.min(start.x, coords.x);
-            const y1 = Math.min(start.y, coords.y);
-            const x2 = Math.max(start.x, coords.x);
-            const y2 = Math.max(start.y, coords.y);
-
-            const x = x1;
-            const y = y1;
-            const width = x2 - x1;
-            const height = y2 - y1;
-
-            console.log('🟢 mouseup - calculated obstacle:', { x, y, width, height });
+            const x = Math.min(start.x, coords.x);
+            const y = Math.min(start.y, coords.y);
+            const width = Math.abs(coords.x - start.x);
+            const height = Math.abs(coords.y - start.y);
 
             // Remove preview
             if (currentRectRef.current) {
@@ -277,23 +149,21 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
 
             if (width > 20 && height > 20) {
                 await createObstacle({ x, y, width, height, type: selectedType });
-            } else {
-                console.warn('Obstacle too small:', { width, height });
             }
 
             startPointRef.current = null;
         };
 
-        container.addEventListener('mousedown', handleMouseDown);
-        container.addEventListener('mousemove', handleMouseMove);
-        container.addEventListener('mouseup', handleMouseUp);
-        container.addEventListener('mouseleave', handleMouseUp);
+        overlay.addEventListener('mousedown', handleMouseDown);
+        overlay.addEventListener('mousemove', handleMouseMove);
+        overlay.addEventListener('mouseup', handleMouseUp);
+        overlay.addEventListener('mouseleave', handleMouseUp);
 
         return () => {
-            container.removeEventListener('mousedown', handleMouseDown);
-            container.removeEventListener('mousemove', handleMouseMove);
-            container.removeEventListener('mouseup', handleMouseUp);
-            container.removeEventListener('mouseleave', handleMouseUp);
+            overlay.removeEventListener('mousedown', handleMouseDown);
+            overlay.removeEventListener('mousemove', handleMouseMove);
+            overlay.removeEventListener('mouseup', handleMouseUp);
+            overlay.removeEventListener('mouseleave', handleMouseUp);
 
             if (currentRectRef.current) {
                 currentRectRef.current.remove();
@@ -304,29 +174,20 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
 
     const createObstacle = async (obstacleData) => {
         try {
-            console.log('Sending obstacle data:', obstacleData);
-
             const response = await fetch(`/api/shops/${shopId}/obstacles`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(obstacleData)
             });
 
             if (response.ok) {
                 const newObstacle = await response.json();
-                console.log('✅ Obstacle created successfully:', newObstacle);
-                addObstacleToMap(newObstacle);
                 setObstacles(prev => [...prev, newObstacle]);
             } else {
-                console.error('❌ Failed to create obstacle:', response.status, response.statusText);
-                const errorText = await response.text();
-                console.error('Error response:', errorText);
                 alert(`Failed to create obstacle: ${response.status} ${response.statusText}`);
             }
         } catch (error) {
-            console.error('❌ Failed to create obstacle:', error);
+            console.error('Failed to create obstacle:', error);
             alert('Failed to create obstacle');
         }
     };
@@ -341,13 +202,6 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
                     method: 'DELETE'
                 });
             }
-
-            // Remove all obstacle elements
-            if (mapContainerRef.current) {
-                const obstacleElements = mapContainerRef.current.querySelectorAll('.obstacle-absolute');
-                obstacleElements.forEach(el => el.remove());
-            }
-
             setObstacles([]);
         } catch (error) {
             console.error('Failed to clear obstacles:', error);
@@ -407,23 +261,34 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
                 </div>
             </div>
 
-            <div className="map-container-wrapper" style={{ position: 'relative', maxWidth: '100%', overflow: 'hidden' }}>
-                <div className="map-container" ref={mapContainerRef} style={{ height: '70vh', minHeight: '500px', maxHeight: '800px', width: '100%', overflow: 'hidden', border: '2px solid #ccc', position: 'relative', boxSizing: 'border-box' }}>
-                    <img 
-                        data-map-editor-bg="true"
-                        src={mapImageUrl} 
-                        alt="Map" 
-                        style={{ 
-                            position: 'absolute', 
-                            top: '0px', 
-                            left: '0px', 
-                            width: '100%', 
-                            height: '100%', 
-                            objectFit: 'contain',
-                            pointerEvents: 'none',
-                            zIndex: 1
-                        }} 
-                    />
+            <div className="obstacle-map-wrapper">
+                <img
+                    src={mapImageUrl}
+                    alt="Map"
+                    className="obstacle-map-image"
+                    draggable={false}
+                />
+                <div
+                    ref={overlayRef}
+                    className="obstacle-map-overlay"
+                    style={{ cursor: drawingMode ? 'crosshair' : 'default' }}
+                >
+                    {/* Render obstacles as percentage-positioned divs */}
+                    {obstacles.map(obs => (
+                        <div
+                            key={obs.id}
+                            className="obstacle-rect"
+                            style={{
+                                left: pctLeft(obs.x),
+                                top: pctTop(obs.y),
+                                width: pctWidth(obs.width),
+                                height: pctHeight(obs.height),
+                                borderColor: getColorByType(obs.type),
+                                backgroundColor: getColorByType(obs.type),
+                            }}
+                            onClick={() => handleObstacleClick(obs)}
+                        />
+                    ))}
                 </div>
             </div>
         </div>

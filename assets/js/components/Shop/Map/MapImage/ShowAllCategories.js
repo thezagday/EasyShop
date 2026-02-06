@@ -1,11 +1,11 @@
 import L from "leaflet";
-import {xy} from "../../../Utils/coordinateUtils";
+import {adminToLeaflet} from "../../../Utils/coordinateUtils";
 import { CustomMarker } from "./CustomMarker";
 
 // Хранилище маркеров для каждой карты
 const markersStorage = new WeakMap();
 
-export function ShowAllCategories(map, categories) {
+export function ShowAllCategories(map, categories, shop) {
     // Получаем или создаем массив маркеров для этой карты
     if (!markersStorage.has(map)) {
         markersStorage.set(map, []);
@@ -21,7 +21,7 @@ export function ShowAllCategories(map, categories) {
     if (Array.isArray(categories) && categories.length > 0) {
         categories.forEach(categoryData => {
             if (categoryData.x_coordinate !== undefined && categoryData.y_coordinate !== undefined) {
-                const categoryPoint = xy(categoryData.x_coordinate, categoryData.y_coordinate);
+                const categoryPoint = adminToLeaflet(categoryData.x_coordinate, categoryData.y_coordinate);
                 
                 // Используем кастомный маркер вместо простого красного
                 const title = categoryData.title || categoryData.category?.title || 'Категория';
@@ -40,12 +40,17 @@ export function ShowAllCategories(map, categories) {
         });
     }
     
-    // Добавляем маркеры входа и выхода
-    const entranceMarker = CustomMarker.createEntranceMarker([0, 50]);
+    // Добавляем маркеры входа и выхода (координаты из Shop entity или fallback)
+    const entranceX = shop?.entranceX ?? 0;
+    const entranceY = shop?.entranceY ?? 50;
+    const exitX = shop?.exitX ?? 0;
+    const exitY = shop?.exitY ?? 200;
+
+    const entranceMarker = CustomMarker.createEntranceMarker(adminToLeaflet(entranceX, entranceY));
     entranceMarker.addTo(map);
     markers.push(entranceMarker);
     
-    const exitMarker = CustomMarker.createExitMarker([0, 200]);
+    const exitMarker = CustomMarker.createExitMarker(adminToLeaflet(exitX, exitY));
     exitMarker.addTo(map);
     markers.push(exitMarker);
 }

@@ -1,5 +1,6 @@
 import L from "leaflet";
 import { InteractiveLayer } from "./InteractiveLayer";
+import { adminToLeaflet } from "../../../Utils/coordinateUtils";
 
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -7,7 +8,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
-export function SetupMap(map, mapImageUrl = "/img/map.svg") {
+export function SetupMap(map, mapImageUrl = "/img/map.svg", shop = null) {
     const bounds = [[0, 0], [993, 1653]];
 
     if (map.__easyShopBaseImageOverlay) {
@@ -54,7 +55,7 @@ export function SetupMap(map, mapImageUrl = "/img/map.svg") {
     map.options.markerZoomAnimation = true;
     
     // Добавляем маркер "Вы здесь" на входе
-    const entrancePosition = [50, 0]; // Координаты входа
+    const entrancePosition = adminToLeaflet(shop?.entranceX ?? 0, shop?.entranceY ?? 50);
     const currentLocationMarker = L.marker(entrancePosition, {
         icon: L.divIcon({
             className: 'current-location-marker',

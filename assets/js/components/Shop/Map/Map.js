@@ -74,14 +74,19 @@ export default function Map({
         if (!categories || categories.length === 0) return;
 
         // Build multi-point route: Entrance → Category1 → Category2 → ... → Exit
+        const entranceX = shop?.entranceX ?? 0;
+        const entranceY = shop?.entranceY ?? 50;
+        const exitX = shop?.exitX ?? 0;
+        const exitY = shop?.exitY ?? 200;
+
         const waypoints = [
-            { name: 'Вход', x: 0, y: 50 },
+            { name: 'Вход', x: entranceX, y: entranceY },
             ...categories.map(cat => ({
                 name: cat.title || cat.category?.title || 'Категория',
                 x: cat.x_coordinate,
                 y: cat.y_coordinate
             })),
-            { name: 'Выход', x: 0, y: 200 }
+            { name: 'Выход', x: exitX, y: exitY }
         ];
 
         setRouteSource(waypoints);
@@ -96,8 +101,8 @@ export default function Map({
             // Pass actual coordinates for direct route drawing
             setRouteSource({
                 name: 'Вход',
-                x: 0,
-                y: 50
+                x: shop?.entranceX ?? 0,
+                y: shop?.entranceY ?? 50
             });
             setRouteDestination({
                 name: targetCategory.category?.title || 'Категория',
@@ -123,6 +128,7 @@ export default function Map({
             >
                 <MapImage
                     shopId={shopId}
+                    shop={shop}
                     mapImageUrl={shop?.mapImage
                         ? `/img/${shop.mapImage}`
                         : '/img/map.svg'}
