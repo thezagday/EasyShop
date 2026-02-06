@@ -39,7 +39,12 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('EasyShop Admin');
+            ->setTitle('EasyShop Управление');
+    }
+
+    public function configureUserMenu(\Symfony\Component\Security\Core\User\UserInterface $user): \EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu
+    {
+        return parent::configureUserMenu($user);
     }
 
     public function configureMenuItems(): iterable
@@ -51,10 +56,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Categories', 'fas fa-list', Category::class);
         yield MenuItem::linkToCrud('Shop Categories', 'fas fa-map-marker-alt', ShopCategory::class);
         yield MenuItem::linkToCrud('Commodities', 'fas fa-shopping-basket', Commodity::class);
-        
+
         yield MenuItem::section('User Management');
         yield MenuItem::linkToCrud('Users', 'fas fa-users', User::class);
-        
+
         yield MenuItem::section('Links');
         $adminUrl = 'http://' . $this->getParameter('admin_host') . '/';
         yield MenuItem::linkToUrl('Back to Website', 'fas fa-arrow-left', $adminUrl);
