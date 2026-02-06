@@ -1,13 +1,14 @@
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-import {useEffect, useRef, useState} from "react";
-import {SetupMap} from "./SetupMap";
-import {ShowAllCategories} from "./ShowAllCategories";
-import {CategorySearch} from "./CategorySearch";
-import {CommoditySearch} from "./CommoditySearch";
-import {MultiCommoditySearch} from "./MultiCommoditySearch";
-import {DirectRouteBuilder} from "./DirectRouteBuilder";
-import {OBSTACLE_MAP, loadObstaclesForShop} from "./ObstacleMap";
+import { useEffect, useRef, useState } from "react";
+import { SetupMap } from "./SetupMap";
+import { ShowAllCategories } from "./ShowAllCategories";
+import { CategorySearch } from "./CategorySearch";
+import { CommoditySearch } from "./CommoditySearch";
+import { MultiCommoditySearch } from "./MultiCommoditySearch";
+import { DirectRouteBuilder } from "./DirectRouteBuilder";
+import { OBSTACLE_MAP, loadObstaclesForShop } from "./ObstacleMap";
+import { adminToLeaflet } from "../../../Utils/coordinateUtils";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -48,13 +49,40 @@ export default function MapImage({
         }
     }, [map]);
 
-    // Показываем все категории с кастомными маркерами при загрузке
-    ShowAllCategories(map, categories, shop);
-    
+    // Определяем список активных категорий для фильтрации
+    const activeCategoryIds = new Set();
+    if (selectedCategory?.id) activeCategoryIds.add(selectedCategory.id);
+    if (selectedProduct?.categoryId) activeCategoryIds.add(selectedProduct.categoryId);
+
+    if (aiCategories && aiCategories.length > 0) {
+        aiCategories.forEach(cat => {
+            if (cat.id) activeCategoryIds.add(cat.id);
+            else if (cat.categoryId) activeCategoryIds.add(cat.categoryId);
+        });
+    }
+
+    if (destination?.categoryId) activeCategoryIds.add(destination.categoryId);
+
+    if (Array.isArray(source)) {
+        source.forEach(wp => {
+            if (wp.categoryId) activeCategoryIds.add(wp.categoryId);
+        });
+    } else if (source?.categoryId) {
+        activeCategoryIds.add(source.categoryId);
+    }
+
+    // Показываем либо отфильтрованные категории, либо все, если ничего не выбрано
+    const visibleCategories = activeCategoryIds.size > 0
+        ? categories.filter(cat => activeCategoryIds.has(cat.id))
+        : categories;
+
+    // Показываем категории с кастомными маркерами
+    ShowAllCategories(map, visibleCategories, shop);
+
     // CategorySearch(map, searchedCategory);
     CommoditySearch(map, searchedCategoryByCommodity);
     // MultiCommoditySearch(map, multiSearch);
-    
+
     // Построение маршрута когда установлены координаты source/destination
     useEffect(() => {
         if (routeBuilderRef.current) {
@@ -100,7 +128,7 @@ export default function MapImage({
         };
 
         map.getContainer().addEventListener('click', handlePopupClick);
-        
+
         return () => {
             map.getContainer().removeEventListener('click', handlePopupClick);
         };
@@ -109,8 +137,11 @@ export default function MapImage({
     // Обработка выбора категории из поиска - центрируем и подсвечиваем
     useEffect(() => {
         if (selectedCategory) {
+            // Конвертируем административные координаты в координаты Leaflet
+            const leafletPos = adminToLeaflet(selectedCategory.x, selectedCategory.y);
+
             // Центрируем карту на выбранной категории
-            map.setView([selectedCategory.y, selectedCategory.x], 1, {
+            map.setView(leafletPos, 1, {
                 animate: true,
                 duration: 0.5
             });
@@ -119,7 +150,7 @@ export default function MapImage({
             map.eachLayer((layer) => {
                 if (layer instanceof L.Marker && layer.getLatLng) {
                     const pos = layer.getLatLng();
-                    if (Math.abs(pos.lat - selectedCategory.y) < 1 && Math.abs(pos.lng - selectedCategory.x) < 1) {
+                    if (Math.abs(pos.lat - leafletPos.lat) < 1 && Math.abs(pos.lng - leafletPos.lng) < 1) {
                         // Анимированное открытие popup с задержкой
                         setTimeout(() => {
                             layer.openPopup();
@@ -133,8 +164,11 @@ export default function MapImage({
     // Обработка выбора товара из поиска - центрируем на категории товара
     useEffect(() => {
         if (selectedProduct && selectedProduct.x && selectedProduct.y) {
+            // Конвертируем административные координаты в координаты Leaflet
+            const leafletPos = adminToLeaflet(selectedProduct.x, selectedProduct.y);
+
             // Центрируем карту на категории товара
-            map.setView([selectedProduct.y, selectedProduct.x], 1, {
+            map.setView(leafletPos, 1, {
                 animate: true,
                 duration: 0.5
             });
@@ -143,7 +177,7 @@ export default function MapImage({
             map.eachLayer((layer) => {
                 if (layer instanceof L.Marker && layer.getLatLng) {
                     const pos = layer.getLatLng();
-                    if (Math.abs(pos.lat - selectedProduct.y) < 1 && Math.abs(pos.lng - selectedProduct.x) < 1) {
+                    if (Math.abs(pos.lat - leafletPos.lat) < 1 && Math.abs(pos.lng - leafletPos.lng) < 1) {
                         // Анимированное открытие popup с задержкой
                         setTimeout(() => {
                             layer.openPopup();
@@ -162,7 +196,8 @@ export default function MapImage({
 
             aiCategories.forEach((cat) => {
                 if (cat.x_coordinate && cat.y_coordinate) {
-                    categoryCoords.push([cat.y_coordinate, cat.x_coordinate]);
+                    const leafletPos = adminToLeaflet(cat.x_coordinate, cat.y_coordinate);
+                    categoryCoords.push(leafletPos);
                 }
             });
 
@@ -181,10 +216,10 @@ export default function MapImage({
                     map.eachLayer((layer) => {
                         if (layer instanceof L.Marker && layer.getLatLng) {
                             const pos = layer.getLatLng();
-                            
+
                             // Проверяем, является ли этот маркер одной из найденных категорий
-                            const isAICategory = categoryCoords.some(coord => 
-                                Math.abs(pos.lat - coord[0]) < 1 && Math.abs(pos.lng - coord[1]) < 1
+                            const isAICategory = categoryCoords.some(coord =>
+                                Math.abs(pos.lat - coord.lat) < 1 && Math.abs(pos.lng - coord.lng) < 1
                             );
 
                             if (isAICategory) {

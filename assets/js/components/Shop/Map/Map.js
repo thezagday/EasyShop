@@ -9,12 +9,12 @@ import { ZoomControl } from "./MapControls/ZoomControl";
 
 function MapControls({ shopId, categories, onCategorySelect, onProductSelect, onAIResult }) {
     const map = useMap();
-    
+
     return (
         <>
-            <UnifiedSearchControl 
+            <UnifiedSearchControl
                 shopId={shopId}
-                categories={categories} 
+                categories={categories}
                 onCategorySelect={onCategorySelect}
                 onProductSelect={onProductSelect}
                 onAIResult={onAIResult}
@@ -61,12 +61,12 @@ export default function Map({
         setAICategories(result.categories || []);
         setSelectedCategory(null);
         setSelectedProduct(null);
-        
+
         // If buildRoute flag is set, build multi-point route
         if (result.buildRoute && result.categories && result.categories.length > 0) {
             buildAIRoute(result.categories);
         }
-        
+
         console.log('AI result:', result);
     };
 
@@ -84,7 +84,8 @@ export default function Map({
             ...categories.map(cat => ({
                 name: cat.title || cat.category?.title || 'Категория',
                 x: cat.x_coordinate,
-                y: cat.y_coordinate
+                y: cat.y_coordinate,
+                categoryId: cat.id
             })),
             { name: 'Выход', x: exitX, y: exitY }
         ];
@@ -96,7 +97,7 @@ export default function Map({
     const handleBuildRoute = (categoryId) => {
         // Find category by ID
         const targetCategory = categories.find(cat => cat.id === categoryId);
-        
+
         if (targetCategory) {
             // Pass actual coordinates for direct route drawing
             setRouteSource({
@@ -145,9 +146,9 @@ export default function Map({
                     aiCategories={aiCategories}
                     onBuildRoute={handleBuildRoute}
                 />
-                <MapControls 
+                <MapControls
                     shopId={shopId}
-                    categories={categories} 
+                    categories={categories}
                     onCategorySelect={handleCategorySelect}
                     onProductSelect={handleProductSelect}
                     onAIResult={handleAIResult}
