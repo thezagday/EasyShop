@@ -25,8 +25,8 @@ export function UnifiedSearchControl({
 
     const modes = [
         { id: 'ai', label: '🤖 AI помощник', icon: '🤖' },
-        { id: 'category', label: '📂 Категория', icon: '📂' },
-        { id: 'product', label: '🛒 Товар', icon: '🛒' }
+        { id: 'product', label: '� Товар', icon: '�' },
+        { id: 'category', label: '� Категория', icon: '�' }
     ];
 
     return (

@@ -6,6 +6,7 @@ export function AIAssistant({ shopId, onResult }) {
     const [messages, setMessages] = useState([]);
     const chatBodyRef = useRef(null);
     const wrapperRef = useRef(null);
+    const fileInputRef = useRef(null);
 
     // Блокируем всплытие wheel-события к Leaflet через нативный listener
     useEffect(() => {
@@ -80,6 +81,32 @@ export function AIAssistant({ shopId, onResult }) {
         setLoading(false);
     };
 
+    const handleFileImport = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const raw = ev.target.result?.trim();
+            if (raw) {
+                // Разделяем по строкам, убираем пустые, соединяем через запятую
+                const text = raw.split(/\r?\n/)
+                    .map(line => line.trim())
+                    .filter(Boolean)
+                    .join(', ');
+                setInput(text);
+                // Показываем системное сообщение о загрузке
+                setMessages(prev => [...prev, {
+                    type: 'system',
+                    text: `📎 Загружен файл: ${file.name}`
+                }]);
+            }
+        };
+        reader.readAsText(file, 'UTF-8');
+        // Сбрасываем input чтобы можно было загрузить тот же файл повторно
+        e.target.value = '';
+    };
+
     const handleBuildRoute = (msg) => {
         if (onResult && msg.categories && msg.categories.length > 0) {
             onResult({
@@ -102,7 +129,9 @@ export function AIAssistant({ shopId, onResult }) {
 
                 {messages.map((msg, idx) => (
                     <div key={idx} className={`ai-chat-message ai-chat-${msg.type}`}>
-                        {msg.type === 'user' ? (
+                        {msg.type === 'system' ? (
+                            <div className="ai-chat-system">{msg.text}</div>
+                        ) : msg.type === 'user' ? (
                             <div className="ai-chat-bubble ai-chat-bubble-user">
                                 {msg.text}
                             </div>
@@ -153,6 +182,21 @@ export function AIAssistant({ shopId, onResult }) {
 
             {/* Поле ввода всегда внизу */}
             <div className="ai-input-group">
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileImport}
+                    accept=".txt,.md,.csv,.json,.list,.text"
+                    style={{ display: 'none' }}
+                />
+                <button
+                    className="ai-attach-button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={loading}
+                    title="Загрузить список товаров из файла"
+                >
+                    📎
+                </button>
                 <input
                     className="map-search-input"
                     placeholder="Например: хочу сделать плов..."

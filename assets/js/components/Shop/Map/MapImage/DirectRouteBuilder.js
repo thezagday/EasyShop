@@ -158,6 +158,43 @@ export class DirectRouteBuilder {
         return order;
     }
 
+    /**
+     * Smooth route points using Catmull-Rom spline interpolation.
+     * Produces curves similar to Google/Yandex Maps routing.
+     */
+    smoothRoutePoints(points, pointsPerSegment = 6) {
+        if (points.length < 3) return points;
+
+        const result = [];
+
+        for (let i = 0; i < points.length - 1; i++) {
+            const p0 = points[Math.max(i - 1, 0)];
+            const p1 = points[i];
+            const p2 = points[i + 1];
+            const p3 = points[Math.min(i + 2, points.length - 1)];
+
+            for (let t = 0; t < pointsPerSegment; t++) {
+                const f = t / pointsPerSegment;
+                const f2 = f * f;
+                const f3 = f2 * f;
+
+                // Catmull-Rom coefficients
+                const c0 = -0.5 * f3 + f2 - 0.5 * f;
+                const c1 = 1.5 * f3 - 2.5 * f2 + 1;
+                const c2 = -1.5 * f3 + 2 * f2 + 0.5 * f;
+                const c3 = 0.5 * f3 - 0.5 * f2;
+
+                const lat = c0 * p0[0] + c1 * p1[0] + c2 * p2[0] + c3 * p3[0];
+                const lng = c0 * p0[1] + c1 * p1[1] + c2 * p2[1] + c3 * p3[1];
+                result.push([lat, lng]);
+            }
+        }
+
+        // Add the last point
+        result.push(points[points.length - 1]);
+        return result;
+    }
+
     buildRoute(sourceCoords, destCoords, sourceName = 'Вход', destName = 'Категория') {
         this.clearRoute();
 
@@ -196,6 +233,9 @@ export class DirectRouteBuilder {
             console.error('Failed to build route');
             return null;
         }
+
+        // Smooth the route for natural-looking curves
+        routePoints = this.smoothRoutePoints(routePoints);
 
         // Draw animated route line
         const routeLine = L.polyline(routePoints, {
