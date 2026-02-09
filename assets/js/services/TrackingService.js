@@ -2,7 +2,7 @@ let currentActivityId = null;
 
 export const TrackingService = {
     trackSearch(shopId, query) {
-        fetch('/api/track', {
+        return fetch('/api/track', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ shopId: parseInt(shopId, 10), query }),

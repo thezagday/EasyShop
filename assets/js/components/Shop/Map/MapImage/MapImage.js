@@ -104,6 +104,10 @@ export default function MapImage({
                     destination.name
                 );
             }
+            // Source reset — clear previous route
+            else if (!source) {
+                routeBuilderRef.current.clearRoute();
+            }
         }
     }, [source, destination, map]);
 

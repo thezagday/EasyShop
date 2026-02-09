@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "leaflet";
 import { CRS } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -7,7 +7,7 @@ import MapImage from "./MapImage/MapImage";
 import { UnifiedSearchControl } from "./MapControls/UnifiedSearchControl";
 import { ZoomControl } from "./MapControls/ZoomControl";
 
-function MapControls({ shopId, categories, onCategorySelect, onProductSelect, onAIResult }) {
+function MapControls({ shopId, categories, onCategorySelect, onProductSelect, onAIResult, onCollectionSelect }) {
     const map = useMap();
 
     return (
@@ -18,6 +18,7 @@ function MapControls({ shopId, categories, onCategorySelect, onProductSelect, on
                 onCategorySelect={onCategorySelect}
                 onProductSelect={onProductSelect}
                 onAIResult={onAIResult}
+                onCollectionSelect={onCollectionSelect}
             />
             <ZoomControl map={map} />
         </>
@@ -42,6 +43,15 @@ export default function Map({
     const [aiCategories, setAICategories] = useState([]);
     const [routeSource, setRouteSource] = useState(null);
     const [routeDestination, setRouteDestination] = useState(null);
+    const [entranceExit, setEntranceExit] = useState(null);
+
+    useEffect(() => {
+        if (!shopId) return;
+        fetch(`/api/shops/${shopId}/entrance-exit`)
+            .then(r => r.ok ? r.json() : null)
+            .then(data => { if (data) setEntranceExit(data); })
+            .catch(() => {});
+    }, [shopId]);
 
     const handleCategorySelect = (category) => {
         setSelectedCategory(category);
@@ -74,10 +84,10 @@ export default function Map({
         if (!categories || categories.length === 0) return;
 
         // Build multi-point route: Entrance → Category1 → Category2 → ... → Exit
-        const entranceX = shop?.entranceX ?? 0;
-        const entranceY = shop?.entranceY ?? 50;
-        const exitX = shop?.exitX ?? 0;
-        const exitY = shop?.exitY ?? 200;
+        const entranceX = entranceExit?.entranceX ?? 0;
+        const entranceY = entranceExit?.entranceY ?? 0;
+        const exitX = entranceExit?.exitX ?? 0;
+        const exitY = entranceExit?.exitY ?? 0;
 
         const waypoints = [
             { name: 'Вход', x: entranceX, y: entranceY },
@@ -93,6 +103,40 @@ export default function Map({
 
         setRouteSource(waypoints);
         setRouteDestination(null); // Signal for multi-point route
+    };
+
+    const handleCollectionSelect = (collection) => {
+        if (!collection.items || collection.items.length === 0) return;
+
+        // Reset everything first
+        setRouteSource(null);
+        setRouteDestination(null);
+        setSelectedCategory(null);
+        setSelectedProduct(null);
+        setAICategories([]);
+
+        // Group items by categoryId to build waypoints with commodity lists
+        const categoryMap = new window.Map();
+        collection.items.forEach(item => {
+            if (!item.categoryId || !item.x || !item.y) return;
+            if (!categoryMap.has(item.categoryId)) {
+                categoryMap.set(item.categoryId, {
+                    id: item.categoryId,
+                    title: item.categoryTitle,
+                    x_coordinate: item.x,
+                    y_coordinate: item.y,
+                    commodities: []
+                });
+            }
+            categoryMap.get(item.categoryId).commodities.push(item.commodityTitle);
+        });
+
+        const cats = Array.from(categoryMap.values());
+
+        // Build route on next tick so React processes the reset first
+        setTimeout(() => {
+            buildAIRoute(cats);
+        }, 50);
     };
 
     const handleRouteReset = () => {
@@ -162,6 +206,7 @@ export default function Map({
                     onCategorySelect={handleCategorySelect}
                     onProductSelect={handleProductSelect}
                     onAIResult={handleAIResult}
+                    onCollectionSelect={handleCollectionSelect}
                 />
             </MapContainer>
         </div>

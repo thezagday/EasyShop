@@ -136,12 +136,12 @@
     left: 20px;
     z-index: 1000;
     width: 360px;
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     overflow: hidden;
     max-height: calc(100% - 40px);
     display: flex;
@@ -955,4 +955,112 @@
     .ai-chat-body {
         max-height: 300px;
     }
+}
+
+/* Collection Picker */
+.collection-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.collection-loading,
+.collection-empty {
+    text-align: center;
+    color: #a0aec0;
+    padding: 24px 12px;
+    font-size: 13px;
+}
+
+.collection-card {
+    background: rgba(102, 126, 234, 0.08);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.collection-card:hover {
+    border-color: rgba(102, 126, 234, 0.5);
+    background: rgba(102, 126, 234, 0.14);
+}
+
+.collection-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+}
+
+.collection-card-emoji {
+    font-size: 28px;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: center;
+}
+
+.collection-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.collection-card-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2d3748;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.collection-card-desc {
+    font-size: 11px;
+    color: #718096;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.collection-card-items {
+    border-top: 1px solid rgba(102, 126, 234, 0.15);
+    padding: 6px 12px;
+}
+
+.collection-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 0;
+    font-size: 12px;
+}
+
+.collection-item-dot {
+    color: #667eea;
+    font-size: 8px;
+    flex-shrink: 0;
+}
+
+.collection-item-name {
+    color: #4a5568;
+}
+
+.collection-build-route-btn {
+    display: block;
+    margin: 8px auto 4px;
+    padding: 6px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.collection-build-route-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
 }

@@ -3,6 +3,7 @@ import L from 'leaflet';
 import { ProductSearch } from './ProductSearch';
 import { CategorySearch } from './CategorySearch';
 import { AIAssistant } from './AIAssistant';
+import { CollectionPicker } from './CollectionPicker';
 
 export function UnifiedSearchControl({ 
     shopId,
@@ -10,7 +11,8 @@ export function UnifiedSearchControl({
     products = [],
     onCategorySelect, 
     onProductSelect,
-    onAIResult
+    onAIResult,
+    onCollectionSelect
 }) {
     const [searchMode, setSearchMode] = useState('ai'); // ai | category | product
     const containerRef = useRef(null);
@@ -24,9 +26,10 @@ export function UnifiedSearchControl({
     }, []);
 
     const modes = [
-        { id: 'ai', label: 'AI \u043f\u043e\u043c\u043e\u0449\u043d\u0438\u043a', icon: '\ud83e\udd16' },
-        { id: 'product', label: '\u0422\u043e\u0432\u0430\u0440', icon: '\ud83d\uded2' },
-        { id: 'category', label: '\u041a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u044f', icon: '\ud83d\udcc2' }
+        { id: 'ai', label: 'AI помощник', icon: '🤖' },
+        { id: 'collection', label: 'Подборки', icon: '🎁' },
+        { id: 'product', label: 'Товар', icon: '🛒' },
+        { id: 'category', label: 'Категория', icon: '📂' }
     ];
 
     return (
@@ -66,6 +69,13 @@ export function UnifiedSearchControl({
                     <AIAssistant 
                         shopId={shopId}
                         onResult={onAIResult} 
+                    />
+                )}
+                
+                {searchMode === 'collection' && (
+                    <CollectionPicker 
+                        shopId={shopId}
+                        onSelect={onCollectionSelect} 
                     />
                 )}
             </div>

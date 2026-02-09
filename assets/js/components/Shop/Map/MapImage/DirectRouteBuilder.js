@@ -52,6 +52,9 @@ export class DirectRouteBuilder {
             this.map.removeLayer(marker);
         });
         this.markers = [];
+
+        const existingPanel = this.map.getContainer().querySelector('.route-info-panel');
+        if (existingPanel) existingPanel.remove();
     }
 
     /**
