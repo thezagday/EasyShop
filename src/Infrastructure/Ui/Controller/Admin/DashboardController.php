@@ -8,6 +8,7 @@ use App\Domain\Entity\Retailer;
 use App\Domain\Entity\Shop;
 use App\Domain\Entity\ShopCategory;
 use App\Domain\Entity\User;
+use App\Domain\Entity\UserActivity;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -59,6 +60,9 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('User Management');
         yield MenuItem::linkToCrud('Users', 'fas fa-users', User::class);
+
+        yield MenuItem::section('Analytics');
+        yield MenuItem::linkToCrud('User Activity', 'fas fa-chart-line', UserActivity::class);
 
         yield MenuItem::section('Links');
         $adminUrl = 'http://' . $this->getParameter('admin_host') . '/';

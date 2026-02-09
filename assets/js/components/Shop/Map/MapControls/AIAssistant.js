@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { TrackingService } from '../../../../services/TrackingService';
 
 export function AIAssistant({ shopId, onResult }) {
     const [input, setInput] = useState('');
@@ -44,6 +45,9 @@ export function AIAssistant({ shopId, onResult }) {
         setMessages(prev => [...prev, { type: 'user', text: trimmed }]);
         setInput('');
         setLoading(true);
+
+        // Трекинг поискового запроса
+        TrackingService.trackSearch(parsedShopId, trimmed);
 
         try {
             const response = await fetch('/api/ai', {

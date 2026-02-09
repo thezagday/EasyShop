@@ -31,7 +31,13 @@ self.addEventListener('activate', (event) => {
 
 // Fetch — network-first для API, cache-first для статики
 self.addEventListener('fetch', (event) => {
+    // Пропускаем POST-запросы (tracking, API mutations) — не кэшируем
+    if (event.request.method !== 'GET') return;
+
     const url = new URL(event.request.url);
+
+    // Пропускаем не-http(s) схемы (chrome-extension://, etc.)
+    if (!url.protocol.startsWith('http')) return;
 
     // API запросы — всегда из сети
     if (url.pathname.startsWith('/api/')) {

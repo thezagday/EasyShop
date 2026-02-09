@@ -28,6 +28,10 @@ class Commodity
     #[Groups(['shopCategory:read', 'commodity:read'])]
     private ?string $title = null;
 
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2, nullable: true)]
+    #[Groups(['shopCategory:read', 'commodity:read'])]
+    private ?string $price = null;
+
     #[ORM\ManyToMany(targetEntity: ShopCategory::class, inversedBy: 'commodities')]
     #[ORM\JoinTable(name: 'commodities_shop_categories')]
     #[Groups(['commodity:read'])]
@@ -50,6 +54,18 @@ class Commodity
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getPrice(): ?string
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?string $price): self
+    {
+        $this->price = $price;
 
         return $this;
     }

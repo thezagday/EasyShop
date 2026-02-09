@@ -15,7 +15,15 @@ export function MultiCommoditySearch(map, multiSearch) {
 
     multiSearch.forEach(function (shopCategory) {
         let categoryPoint = xy(shopCategory.x_coordinate, shopCategory.y_coordinate);
-        let marker = L.marker(categoryPoint).addTo(map);
+        let marker = L.marker(categoryPoint, {
+            icon: L.divIcon({
+                className: 'custom-marker-wrapper',
+                html: '<div class="custom-shop-marker"><div class="icon">🛒</div></div>',
+                iconSize: [40, 40],
+                iconAnchor: [20, 40],
+                popupAnchor: [0, -40]
+            })
+        }).addTo(map);
 
         marker.bindPopup(shopCategory.category.title, {autoClose: false, closeOnClick: false}).openPopup();
         markers.current.push({

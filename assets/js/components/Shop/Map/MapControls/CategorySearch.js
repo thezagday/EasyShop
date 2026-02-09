@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { TrackingService } from '../../../../services/TrackingService';
 
-export function CategorySearch({ categories, onSelect }) {
+export function CategorySearch({ shopId, categories, onSelect }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -30,6 +31,7 @@ export function CategorySearch({ categories, onSelect }) {
     }, [searchQuery, categories]);
 
     const handleSelectCategory = (category) => {
+        TrackingService.trackSearch(shopId, category.name);
         setSearchQuery('');
         setSearchResults([]);
         setIsSearching(false);

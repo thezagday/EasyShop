@@ -2,6 +2,7 @@ import L from "leaflet";
 import { xy, adminToLeaflet } from "../../../Utils/coordinateUtils";
 import { PathfindingService } from "./PathfindingService";
 import { generateWalkableGrid, OBSTACLE_MAP } from "./ObstacleMap";
+import { TrackingService } from "../../../../services/TrackingService";
 
 export class DirectRouteBuilder {
     constructor(map) {
@@ -200,6 +201,9 @@ export class DirectRouteBuilder {
 
         let routePoints = [];
         let waypointNames = [];
+
+        // Store waypoints for tracking
+        this.lastWaypoints = Array.isArray(sourceCoords) ? sourceCoords : [{ name: sourceName }, { name: destName }];
 
         // Check if sourceCoords is an array (multi-point route)
         if (Array.isArray(sourceCoords)) {
@@ -452,7 +456,6 @@ export class DirectRouteBuilder {
             }
             distanceInMeters = Math.round(distanceInMeters);
         } else {
-            // Fallback to direct distance
             const dy = end[0] - start[0];
             const dx = end[1] - start[1];
             distanceInMeters = Math.round(Math.sqrt(dx * dx + dy * dy) * 0.1);
@@ -462,61 +465,34 @@ export class DirectRouteBuilder {
 
         // Remove existing info panel
         const existingPanel = this.map.getContainer().querySelector('.route-info-panel');
-        if (existingPanel) {
-            existingPanel.remove();
-        }
+        if (existingPanel) existingPanel.remove();
 
-        // Create info panel
         const infoPanel = L.DomUtil.create('div', 'route-info-panel');
-        
-        const waypointInfo = waypointCount > 2 
-            ? `<div class="route-info-item">
-                    <span class="route-info-label">Точек маршрута:</span>
-                    <span class="route-info-value">${waypointCount}</span>
-                </div>`
-            : '';
+        L.DomEvent.disableClickPropagation(infoPanel);
 
         infoPanel.innerHTML = `
-            <div class="route-info-header">
-                <span class="route-info-icon">🗺️</span>
-                <span class="route-info-title">Маршрут построен</span>
-                <button class="route-info-close">&times;</button>
-            </div>
-            <div class="route-info-body">
-                <div class="route-info-item">
-                    <span class="route-info-label">От:</span>
-                    <span class="route-info-value">${sourceName}</span>
-                </div>
-                <div class="route-info-item">
-                    <span class="route-info-label">До:</span>
-                    <span class="route-info-value">${destName}</span>
-                </div>
-                ${waypointInfo}
-                <div class="route-info-item">
-                    <span class="route-info-label">Расстояние:</span>
-                    <span class="route-info-value">~${distanceInMeters}м</span>
-                </div>
-                <div class="route-info-item">
-                    <span class="route-info-label">Время:</span>
-                    <span class="route-info-value">~${timeInMinutes} мин</span>
-                </div>
-            </div>
+            <span class="route-chip">\ud83d\uddfa\ufe0f ${sourceName} \u2192 ${destName}</span>
+            <span class="route-chip">\ud83d\udccf ~${distanceInMeters}\u043c</span>
+            <span class="route-chip">⏱ ~${timeInMinutes} мин</span>
+            <button class="route-reset-btn" title="Сбросить маршрут">✕</button>
         `;
 
         this.map.getContainer().appendChild(infoPanel);
 
-        // Close button handler — only hide the info panel, keep the route visible
-        const closeBtn = infoPanel.querySelector('.route-info-close');
-        closeBtn.addEventListener('click', () => {
-            infoPanel.remove();
-        });
+        // Track route building
+        if (this.shopId) {
+            const routeCategories = this.lastWaypoints || [];
+            TrackingService.trackRoute(this.shopId, routeCategories, distanceInMeters, timeInMinutes);
+        }
 
-        // Auto-hide after 10 seconds
-        setTimeout(() => {
-            if (infoPanel.parentElement) {
-                infoPanel.style.opacity = '0';
-                setTimeout(() => infoPanel.remove(), 300);
+        // Reset button — clear route, panel, and React state
+        const resetBtn = infoPanel.querySelector('.route-reset-btn');
+        resetBtn.addEventListener('click', () => {
+            this.clearRoute();
+            infoPanel.remove();
+            if (typeof this.onResetCallback === 'function') {
+                this.onResetCallback();
             }
-        }, 10000);
+        });
     }
 }

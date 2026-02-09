@@ -24,9 +24,9 @@ export function UnifiedSearchControl({
     }, []);
 
     const modes = [
-        { id: 'ai', label: '🤖 AI помощник', icon: '🤖' },
-        { id: 'product', label: '� Товар', icon: '�' },
-        { id: 'category', label: '� Категория', icon: '�' }
+        { id: 'ai', label: 'AI \u043f\u043e\u043c\u043e\u0449\u043d\u0438\u043a', icon: '\ud83e\udd16' },
+        { id: 'product', label: '\u0422\u043e\u0432\u0430\u0440', icon: '\ud83d\uded2' },
+        { id: 'category', label: '\u041a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u044f', icon: '\ud83d\udcc2' }
     ];
 
     return (
@@ -49,6 +49,7 @@ export function UnifiedSearchControl({
             <div className="search-mode-content">
                 {searchMode === 'category' && (
                     <CategorySearch 
+                        shopId={shopId}
                         categories={categories} 
                         onSelect={onCategorySelect} 
                     />

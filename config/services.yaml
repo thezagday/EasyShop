@@ -56,6 +56,7 @@ services:
     App\Domain\Repository\RetailerRepositoryInterface: '@App\Infrastructure\Persistence\Repository\RetailerRepository'
     App\Domain\Repository\ShopCategoryRepositoryInterface: '@App\Infrastructure\Persistence\Repository\ShopCategoryRepository'
     App\Domain\Repository\UserRepositoryInterface: '@App\Infrastructure\Persistence\Repository\UserRepository'
+    App\Domain\Repository\UserActivityRepositoryInterface: '@App\Infrastructure\Persistence\Repository\UserActivityRepository'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

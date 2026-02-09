@@ -95,6 +95,14 @@ export default function Map({
         setRouteDestination(null); // Signal for multi-point route
     };
 
+    const handleRouteReset = () => {
+        setRouteSource(null);
+        setRouteDestination(null);
+        setAICategories([]);
+        setSelectedCategory(null);
+        setSelectedProduct(null);
+    };
+
     const handleBuildRoute = (categoryId) => {
         // Find category by ID
         const targetCategory = categories.find(cat => cat.id === categoryId);
@@ -146,6 +154,7 @@ export default function Map({
                     selectedProduct={selectedProduct}
                     aiCategories={aiCategories}
                     onBuildRoute={handleBuildRoute}
+                    onRouteReset={handleRouteReset}
                 />
                 <MapControls
                     shopId={shopId}

@@ -41,6 +41,14 @@ class ShopCategoryRepository extends ServiceEntityRepository implements ShopCate
     }
 
     /**
+     * @return ShopCategory[]
+     */
+    public function findByShop(\App\Domain\Entity\Shop $shop): array
+    {
+        return $this->findBy(['shop' => $shop]);
+    }
+
+    /**
      * @return ShopCategory[] Returns an array of ShopCategory objects
      */
     public function getShopToCoordinatesByPath(array $shops): array

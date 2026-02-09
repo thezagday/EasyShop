@@ -543,22 +543,29 @@
 
 .route-info-panel {
     position: absolute;
-    bottom: 80px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    min-width: 300px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    max-width: 90%;
     animation: slideUp 0.3s ease-out;
-    transition: opacity 0.3s ease;
 }
 
 @keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateX(-50%) translateY(20px);
+        transform: translateX(-50%) translateY(12px);
     }
     to {
         opacity: 1;
@@ -566,68 +573,37 @@
     }
 }
 
-.route-info-header {
-    display: flex;
+.route-chip {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 16px;
-    border-bottom: 1px solid #e5e7eb;
+    background: rgba(102, 126, 234, 0.1);
+    color: #2d3748;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
 }
 
-.route-info-icon {
-    font-size: 24px;
-}
-
-.route-info-title {
-    flex: 1;
-    font-size: 16px;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.route-info-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #9ca3af;
-    cursor: pointer;
-    padding: 0;
+.route-reset-btn {
     width: 28px;
     height: 28px;
+    border: none;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
+    flex-shrink: 0;
     transition: all 0.2s;
 }
 
-.route-info-close:hover {
-    background: #f3f4f6;
-    color: #1f2937;
-}
-
-.route-info-body {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.route-info-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.route-info-label {
-    color: #6b7280;
-    font-size: 14px;
-}
-
-.route-info-value {
-    color: #1f2937;
-    font-weight: 600;
-    font-size: 14px;
+.route-reset-btn:hover {
+    background: #ef4444;
+    color: white;
 }
 
 /* Current Location Marker */
@@ -854,39 +830,6 @@
     }
 }
 
-/* Информационная панель */
-.route-info-panel {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    padding: 16px 24px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.route-info-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.route-info-label {
-    font-size: 12px;
-    color: #718096;
-    margin-bottom: 4px;
-}
-
-.route-info-value {
-    font-size: 18px;
-    font-weight: 600;
-    color: #2d3748;
-}
 
 /* Маркер "Вы здесь" */
 .you-are-here {

@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { TrackingService } from '../../../../services/TrackingService';
 
 export function ProductSearch({ shopId, onSelect }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const [loading, setLoading] = useState(false);
+    const abortRef = useRef(null);
 
     useEffect(() => {
         if (searchQuery.length < 2) {
             setSearchResults([]);
             setIsSearching(false);
+            if (abortRef.current) abortRef.current.abort();
             return;
         }
 
@@ -24,9 +27,16 @@ export function ProductSearch({ shopId, onSelect }) {
     }, [searchQuery]);
 
     const searchProducts = async (query) => {
+        // Отменяем предыдущий запрос
+        if (abortRef.current) abortRef.current.abort();
+        abortRef.current = new AbortController();
+
         setLoading(true);
+        TrackingService.trackSearch(shopId, query);
         try {
-            const response = await fetch(`/api/commodities?title=${encodeURIComponent(query)}&shopCategories.shop=${shopId}`);
+            const response = await fetch(`/api/commodities?title=${encodeURIComponent(query)}&shopCategories.shop=${shopId}`, {
+                signal: abortRef.current.signal
+            });
             const data = await response.json();
             
             const results = (data['hydra:member'] || []).slice(0, 5).map(product => {

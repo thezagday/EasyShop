@@ -69,7 +69,7 @@ export class CustomMarker {
 
         return L.marker(position, { icon })
             .bindTooltip('Вход', { 
-                permanent: true,
+                permanent: false,
                 direction: 'top',
                 className: 'room-tooltip'
             });
@@ -89,7 +89,7 @@ export class CustomMarker {
 
         return L.marker(position, { icon })
             .bindTooltip('Выход', {
-                permanent: true,
+                permanent: false,
                 direction: 'top',
                 className: 'room-tooltip'
             });
