@@ -67,11 +67,19 @@ final class ChatWithAIHandler implements QueryHandlerInterface
             $answer = trim(substr($aiResponseContent, 0, strpos($aiResponseContent, 'selected_commodities:')));
         }
 
-        $categories = [];
+        // Group selected commodities by categoryId
+        $groupedByCategoryId = [];
         foreach ($selectedCommodities as $item) {
+            $catId = $item['categoryId'] ?? null;
+            if ($catId === null) continue;
+            $groupedByCategoryId[$catId][] = $item['commodityTitle'] ?? '';
+        }
+
+        $categories = [];
+        foreach ($groupedByCategoryId as $categoryId => $commodityTitles) {
             /** @var ShopCategory $foundShopCategory */
-            $foundShopCategory = $shopCategories->filter(function ($cat) use ($item) {
-                return $cat->getId() === $item['categoryId'];
+            $foundShopCategory = $shopCategories->filter(function ($cat) use ($categoryId) {
+                return $cat->getId() === $categoryId;
             })->first();
 
             if ($foundShopCategory) {
@@ -80,6 +88,7 @@ final class ChatWithAIHandler implements QueryHandlerInterface
                     'title' => $foundShopCategory->getCategory()->getTitle(),
                     'x_coordinate' => $foundShopCategory->getXCoordinate(),
                     'y_coordinate' => $foundShopCategory->getYCoordinate(),
+                    'commodities' => array_values(array_filter($commodityTitles)),
                 ];
             }
         }

@@ -53,6 +53,111 @@ export class DirectRouteBuilder {
         this.markers = [];
     }
 
+    /**
+     * Compute A* path distance between two Leaflet points.
+     * Returns the path length in grid units, or Infinity if no path found.
+     */
+    computePathDistance(pointA, pointB) {
+        const path = this.findPathWithObstacles(pointA, pointB);
+        if (!path || path.length < 2) return Infinity;
+
+        let dist = 0;
+        for (let i = 1; i < path.length; i++) {
+            const dy = path[i][0] - path[i - 1][0];
+            const dx = path[i][1] - path[i - 1][1];
+            dist += Math.sqrt(dx * dx + dy * dy);
+        }
+        return dist;
+    }
+
+    /**
+     * Optimize waypoint order using TSP heuristics.
+     * Entrance (index 0) stays first, Exit (last index) stays last.
+     * Only intermediate waypoints (categories) are reordered.
+     *
+     * @param {Array} waypoints - Leaflet coords [{lat,lng}, ...]
+     * @returns {Array<number>} - optimized index order
+     */
+    optimizeWaypointOrder(waypoints) {
+        const n = waypoints.length;
+        if (n <= 3) return waypoints.map((_, i) => i); // entrance + 0-1 categories + exit — nothing to optimize
+
+        // Indices: 0 = entrance, 1..n-2 = categories, n-1 = exit
+        const midIndices = [];
+        for (let i = 1; i < n - 1; i++) midIndices.push(i);
+
+        // Precompute distance matrix for all waypoints
+        const dist = Array.from({ length: n }, () => new Array(n).fill(0));
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                const d = this.computePathDistance(waypoints[i], waypoints[j]);
+                dist[i][j] = d;
+                dist[j][i] = d;
+            }
+        }
+
+        console.log('📊 Distance matrix computed for', n, 'waypoints');
+
+        // ── Nearest-neighbor heuristic ──
+        // Start from entrance (0), greedily pick nearest unvisited category, end at exit
+        const visited = new Set();
+        const order = [0]; // start with entrance
+        visited.add(0);
+        visited.add(n - 1); // reserve exit for last
+
+        let current = 0;
+        while (order.length < n - 1) { // n-1 because exit is appended at end
+            let bestIdx = -1;
+            let bestDist = Infinity;
+            for (const idx of midIndices) {
+                if (visited.has(idx)) continue;
+                if (dist[current][idx] < bestDist) {
+                    bestDist = dist[current][idx];
+                    bestIdx = idx;
+                }
+            }
+            if (bestIdx === -1) break;
+            order.push(bestIdx);
+            visited.add(bestIdx);
+            current = bestIdx;
+        }
+        order.push(n - 1); // end with exit
+
+        // ── 2-opt improvement ──
+        // Only swap intermediate nodes (indices 1..order.length-2)
+        const totalDist = (ord) => {
+            let s = 0;
+            for (let i = 0; i < ord.length - 1; i++) s += dist[ord[i]][ord[i + 1]];
+            return s;
+        };
+
+        let improved = true;
+        let iterations = 0;
+        const maxIterations = 100;
+        while (improved && iterations < maxIterations) {
+            improved = false;
+            iterations++;
+            // Only reverse segments within the middle portion (skip index 0 and last)
+            for (let i = 1; i < order.length - 2; i++) {
+                for (let j = i + 1; j < order.length - 1; j++) {
+                    // Cost of current edges: (i-1→i) + (j→j+1)
+                    const oldCost = dist[order[i - 1]][order[i]] + dist[order[j]][order[j + 1]];
+                    // Cost if we reverse segment [i..j]: (i-1→j) + (i→j+1)
+                    const newCost = dist[order[i - 1]][order[j]] + dist[order[i]][order[j + 1]];
+                    if (newCost < oldCost - 0.001) {
+                        // Reverse segment [i..j]
+                        const segment = order.slice(i, j + 1).reverse();
+                        order.splice(i, j - i + 1, ...segment);
+                        improved = true;
+                    }
+                }
+            }
+        }
+
+        console.log('🛣️ Route optimized: distance', Math.round(totalDist(order)), '(2-opt iterations:', iterations, ')');
+        return order;
+    }
+
     buildRoute(sourceCoords, destCoords, sourceName = 'Вход', destName = 'Категория') {
         this.clearRoute();
 
@@ -61,12 +166,22 @@ export class DirectRouteBuilder {
 
         // Check if sourceCoords is an array (multi-point route)
         if (Array.isArray(sourceCoords)) {
-            // Multi-point route with pathfinding between each waypoint
+            // Convert to Leaflet coords
             const waypoints = sourceCoords.map(wp => adminToLeaflet(wp.x, wp.y));
-            waypointNames = sourceCoords.map(wp => wp.name);
-            
-            // Build path through all waypoints
-            routePoints = this.buildMultiWaypointPath(waypoints);
+            const names = sourceCoords.map(wp => wp.name);
+
+            // Optimize order: entrance stays first, exit stays last, categories reordered
+            const optimizedOrder = this.optimizeWaypointOrder(waypoints);
+            const optimizedWaypoints = optimizedOrder.map(i => waypoints[i]);
+            waypointNames = optimizedOrder.map(i => names[i]);
+
+            // Reorder sourceCoords too so markers match
+            const optimizedSourceCoords = optimizedOrder.map(i => sourceCoords[i]);
+            // Replace sourceCoords reference for marker rendering below
+            sourceCoords = optimizedSourceCoords;
+
+            // Build path through optimized waypoints
+            routePoints = this.buildMultiWaypointPath(optimizedWaypoints);
         } else {
             // Simple two-point route with pathfinding
             const start = adminToLeaflet(sourceCoords.x, sourceCoords.y);
@@ -150,6 +265,23 @@ export class DirectRouteBuilder {
             }
 
             const marker = L.marker(wpPoint, { icon: markerIcon }).addTo(this.map);
+
+            // Добавляем popup с товарами для промежуточных точек маршрута
+            if (wp.commodities && wp.commodities.length > 0) {
+                const commoditiesHtml = wp.commodities.map(c => `<li>${c}</li>`).join('');
+                marker.bindPopup(`
+                    <div class="shop-popup">
+                        <h3>${wp.name}</h3>
+                        <div class="shop-popup-commodities">
+                            <div class="shop-popup-commodities-title">🛒 Нужно взять:</div>
+                            <ul class="shop-popup-commodities-list">
+                                ${commoditiesHtml}
+                            </ul>
+                        </div>
+                    </div>
+                `);
+            }
+
             this.markers.push(marker);
         });
 

@@ -140,6 +140,9 @@
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     overflow: hidden;
+    max-height: calc(100% - 40px);
+    display: flex;
+    flex-direction: column;
 }
 
 .search-mode-tabs {
@@ -185,6 +188,9 @@
 
 .search-mode-content {
     padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
 }
 
 .search-input-wrapper {
@@ -258,17 +264,76 @@
     color: #718096;
 }
 
-/* AI Assistant */
+/* AI Assistant — chat layout */
 .ai-assistant-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    flex: 1;
+    min-height: 0;
+    gap: 0;
+}
+
+.ai-chat-body {
+    flex: 1;
+    min-height: 0;
+    max-height: 350px;
+    overflow-y: auto;
+    padding: 0 0 8px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ai-chat-empty {
+    color: #718096;
+    font-size: 13px;
+    text-align: center;
+    padding: 20px 8px;
+}
+
+.ai-chat-message {
+    display: flex;
+}
+
+.ai-chat-user {
+    justify-content: flex-end;
+}
+
+.ai-chat-ai {
+    justify-content: flex-start;
+}
+
+.ai-chat-bubble {
+    max-width: 90%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.45;
+    word-break: break-word;
+}
+
+.ai-chat-bubble-user {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.ai-chat-bubble-ai {
+    background: #f0f4ff;
+    color: #2d3748;
+    border-bottom-left-radius: 4px;
+}
+
+.ai-answer-text {
+    margin-bottom: 4px;
 }
 
 .ai-input-group {
     display: flex;
     gap: 8px;
     align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid #e2e8f0;
 }
 
 .ai-input-group .map-search-input {
@@ -289,6 +354,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .ai-send-button:hover:not(:disabled) {
@@ -299,15 +365,6 @@
 .ai-send-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-.ai-response-box {
-    background: #f7fafc;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 14px;
-    max-height: 300px;
-    overflow-y: auto;
 }
 
 .ai-loading {
@@ -672,6 +729,62 @@
 .shop-popup-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Товары в popup маркера */
+.shop-popup-commodities {
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: #f0f4ff;
+    border-radius: 8px;
+    border-left: 3px solid #667eea;
+}
+
+.shop-popup-commodities-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 4px;
+}
+
+.shop-popup-commodities-list {
+    margin: 0;
+    padding: 0 0 0 18px;
+    list-style: disc;
+}
+
+.shop-popup-commodities-list li {
+    font-size: 13px;
+    color: #2d3748;
+    padding: 1px 0;
+}
+
+/* Товары в AI чате */
+.ai-category-item {
+    margin-bottom: 6px;
+}
+
+.ai-category-name {
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.ai-commodity-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 3px;
+    padding-left: 22px;
+}
+
+.ai-commodity-tag {
+    display: inline-block;
+    background: #edf2f7;
+    color: #4a5568;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
 }
 
 /* Индикатор загрузки маршрута */

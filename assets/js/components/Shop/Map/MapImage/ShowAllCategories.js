@@ -5,7 +5,7 @@ import { CustomMarker } from "./CustomMarker";
 // Хранилище маркеров для каждой карты
 const markersStorage = new WeakMap();
 
-export function ShowAllCategories(map, categories, shop) {
+export function ShowAllCategories(map, categories, shop, aiCategories = []) {
     // Получаем или создаем массив маркеров для этой карты
     if (!markersStorage.has(map)) {
         markersStorage.set(map, []);
@@ -18,6 +18,16 @@ export function ShowAllCategories(map, categories, shop) {
     });
     markers.length = 0;
 
+    // Построим карту categoryId → commodities из AI-результата
+    const aiCommoditiesMap = {};
+    if (Array.isArray(aiCategories)) {
+        aiCategories.forEach(cat => {
+            if (cat.id && cat.commodities && cat.commodities.length > 0) {
+                aiCommoditiesMap[cat.id] = cat.commodities;
+            }
+        });
+    }
+
     if (Array.isArray(categories) && categories.length > 0) {
         categories.forEach(categoryData => {
             if (categoryData.x_coordinate !== undefined && categoryData.y_coordinate !== undefined) {
@@ -26,12 +36,14 @@ export function ShowAllCategories(map, categories, shop) {
                 // Используем кастомный маркер вместо простого красного
                 const title = categoryData.title || categoryData.category?.title || 'Категория';
                 const categoryName = categoryData.category?.parent?.title || 'Общее';
+                const commodities = aiCommoditiesMap[categoryData.id] || [];
                 
                 const marker = CustomMarker.createShopMarker(
                     categoryPoint,
                     title,
                     categoryName,
-                    categoryData.id
+                    categoryData.id,
+                    commodities
                 );
                 
                 marker.addTo(map);

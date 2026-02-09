@@ -1,9 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 export function AIAssistant({ shopId, onResult }) {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [lastResult, setLastResult] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const chatBodyRef = useRef(null);
+    const wrapperRef = useRef(null);
+
+    // Блокируем всплытие wheel-события к Leaflet через нативный listener
+    useEffect(() => {
+        const el = wrapperRef.current;
+        if (!el) return;
+        const stopWheel = (e) => {
+            e.stopPropagation();
+        };
+        el.addEventListener('wheel', stopWheel, { passive: false });
+        return () => el.removeEventListener('wheel', stopWheel);
+    }, []);
+
+    // Автоскролл вниз при новых сообщениях
+    useEffect(() => {
+        if (chatBodyRef.current) {
+            chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+        }
+    }, [messages, loading]);
 
     const handleSend = async () => {
         const trimmed = input.trim();
@@ -11,16 +31,18 @@ export function AIAssistant({ shopId, onResult }) {
 
         const parsedShopId = Number.parseInt(shopId, 10);
         if (!Number.isInteger(parsedShopId) || parsedShopId <= 0) {
-            setLastResult({
-                question: trimmed,
-                answer: 'Ошибка: некорректный идентификатор магазина.',
-                categories: []
-            });
+            setMessages(prev => [...prev, {
+                type: 'user', text: trimmed
+            }, {
+                type: 'ai', text: 'Ошибка: некорректный идентификатор магазина.', categories: []
+            }]);
             return;
         }
 
+        // Добавляем сообщение пользователя
+        setMessages(prev => [...prev, { type: 'user', text: trimmed }]);
+        setInput('');
         setLoading(true);
-        setLastResult(null);
 
         try {
             const response = await fetch('/api/ai', {
@@ -35,11 +57,13 @@ export function AIAssistant({ shopId, onResult }) {
                 Array.from(new Map(data.categories.map(cat => [cat.title || cat.category?.title, cat])).values())
                 : [];
 
-            setLastResult({
-                question: trimmed,
-                answer: data.answer,
+            const aiMsg = {
+                type: 'ai',
+                text: data.answer,
                 categories: uniqueCategories
-            });
+            };
+
+            setMessages(prev => [...prev, aiMsg]);
 
             if (uniqueCategories.length > 0 && onResult) {
                 onResult({
@@ -48,20 +72,86 @@ export function AIAssistant({ shopId, onResult }) {
                     categories: uniqueCategories
                 });
             }
-
-            setInput('');
         } catch (e) {
-            setLastResult({
-                question: trimmed,
-                answer: 'Ошибка при общении с сервером.',
-                categories: []
-            });
+            setMessages(prev => [...prev, {
+                type: 'ai', text: 'Ошибка при общении с сервером.', categories: []
+            }]);
         }
         setLoading(false);
     };
 
+    const handleBuildRoute = (msg) => {
+        if (onResult && msg.categories && msg.categories.length > 0) {
+            onResult({
+                answer: msg.text,
+                categories: msg.categories,
+                buildRoute: true
+            });
+        }
+    };
+
     return (
-        <div className="ai-assistant-wrapper">
+        <div className="ai-assistant-wrapper" ref={wrapperRef}>
+            {/* Область сообщений */}
+            <div className="ai-chat-body" ref={chatBodyRef}>
+                {messages.length === 0 && !loading && (
+                    <div className="ai-chat-empty">
+                        🤖 Привет! Напишите что вы хотите найти или приготовить, и я подберу нужные товары.
+                    </div>
+                )}
+
+                {messages.map((msg, idx) => (
+                    <div key={idx} className={`ai-chat-message ai-chat-${msg.type}`}>
+                        {msg.type === 'user' ? (
+                            <div className="ai-chat-bubble ai-chat-bubble-user">
+                                {msg.text}
+                            </div>
+                        ) : (
+                            <div className="ai-chat-bubble ai-chat-bubble-ai">
+                                <div className="ai-answer-text">{msg.text}</div>
+                                {msg.categories && msg.categories.length > 0 && (
+                                    <div className="ai-categories">
+                                        <div className="ai-categories-title">📍 Найденные категории ({msg.categories.length}):</div>
+                                        {msg.categories.map((cat, cIdx) => (
+                                            <div key={cIdx} className="ai-category-item">
+                                                <div className="ai-category-name">📂 {cat.title || cat.category?.title || 'Категория'}</div>
+                                                {cat.commodities && cat.commodities.length > 0 && (
+                                                    <div className="ai-commodity-list">
+                                                        {cat.commodities.map((commodity, pIdx) => (
+                                                            <span key={pIdx} className="ai-commodity-tag">
+                                                                {commodity}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                        <button 
+                                            className="ai-build-route-button"
+                                            onClick={() => handleBuildRoute(msg)}
+                                        >
+                                            🗺️ Построить маршрут
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                ))}
+
+                {loading && (
+                    <div className="ai-chat-message ai-chat-ai">
+                        <div className="ai-chat-bubble ai-chat-bubble-ai">
+                            <div className="ai-loading">
+                                <div className="spinner-small"></div>
+                                <span>AI думает...</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Поле ввода всегда внизу */}
             <div className="ai-input-group">
                 <input
                     className="map-search-input"
@@ -79,42 +169,6 @@ export function AIAssistant({ shopId, onResult }) {
                     {loading ? '⏳' : '🚀'}
                 </button>
             </div>
-
-            {loading && (
-                <div className="ai-response-box">
-                    <div className="ai-loading">
-                        <div className="spinner-small"></div>
-                        <span>AI думает...</span>
-                    </div>
-                </div>
-            )}
-
-            {lastResult && !loading && (
-                <div className="ai-response-box">
-                    <div className="ai-question">
-                        <strong>Вы:</strong> {lastResult.question}
-                    </div>
-                    <div className="ai-answer">
-                        <strong>AI:</strong> {lastResult.answer}
-                    </div>
-                    {lastResult.categories.length > 0 && (
-                        <div className="ai-categories">
-                            <div className="ai-categories-title">📍 Найденные категории ({lastResult.categories.length}):</div>
-                            {lastResult.categories.map((cat, idx) => (
-                                <div key={idx} className="ai-category-item">
-                                    • {cat.title || cat.category?.title || 'Категория'}
-                                </div>
-                            ))}
-                            <button 
-                                className="ai-build-route-button"
-                                onClick={() => onResult && onResult({ ...lastResult, buildRoute: true })}
-                            >
-                                🗺️ Построить маршрут через все
-                            </button>
-                        </div>
-                    )}
-                </div>
-            )}
         </div>
     );
 }

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import L from 'leaflet';
 import { ProductSearch } from './ProductSearch';
 import { CategorySearch } from './CategorySearch';
 import { AIAssistant } from './AIAssistant';
@@ -11,16 +12,25 @@ export function UnifiedSearchControl({
     onProductSelect,
     onAIResult
 }) {
-    const [searchMode, setSearchMode] = useState('category'); // category | product | ai
+    const [searchMode, setSearchMode] = useState('ai'); // ai | category | product
+    const containerRef = useRef(null);
+
+    // Блокируем перехват scroll/wheel/click Leaflet-ом внутри панели
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        L.DomEvent.disableScrollPropagation(el);
+        L.DomEvent.disableClickPropagation(el);
+    }, []);
 
     const modes = [
+        { id: 'ai', label: '🤖 AI помощник', icon: '🤖' },
         { id: 'category', label: '📂 Категория', icon: '📂' },
-        { id: 'product', label: '🛒 Товар', icon: '🛒' },
-        { id: 'ai', label: '🤖 AI помощник', icon: '🤖' }
+        { id: 'product', label: '🛒 Товар', icon: '🛒' }
     ];
 
     return (
-        <div className="unified-search-container">
+        <div className="unified-search-container" ref={containerRef}>
             {/* Табы переключения режимов */}
             <div className="search-mode-tabs">
                 {modes.map(mode => (

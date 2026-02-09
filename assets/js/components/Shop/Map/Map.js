@@ -85,7 +85,8 @@ export default function Map({
                 name: cat.title || cat.category?.title || 'Категория',
                 x: cat.x_coordinate,
                 y: cat.y_coordinate,
-                categoryId: cat.id
+                categoryId: cat.id,
+                commodities: cat.commodities || []
             })),
             { name: 'Выход', x: exitX, y: exitY }
         ];

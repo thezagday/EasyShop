@@ -76,8 +76,8 @@ export default function MapImage({
         ? categories.filter(cat => activeCategoryIds.has(cat.id))
         : categories;
 
-    // Показываем категории с кастомными маркерами
-    ShowAllCategories(map, visibleCategories, shop);
+    // Показываем категории с кастомными маркерами (передаём aiCategories для товаров в popup)
+    ShowAllCategories(map, visibleCategories, shop, aiCategories);
 
     // CategorySearch(map, searchedCategory);
     CommoditySearch(map, searchedCategoryByCommodity);

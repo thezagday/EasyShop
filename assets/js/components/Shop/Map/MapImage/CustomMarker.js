@@ -1,7 +1,7 @@
 import L from 'leaflet';
 
 export class CustomMarker {
-    static createShopMarker(position, shopName, category, categoryId = null) {
+    static createShopMarker(position, shopName, category, categoryId = null, commodities = []) {
         const icon = L.divIcon({
             className: 'custom-marker-wrapper',
             html: `
@@ -20,6 +20,15 @@ export class CustomMarker {
         if (categoryId) {
             marker.categoryId = categoryId;
         }
+
+        const commoditiesHtml = commodities && commodities.length > 0
+            ? `<div class="shop-popup-commodities">
+                    <div class="shop-popup-commodities-title">🛒 Нужно взять:</div>
+                    <ul class="shop-popup-commodities-list">
+                        ${commodities.map(c => `<li>${c}</li>`).join('')}
+                    </ul>
+                </div>`
+            : '';
         
         marker.bindPopup(`
             <div class="shop-popup">
@@ -30,6 +39,7 @@ export class CustomMarker {
                         <span>${category}</span>
                     </div>
                 </div>
+                ${commoditiesHtml}
                 <button class="shop-popup-button" data-category-id="${categoryId || ''}" data-action="build-route">
                     Построить маршрут
                 </button>
