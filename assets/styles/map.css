@@ -897,3 +897,83 @@
                 drop-shadow(0 0 15px rgba(255, 140, 0, 1));
     }
 }
+
+/* ── Mobile / PWA responsive ── */
+@media (max-width: 480px) {
+    .unified-search-container {
+        width: calc(100% - 20px);
+        left: 10px;
+        top: 10px;
+        border-radius: 10px;
+    }
+
+    .search-mode-tab {
+        padding: 8px 4px;
+        font-size: 11px;
+    }
+
+    .mode-label {
+        font-size: 9px;
+    }
+
+    .search-mode-content {
+        padding: 10px;
+    }
+
+    .ai-chat-body {
+        max-height: 250px;
+    }
+
+    .ai-chat-bubble {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .ai-input-group .map-search-input {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    .ai-send-button {
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+    }
+
+    .shop-popup {
+        padding: 12px;
+        min-width: 180px;
+    }
+
+    .shop-popup h3 {
+        font-size: 15px;
+    }
+
+    .route-info-bar {
+        padding: 10px 16px;
+        gap: 12px;
+    }
+
+    .route-info-value {
+        font-size: 14px;
+    }
+
+    .custom-shop-marker {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .custom-shop-marker .icon {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+    .unified-search-container {
+        width: 320px;
+    }
+
+    .ai-chat-body {
+        max-height: 300px;
+    }
+}

@@ -2,8 +2,15 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="theme-color" content="#667eea">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="EasyShop">
+        <title>{% block title %}EasyShop{% endblock %}</title>
         <link rel="icon" href="/favicon.ico">
+        <link rel="manifest" href="/manifest.json">
+        <link rel="apple-touch-icon" href="/img/icons/icon-192.png">
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
@@ -11,6 +18,16 @@
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
+
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(reg => console.log('SW registered:', reg.scope))
+                        .catch(err => console.log('SW registration failed:', err));
+                });
+            }
+        </script>
     </head>
     <body>
         {% block body %}
