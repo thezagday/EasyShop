@@ -2,7 +2,9 @@
 
 namespace App\Infrastructure\Ui\Controller\Admin;
 
+use App\Domain\Entity\Commodity;
 use App\Domain\Entity\ProductCollection;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -33,9 +35,32 @@ class ProductCollectionCrudController extends AbstractCrudController
         yield TextField::new('emoji')->setLabel('Emoji');
         yield TextField::new('title')->setLabel('Название');
         yield TextareaField::new('description')->setLabel('Описание');
-        yield AssociationField::new('shop')->setLabel('Магазин');
+        $shopField = AssociationField::new('shop')->setLabel('Магазин');
+        if ($pageName === Crud::PAGE_EDIT) {
+            $shopField->setDisabled();
+        }
+        yield $shopField;
         yield BooleanField::new('active')->setLabel('Активна');
         yield IntegerField::new('sortOrder')->setLabel('Порядок');
-        yield AssociationField::new('items')->setLabel('Товары')->onlyOnDetail();
+
+        $commoditiesField = AssociationField::new('commodities')
+            ->setLabel('Товары');
+
+        if ($pageName === Crud::PAGE_EDIT || $pageName === Crud::PAGE_NEW) {
+            $entity = $this->getContext()?->getEntity()?->getInstance();
+            $shopId = $entity?->getShop()?->getId();
+
+            if ($shopId) {
+                $commoditiesField->setQueryBuilder(function (QueryBuilder $qb) use ($shopId) {
+                    return $qb
+                        ->join('entity.shopCategories', 'sc')
+                        ->andWhere('sc.shop = :shopId')
+                        ->setParameter('shopId', $shopId)
+                        ->orderBy('entity.title', 'ASC');
+                });
+            }
+        }
+
+        yield $commoditiesField;
     }
 }

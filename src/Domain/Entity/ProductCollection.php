@@ -33,12 +33,13 @@ class ProductCollection
     #[ORM\Column(type: 'integer', options: ['default' => 0])]
     private int $sortOrder = 0;
 
-    #[ORM\OneToMany(mappedBy: 'collection', targetEntity: ProductCollectionItem::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    private Collection $items;
+    #[ORM\ManyToMany(targetEntity: Commodity::class)]
+    #[ORM\JoinTable(name: 'product_collection_commodity')]
+    private Collection $commodities;
 
     public function __construct()
     {
-        $this->items = new ArrayCollection();
+        $this->commodities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -112,27 +113,22 @@ class ProductCollection
         return $this;
     }
 
-    public function getItems(): Collection
+    public function getCommodities(): Collection
     {
-        return $this->items;
+        return $this->commodities;
     }
 
-    public function addItem(ProductCollectionItem $item): self
+    public function addCommodity(Commodity $commodity): self
     {
-        if (!$this->items->contains($item)) {
-            $this->items->add($item);
-            $item->setCollection($this);
+        if (!$this->commodities->contains($commodity)) {
+            $this->commodities->add($commodity);
         }
         return $this;
     }
 
-    public function removeItem(ProductCollectionItem $item): self
+    public function removeCommodity(Commodity $commodity): self
     {
-        if ($this->items->removeElement($item)) {
-            if ($item->getCollection() === $this) {
-                $item->setCollection(null);
-            }
-        }
+        $this->commodities->removeElement($commodity);
         return $this;
     }
 

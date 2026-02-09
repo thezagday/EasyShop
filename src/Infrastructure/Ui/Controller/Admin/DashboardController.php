@@ -5,7 +5,6 @@ namespace App\Infrastructure\Ui\Controller\Admin;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\Commodity;
 use App\Domain\Entity\ProductCollection;
-use App\Domain\Entity\ProductCollectionItem;
 use App\Domain\Entity\Retailer;
 use App\Domain\Entity\Shop;
 use App\Domain\Entity\ShopCategory;
@@ -62,7 +61,6 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Collections');
         yield MenuItem::linkToCrud('Подборки', 'fas fa-gift', ProductCollection::class);
-        yield MenuItem::linkToCrud('Товары в подборках', 'fas fa-box', ProductCollectionItem::class);
 
         yield MenuItem::section('User Management');
         yield MenuItem::linkToCrud('Users', 'fas fa-users', User::class);

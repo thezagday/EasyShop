@@ -27,12 +27,7 @@ final class GetCollectionsHandler implements QueryHandlerInterface
 
         return array_map(function ($collection) {
             $items = [];
-            foreach ($collection->getItems() as $item) {
-                $commodity = $item->getCommodity();
-                if (!$commodity) {
-                    continue;
-                }
-
+            foreach ($collection->getCommodities() as $commodity) {
                 // Find the ShopCategory for this commodity in this shop
                 $shopCategory = null;
                 foreach ($commodity->getShopCategories() as $sc) {
@@ -43,7 +38,7 @@ final class GetCollectionsHandler implements QueryHandlerInterface
                 }
 
                 $items[] = [
-                    'id' => $item->getId(),
+                    'id' => $commodity->getId(),
                     'commodityId' => $commodity->getId(),
                     'commodityTitle' => $commodity->getTitle(),
                     'price' => $commodity->getPrice(),
