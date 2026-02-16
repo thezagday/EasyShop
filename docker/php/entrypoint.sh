@@ -21,7 +21,7 @@ php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migratio
 # Load fixtures if DB is fresh (no users table or empty)
 if ! php bin/console doctrine:query:sql "SELECT COUNT(*) FROM user" 2>/dev/null | grep -q "1"; then
     echo "Loading fixtures..."
-    php bin/console doctrine:fixtures:load --no-interaction
+    php bin/console doctrine:fixtures:load --no-interaction --append
 fi
 
 # Clear and warm up cache
