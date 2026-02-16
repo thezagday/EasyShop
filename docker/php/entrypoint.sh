@@ -18,6 +18,12 @@ echo "Setting up database..."
 php bin/console doctrine:database:create --if-not-exists
 php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 
+echo "Clearing Doctrine cache..."
+php bin/console doctrine:cache:clear-metadata --flush
+php bin/console doctrine:cache:clear-query --flush
+php bin/console doctrine:cache:clear-result --flush
+php bin/console cache:clear --no-warmup
+
 # Load fixtures if DB is fresh (no users table or empty)
 if ! php bin/console doctrine:query:sql "SELECT COUNT(*) FROM user" 2>/dev/null | grep -q "1"; then
     echo "Loading fixtures..."
