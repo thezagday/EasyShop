@@ -70,8 +70,7 @@ COPY public/build ./public/build
 ENV APP_ENV=prod
 ENV APP_SECRET=build-time-secret-will-be-overridden-at-runtime
 
-RUN composer dump-autoload --optimize \
-    && composer run-script post-install-cmd
+RUN composer dump-autoload --optimize
 
 # Set permissions
 RUN chown -R www-data:www-data var/
