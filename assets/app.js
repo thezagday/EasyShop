@@ -7,7 +7,7 @@ const $ = require('jquery');
 
 import './js/plugins';
 
-$(window).on("load", function() {
+$(window).on("load", function () {
     $('body').addClass('loaded');
 });
 
@@ -17,10 +17,16 @@ import App from "./js/components/App";
 import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+const content = (
+    <BrowserRouter>
+        <App />
+    </BrowserRouter>
+);
+
 root.render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
-    </React.StrictMode>
+    process.env.NODE_ENV === 'prod' ? content : (
+        <React.StrictMode>
+            {content}
+        </React.StrictMode>
+    )
 );
