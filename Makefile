@@ -48,6 +48,7 @@ build-assets-prod:
 # Requires assets to be built first
 build-prod: build-assets-prod
 	docker build --target prod -t easyshop-php:prod -f docker/php/Dockerfile .
+	docker build -t easyshop-nginx:prod -f docker/nginx/Dockerfile .
 
 # Deploy to production (using docker-compose.prod.yml)
 deploy-prod: build-prod
