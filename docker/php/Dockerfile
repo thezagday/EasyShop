@@ -72,8 +72,8 @@ ENV APP_SECRET=build-time-secret-will-be-overridden-at-runtime
 
 RUN composer dump-autoload --optimize
 
-# Set permissions
-RUN chown -R www-data:www-data var/
+# Create var directory and set permissions
+RUN mkdir -p var/ && chown -R www-data:www-data var/
 
 # Copy entrypoint script
 COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
