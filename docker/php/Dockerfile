@@ -66,6 +66,10 @@ COPY . .
 # This preserves the separation of concerns for the application
 COPY public/build ./public/build
 
+# Set production environment for build
+ENV APP_ENV=prod
+ENV APP_SECRET=build-time-secret-will-be-overridden-at-runtime
+
 RUN composer dump-autoload --optimize \
     && composer run-script post-install-cmd
 
