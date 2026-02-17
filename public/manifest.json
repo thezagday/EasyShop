@@ -3,10 +3,16 @@
     "short_name": "EasyShop",
     "description": "AI-помощник для навигации по магазину: поиск товаров, построение оптимального маршрута",
     "start_url": "/",
+    "scope": "/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#667eea",
     "orientation": "portrait-primary",
+    "categories": [
+        "shopping",
+        "navigation",
+        "productivity"
+    ],
     "icons": [
         {
             "src": "/img/icons/icon-192.png",

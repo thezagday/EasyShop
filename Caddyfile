@@ -1,0 +1,19 @@
+# Основной домен
+easy-shop.by, www.easy-shop.by {
+    # Автоматический HTTPS от Let's Encrypt
+    reverse_proxy nginx:80
+    
+    # Логирование
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
+
+# Админка
+admin.easy-shop.by {
+    reverse_proxy nginx:80
+    
+    log {
+        output file /var/log/caddy/admin-access.log
+    }
+}

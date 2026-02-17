@@ -26,10 +26,27 @@ services:
       dockerfile: docker/nginx/Dockerfile
     image: easyshop-nginx:prod
     container_name: easyshop-nginx
-    ports:
-      - "80:80"
+    # No ports exposed - only accessible through Caddy
     depends_on:
       - php
+    networks:
+      - easyshop
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: easyshop-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy
+    depends_on:
+      - nginx
     networks:
       - easyshop
 
@@ -53,6 +70,9 @@ services:
 
 volumes:
   db_data:
+  caddy_data:
+  caddy_config:
+  caddy_logs:
 
 
 networks:
