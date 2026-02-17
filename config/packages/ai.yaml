@@ -1,9 +1,9 @@
 ai:
     agent:
         default:
-            platform: ai.traceable_platform.openrouter
+            platform: ai.platform.openrouter
             model: google/gemini-2.5-flash
         
         openai_fallback:
-            platform: ai.traceable_platform.openai
+            platform: ai.platform.openai
             model: gpt-4o-mini
