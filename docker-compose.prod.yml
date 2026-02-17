@@ -1,0 +1,60 @@
+services:
+  php:
+    image: easyshop-php:prod
+    container_name: easyshop-php
+    environment:
+      APP_ENV: ${APP_ENV:-prod}
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+      MESSENGER_TRANSPORT_DSN: ${MESSENGER_TRANSPORT_DSN}
+      ADMIN_HOST: ${ADMIN_HOST}
+      MAIN_HOST: ${MAIN_HOST}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      AI_PROVIDER: ${AI_PROVIDER:-}
+      MAILER_DSN: ${MAILER_DSN:-null://null}
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - easyshop
+    # Note: No volumes - code is baked into the image
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    image: easyshop-nginx:prod
+    container_name: easyshop-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - php
+    networks:
+      - easyshop
+
+  database:
+    image: mysql:8.0
+    container_name: easyshop-db
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - easyshop
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  db_data:
+
+
+networks:
+  easyshop:
+    driver: bridge

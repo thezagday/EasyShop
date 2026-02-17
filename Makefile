@@ -5,6 +5,7 @@ help:
 	@echo "EasyShop Docker Commands"
 	@echo "========================"
 	@echo ""
+	@echo "Development:"
 	@echo "  make install       - First time setup (build, start, install deps, migrate)"
 	@echo "  make up            - Start all containers"
 	@echo "  make down          - Stop all containers"
@@ -12,13 +13,20 @@ help:
 	@echo "  make restart       - Restart with fresh database"
 	@echo "  make restart-quick - Restart without removing database"
 	@echo "  make build         - Build Docker images"
+	@echo ""
+	@echo "Production:"
+	@echo "  make build-prod    - Build production image with assets"
+	@echo "  make deploy-prod   - Deploy to production (build + up)"
+	@echo "  make stop-prod     - Stop production containers"
+	@echo ""
+	@echo "Utilities:"
 	@echo "  make logs       - View logs (all containers)"
 	@echo "  make logs-php   - View PHP logs"
 	@echo "  make logs-node  - View Node logs"
 	@echo "  make shell      - Open shell in PHP container"
-	@echo "  make db-shell   - Open PostgreSQL shell"
+	@echo "  make db-shell   - Open MySQL shell"
 	@echo "  make migrate    - Run database migrations"
-	@echo "  make fixtures   - Load fixtures"
+	@echo "  make fixtures   - Load fixtures (DEV ONLY)"
 	@echo "  make assets     - Build production assets"
 	@echo "  make composer   - Run composer install"
 	@echo "  make yarn       - Run yarn install"
@@ -41,7 +49,15 @@ build-assets-prod:
 build-prod: build-assets-prod
 	docker build --target prod -t easyshop-php:prod -f docker/php/Dockerfile .
 
-# Start containers
+# Deploy to production (using docker-compose.prod.yml)
+deploy-prod: build-prod
+	docker compose -f docker-compose.prod.yml up -d
+
+# Stop production containers
+stop-prod:
+	docker compose -f docker-compose.prod.yml down
+
+# Start containers (development)
 up:
 	docker compose up -d
 
@@ -83,12 +99,18 @@ db-shell:
 migrate:
 	docker compose exec php bin/console doctrine:migrations:migrate --no-interaction
 
-# Load fixtures
+# Load fixtures (DEV/TEST ONLY - use at your own risk in production!)
 fixtures:
-	docker compose exec php bin/console doctrine:database:drop --force --if-exists
-	docker compose exec php bin/console doctrine:database:create
-	docker compose exec php bin/console doctrine:migrations:migrate --no-interaction
-	docker compose exec php bin/console doctrine:fixtures:load --no-interaction
+	@echo "⚠️  WARNING: This will DROP and recreate the database!"
+	@echo "⚠️  Only use in dev/test environments."
+	@read -p "Continue? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		docker compose exec php bin/console doctrine:database:drop --force --if-exists && \
+		docker compose exec php bin/console doctrine:database:create && \
+		docker compose exec php bin/console doctrine:migrations:migrate --no-interaction && \
+		docker compose exec php bin/console doctrine:fixtures:load --no-interaction; \
+	fi
 
 # Build production assets
 assets:
@@ -111,7 +133,7 @@ test:
 	docker compose exec php bin/phpunit
 
 # First time installation
-install: build env
+install: env build
 	docker compose up -d
 	@echo ""
 	@echo "============================================"

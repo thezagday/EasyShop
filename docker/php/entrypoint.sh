@@ -24,10 +24,14 @@ php bin/console doctrine:cache:clear-query --flush
 php bin/console doctrine:cache:clear-result --flush
 php bin/console cache:clear --no-warmup
 
-# Load fixtures if DB is fresh (no users table or empty)
-if ! php bin/console doctrine:query:sql "SELECT COUNT(*) FROM user" 2>/dev/null | grep -q "1"; then
-    echo "Loading fixtures..."
-    php bin/console doctrine:fixtures:load --no-interaction --append
+# Load fixtures only in dev/test environments if DB is fresh (no users table or empty)
+if [ "$APP_ENV" != "prod" ]; then
+    if ! php bin/console doctrine:query:sql "SELECT COUNT(*) FROM user" 2>/dev/null | grep -q "1"; then
+        echo "Loading fixtures (dev/test environment)..."
+        php bin/console doctrine:fixtures:load --no-interaction --append
+    fi
+else
+    echo "Skipping fixtures in production environment"
 fi
 
 # Clear and warm up cache
