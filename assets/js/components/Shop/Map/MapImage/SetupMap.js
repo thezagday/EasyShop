@@ -54,32 +54,12 @@ export function SetupMap(map, mapImageUrl = "/img/map.svg", shop = null) {
     map.options.fadeAnimation = true;
     map.options.markerZoomAnimation = true;
     
-    // Добавляем маркер "Вы здесь" на входе
-    const entrancePosition = adminToLeaflet(shop?.entranceX ?? 0, shop?.entranceY ?? 50);
-    const currentLocationMarker = L.marker(entrancePosition, {
-        icon: L.divIcon({
-            className: 'current-location-marker',
-            html: `
-                <div class="current-location-pulse">
-                    <div class="current-location-dot"></div>
-                    <div class="current-location-ring"></div>
-                </div>
-                <div class="current-location-label">Вы здесь</div>
-            `,
-            iconSize: [60, 80],
-            iconAnchor: [30, 40]
-        }),
-        zIndexOffset: 10000
-    }).addTo(map);
-
-    map.__easyShopCurrentLocationMarker = currentLocationMarker;
     
     // Создаем интерактивный слой для будущего использования
     const interactiveLayer = new InteractiveLayer(map);
     
     return {
         map,
-        interactiveLayer,
-        currentLocationMarker
+        interactiveLayer
     };
 }

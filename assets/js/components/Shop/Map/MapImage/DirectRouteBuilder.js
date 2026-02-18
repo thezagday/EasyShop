@@ -265,76 +265,41 @@ export class DirectRouteBuilder {
         const explicitWaypoints = Array.isArray(sourceCoords) ? sourceCoords : [sourceCoords, destCoords];
         
         explicitWaypoints.forEach((wp, index) => {
+            const isFirst = index === 0;
+            const isLast = index === explicitWaypoints.length - 1;
+
+            // Skip entrance (first) and exit (last) — their markers already exist on the map
+            if (isFirst || isLast) return;
+
             const wpLeaflet = adminToLeaflet(wp.x, wp.y);
-            const wpPoint = Array.isArray(sourceCoords) ? 
-                routePoints.find(p => Math.abs(p[0] - wpLeaflet.lat) < 1 && Math.abs(p[1] - wpLeaflet.lng) < 1) || [wpLeaflet.lat, wpLeaflet.lng] :
-                (index === 0 ? routePoints[0] : routePoints[routePoints.length - 1]);
-            
-            let markerIcon;
-            
-            if (index === 0) {
-                // Start marker (entrance)
-                markerIcon = L.divIcon({
-                    className: 'route-marker-start',
-                    html: `
-                        <div class="route-marker">
-                            <div class="route-marker-icon start">🚪</div>
-                            <div class="route-marker-label">${waypointNames[0]}</div>
-                        </div>
-                    `,
-                    iconSize: [60, 60],
-                    iconAnchor: [30, 30]
-                });
-            } else if (index === explicitWaypoints.length - 1 && explicitWaypoints.length === 2) {
-                // End marker for simple 2-point route (no number needed)
-                const wpName = waypointNames[index] || wp.name || 'Категория';
-                markerIcon = L.divIcon({
-                    className: 'route-marker-end',
-                    html: `
-                        <div class="route-marker">
-                            <div class="route-marker-icon end">🎯</div>
-                            <div class="route-marker-label">${wpName}</div>
-                        </div>
-                    `,
-                    iconSize: [60, 60],
-                    iconAnchor: [30, 30]
-                });
-            } else if (index === explicitWaypoints.length - 1) {
-                // Last waypoint in multi-point route is the exit
-                const wpName = waypointNames[index] || wp.name || 'Выход';
-                markerIcon = L.divIcon({
-                    className: 'route-marker-end',
-                    html: `
-                        <div class="route-marker">
-                            <div class="route-marker-icon exit">🚶</div>
-                            <div class="route-marker-label">${wpName}</div>
-                        </div>
-                    `,
-                    iconSize: [60, 60],
-                    iconAnchor: [30, 30]
-                });
-            } else {
-                // Multi-point route: numbered intermediate waypoint markers
-                const wpName = waypointNames[index] || wp.name || 'Категория';
-                markerIcon = L.divIcon({
-                    className: 'route-marker-waypoint',
-                    html: `
-                        <div class="route-marker">
-                            <div class="route-marker-icon waypoint">${index}</div>
-                            <div class="route-marker-label">${wpName}</div>
-                        </div>
-                    `,
-                    iconSize: [60, 60],
-                    iconAnchor: [30, 30]
-                });
-            }
+            const wpPoint = Array.isArray(sourceCoords)
+                ? routePoints.find(p => Math.abs(p[0] - wpLeaflet.lat) < 1 && Math.abs(p[1] - wpLeaflet.lng) < 1) || [wpLeaflet.lat, wpLeaflet.lng]
+                : routePoints[routePoints.length - 1];
+
+            const wpName = waypointNames[index] || wp.name || 'Категория';
+
+            // Simple 2-point route: target icon 🎯
+            // Multi-point route: numbered icon
+            const isSimple = explicitWaypoints.length === 2;
+            const iconContent = isSimple ? '🎯' : index;
+            const iconClass = isSimple ? 'end' : 'waypoint';
+
+            const markerIcon = L.divIcon({
+                className: 'route-marker-waypoint',
+                html: `
+                    <div class="route-marker">
+                        <div class="route-marker-icon ${iconClass}">${iconContent}</div>
+                        <div class="route-marker-label">${wpName}</div>
+                    </div>
+                `,
+                iconSize: [60, 60],
+                iconAnchor: [30, 30]
+            });
 
             const marker = L.marker(wpPoint, { icon: markerIcon }).addTo(this.map);
 
-            // Popup only for waypoints that have commodities (AI/product routes)
-            // Category-only routes: no popup on target
-            if (index > 0 && wp.commodities && wp.commodities.length > 0) {
-                const wpName = waypointNames[index] || wp.name || 'Категория';
+            // Popup only if there are commodities (AI/product routes)
+            if (wp.commodities && wp.commodities.length > 0) {
                 const commoditiesHtml = `<div class="shop-popup-commodities">
                         <div class="shop-popup-commodities-title">🛒 Нужно взять:</div>
                         <ul class="shop-popup-commodities-list">
