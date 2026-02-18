@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 FROM php:8.2-fpm-alpine AS base
 
 # Install system dependencies
