@@ -7,22 +7,9 @@ import MapImage from "./MapImage/MapImage";
 import { UnifiedSearchControl } from "./MapControls/UnifiedSearchControl";
 import { ZoomControl } from "./MapControls/ZoomControl";
 
-function MapControls({ shopId, categories, onCategorySelect, onProductSelect, onAIResult, onCollectionSelect }) {
+function MapZoomControl() {
     const map = useMap();
-
-    return (
-        <>
-            <UnifiedSearchControl
-                shopId={shopId}
-                categories={categories}
-                onCategorySelect={onCategorySelect}
-                onProductSelect={onProductSelect}
-                onAIResult={onAIResult}
-                onCollectionSelect={onCollectionSelect}
-            />
-            <ZoomControl map={map} />
-        </>
-    );
+    return <ZoomControl map={map} />;
 }
 
 export default function Map({
@@ -169,7 +156,7 @@ export default function Map({
     };
 
     return (
-        <div style={{ height: height + 'px', width: '100%', position: 'relative' }}>
+        <div className="map-wrapper" style={{ height: height + 'px', width: '100%', position: 'relative' }}>
             <MapContainer
                 minZoom={-1}
                 crs={CRS.Simple}
@@ -200,15 +187,18 @@ export default function Map({
                     onBuildRoute={handleBuildRoute}
                     onRouteReset={handleRouteReset}
                 />
-                <MapControls
-                    shopId={shopId}
-                    categories={categories}
-                    onCategorySelect={handleCategorySelect}
-                    onProductSelect={handleProductSelect}
-                    onAIResult={handleAIResult}
-                    onCollectionSelect={handleCollectionSelect}
-                />
+                <MapZoomControl />
             </MapContainer>
+
+            {/* Bottom nav + sheets rendered outside MapContainer so they overlay the map */}
+            <UnifiedSearchControl
+                shopId={shopId}
+                categories={categories}
+                onCategorySelect={handleCategorySelect}
+                onProductSelect={handleProductSelect}
+                onAIResult={handleAIResult}
+                onCollectionSelect={handleCollectionSelect}
+            />
         </div>
     )
 }

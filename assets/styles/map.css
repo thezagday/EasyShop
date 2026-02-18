@@ -129,71 +129,184 @@
     transform: translateY(0);
 }
 
-/* Унифицированный поиск с табами */
-.unified-search-container {
+/* ── Bottom Navigation Bar ── */
+.bottom-nav-bar {
     position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 1000;
-    width: 360px;
-    background: rgba(255, 255, 255, 0.75);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    overflow: hidden;
-    max-height: calc(100% - 40px);
-    display: flex;
-    flex-direction: column;
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
 }
 
-.search-mode-tabs {
-    display: flex;
-    background: rgba(247, 250, 252, 0.7);
-    border-bottom: 2px solid rgba(226, 232, 240, 0.6);
-}
-
-.search-mode-tab {
-    flex: 1;
-    padding: 12px 8px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.bottom-nav-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    font-size: 13px;
+    gap: 2px;
+    padding: 6px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 12px;
     color: #718096;
 }
 
-.search-mode-tab:hover {
-    background: rgba(102, 126, 234, 0.1);
+.bottom-nav-item:hover {
+    background: rgba(102, 126, 234, 0.08);
 }
 
-.search-mode-tab.active {
-    background: rgba(255, 255, 255, 0.8);
+.bottom-nav-item--active {
+    color: #667eea;
+}
+
+.bottom-nav-item--active .bottom-nav-icon {
+    transform: scale(1.15);
+}
+
+.bottom-nav-icon {
+    font-size: 22px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+.bottom-nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+/* ── Bottom Sheet ── */
+.bottom-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 56px; /* sits above the nav bar */
+    z-index: 1050;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.bottom-sheet--expanded {
+    height: calc(100% - 56px - 5%); /* ~95% of map minus nav bar, 5% peek at top */
+    animation: sheetSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bottom-sheet--collapsed {
+    height: 40%;
+    animation: sheetCollapse 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes sheetSlideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+}
+
+@keyframes sheetCollapse {
+    from { height: calc(100% - 56px - 5%); }
+    to   { height: 40%; }
+}
+
+.bottom-sheet__header {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px 8px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.bottom-sheet__handle {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    background: #cbd5e0;
+    border-radius: 2px;
+}
+
+.bottom-sheet__title {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a202c;
+    padding-top: 4px;
+}
+
+.bottom-sheet__close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 50%;
+    font-size: 16px;
+    color: #718096;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.bottom-sheet__close:hover {
+    background: rgba(0, 0, 0, 0.12);
+    color: #2d3748;
+}
+
+.bottom-sheet__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 16px 16px;
+    min-height: 0;
+}
+
+/* ── Search Switcher (inside search sheet) ── */
+.search-switcher {
+    display: flex;
+    gap: 0;
+    background: #edf2f7;
+    border-radius: 10px;
+    padding: 3px;
+    margin-bottom: 12px;
+}
+
+.search-switcher-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #718096;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.search-switcher-btn--active {
+    background: white;
     color: #667eea;
     font-weight: 600;
-    border-bottom: 3px solid #667eea;
-}
-
-.mode-icon {
-    font-size: 20px;
-}
-
-.mode-label {
-    font-size: 11px;
-    white-space: nowrap;
-}
-
-.search-mode-content {
-    padding: 16px;
-    overflow-y: auto;
-    flex: 1;
-    min-height: 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .search-input-wrapper {
@@ -279,7 +392,6 @@
 .ai-chat-body {
     flex: 1;
     min-height: 0;
-    max-height: 350px;
     overflow-y: auto;
     padding: 0 0 8px 0;
     display: flex;
@@ -543,7 +655,7 @@
 
 .route-info-panel {
     position: absolute;
-    bottom: 20px;
+    bottom: 68px; /* above bottom nav bar */
     left: 50%;
     transform: translateX(-50%);
     background: rgba(255, 255, 255, 0.88);
@@ -879,28 +991,24 @@
 
 /* ── Mobile / PWA responsive ── */
 @media (max-width: 480px) {
-    .unified-search-container {
-        width: calc(100% - 20px);
-        left: 10px;
-        top: 10px;
-        border-radius: 10px;
+    .bottom-nav-bar {
+        height: 52px;
     }
 
-    .search-mode-tab {
-        padding: 8px 4px;
-        font-size: 11px;
+    .bottom-nav-icon {
+        font-size: 20px;
     }
 
-    .mode-label {
+    .bottom-nav-label {
         font-size: 9px;
     }
 
-    .search-mode-content {
-        padding: 10px;
+    .bottom-sheet--expanded {
+        height: calc(100% - 52px - 5%);
     }
 
-    .ai-chat-body {
-        max-height: 250px;
+    .bottom-sheet {
+        bottom: 52px;
     }
 
     .ai-chat-bubble {
@@ -928,13 +1036,8 @@
         font-size: 15px;
     }
 
-    .route-info-bar {
-        padding: 10px 16px;
-        gap: 12px;
-    }
-
-    .route-info-value {
-        font-size: 14px;
+    .route-info-panel {
+        bottom: 64px;
     }
 
     .custom-shop-marker {
@@ -944,16 +1047,6 @@
 
     .custom-shop-marker .icon {
         font-size: 16px;
-    }
-}
-
-@media (max-width: 768px) and (min-width: 481px) {
-    .unified-search-container {
-        width: 320px;
-    }
-
-    .ai-chat-body {
-        max-height: 300px;
     }
 }
 
