@@ -2,8 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from "react-router-dom";
 import Map from "./Map/Map";
 
-const SIDEBLOCK_HEIGHT = 620;
-
 export default function Shop() {
     // To avoid repetitive "prop drilling", see https://react.dev/learn/scaling-up-with-reducer-and-context
     const [shop, setShop] = useState([]);
@@ -17,6 +15,39 @@ export default function Shop() {
 
     let sourceRef = useRef(null);
     let destinationRef = useRef(null);
+
+    // Hide Twig footer, lock body scroll, make #root fill viewport for map page
+    useEffect(() => {
+        const footer = document.querySelector('footer.tm-footer');
+        if (footer) footer.style.display = 'none';
+
+        document.body.style.overflow = 'hidden';
+        document.body.style.height = '100vh';
+        document.documentElement.style.overflow = 'hidden';
+        document.documentElement.style.height = '100vh';
+
+        const root = document.getElementById('root');
+        if (root) {
+            root.style.display = 'flex';
+            root.style.flexDirection = 'column';
+            root.style.height = '100vh';
+            root.style.overflow = 'hidden';
+        }
+
+        return () => {
+            if (footer) footer.style.display = '';
+            document.body.style.overflow = '';
+            document.body.style.height = '';
+            document.documentElement.style.overflow = '';
+            document.documentElement.style.height = '';
+            if (root) {
+                root.style.display = '';
+                root.style.flexDirection = '';
+                root.style.height = '';
+                root.style.overflow = '';
+            }
+        };
+    }, []);
 
     useEffect(() => {
         fetchShop();
@@ -83,27 +114,19 @@ export default function Shop() {
     }
 
     return (
-        <div className="container-fluid tm-container-content tm-mt-60">
-            <div className="row mb-4">
-                <h2 className="col-12 tm-text-primary">{shop.title}</h2>
-            </div>
-            <div className="row tm-mb-90">
-                <div className="col-12">
-                    <Map
-                        shopId={id}
-                        shop={shop}
-                        isBuildRouteClicked={isBuildRouteClicked}
-                        categories={categories}
-                        source={sourceRef.current}
-                        destination={destinationRef.current}
-                        postBuildRoute={postBuildRoute}
-                        searchedCategory={searchedCategory}
-                        searchedCategoryByCommodity={searchedCategoryByCommodity}
-                        multiSearch={multiSearch}
-                        height={SIDEBLOCK_HEIGHT}
-                    />
-                </div>
-            </div>
+        <div className="map-page">
+            <Map
+                shopId={id}
+                shop={shop}
+                isBuildRouteClicked={isBuildRouteClicked}
+                categories={categories}
+                source={sourceRef.current}
+                destination={destinationRef.current}
+                postBuildRoute={postBuildRoute}
+                searchedCategory={searchedCategory}
+                searchedCategoryByCommodity={searchedCategoryByCommodity}
+                multiSearch={multiSearch}
+            />
         </div>
     );
 }

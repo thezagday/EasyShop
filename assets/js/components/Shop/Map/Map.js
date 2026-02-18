@@ -23,7 +23,6 @@ export default function Map({
     searchedCategory,
     searchedCategoryByCommodity,
     multiSearch,
-    height = 620
 }) {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -31,6 +30,7 @@ export default function Map({
     const [routeSource, setRouteSource] = useState(null);
     const [routeDestination, setRouteDestination] = useState(null);
     const [entranceExit, setEntranceExit] = useState(null);
+    const [routeInfo, setRouteInfo] = useState(null);
 
     useEffect(() => {
         if (!shopId) return;
@@ -132,6 +132,7 @@ export default function Map({
         setAICategories([]);
         setSelectedCategory(null);
         setSelectedProduct(null);
+        setRouteInfo(null);
     };
 
     const handleBuildRoute = (categoryId) => {
@@ -156,7 +157,17 @@ export default function Map({
     };
 
     return (
-        <div className="map-wrapper" style={{ height: height + 'px', width: '100%', position: 'relative' }}>
+        <div className="map-wrapper">
+            {/* Route info bar — above the map, not overlapping */}
+            {routeInfo && (
+                <div className="route-info-bar">
+                    <span className="route-chip">🗺️ {routeInfo.from} → {routeInfo.to}</span>
+                    <span className="route-chip">📏 ~{routeInfo.distance}м</span>
+                    <span className="route-chip">⏱ ~{routeInfo.time} мин</span>
+                    <button className="route-reset-btn" onClick={handleRouteReset}>✕</button>
+                </div>
+            )}
+
             <MapContainer
                 minZoom={-1}
                 crs={CRS.Simple}
@@ -186,6 +197,7 @@ export default function Map({
                     aiCategories={aiCategories}
                     onBuildRoute={handleBuildRoute}
                     onRouteReset={handleRouteReset}
+                    onRouteInfo={setRouteInfo}
                 />
                 <MapZoomControl />
             </MapContainer>

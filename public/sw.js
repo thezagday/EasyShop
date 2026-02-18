@@ -1,4 +1,4 @@
-const CACHE_NAME = 'easyshop-v2';
+const CACHE_NAME = 'easyshop-v3';
 const STATIC_ASSETS = [
     '/',
     '/img/logo.png',

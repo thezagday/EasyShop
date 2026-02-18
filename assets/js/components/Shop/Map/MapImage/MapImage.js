@@ -29,6 +29,7 @@ export default function MapImage({
     aiCategories,
     onBuildRoute,
     onRouteReset,
+    onRouteInfo,
 }) {
     const map = useMap();
     const routeBuilderRef = useRef(null);
@@ -50,9 +51,10 @@ export default function MapImage({
         }
         if (routeBuilderRef.current) {
             routeBuilderRef.current.onResetCallback = onRouteReset;
+            routeBuilderRef.current.onRouteInfoCallback = onRouteInfo;
             routeBuilderRef.current.shopId = shopId;
         }
-    }, [map, onRouteReset]);
+    }, [map, onRouteReset, onRouteInfo]);
 
     // Определяем список активных категорий для фильтрации
     const activeCategoryIds = new Set();

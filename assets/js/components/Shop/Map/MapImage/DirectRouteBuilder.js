@@ -53,8 +53,10 @@ export class DirectRouteBuilder {
         });
         this.markers = [];
 
-        const existingPanel = this.map.getContainer().querySelector('.route-info-panel');
-        if (existingPanel) existingPanel.remove();
+        // Clear React route info
+        if (typeof this.onRouteInfoCallback === 'function') {
+            this.onRouteInfoCallback(null);
+        }
     }
 
     /**
@@ -466,36 +468,20 @@ export class DirectRouteBuilder {
         
         const timeInMinutes = Math.ceil(distanceInMeters / 80);
 
-        // Remove existing info panel
-        const existingPanel = this.map.getContainer().querySelector('.route-info-panel');
-        if (existingPanel) existingPanel.remove();
-
-        const infoPanel = L.DomUtil.create('div', 'route-info-panel');
-        L.DomEvent.disableClickPropagation(infoPanel);
-
-        infoPanel.innerHTML = `
-            <span class="route-chip">\ud83d\uddfa\ufe0f ${sourceName} \u2192 ${destName}</span>
-            <span class="route-chip">\ud83d\udccf ~${distanceInMeters}\u043c</span>
-            <span class="route-chip">⏱ ~${timeInMinutes} мин</span>
-            <button class="route-reset-btn" title="Сбросить маршрут">✕</button>
-        `;
-
-        this.map.getContainer().appendChild(infoPanel);
+        // Send route info to React via callback (rendered outside map)
+        if (typeof this.onRouteInfoCallback === 'function') {
+            this.onRouteInfoCallback({
+                from: sourceName,
+                to: destName,
+                distance: distanceInMeters,
+                time: timeInMinutes,
+            });
+        }
 
         // Track route building
         if (this.shopId) {
             const routeCategories = this.lastWaypoints || [];
             TrackingService.trackRoute(this.shopId, routeCategories, distanceInMeters, timeInMinutes);
         }
-
-        // Reset button — clear route, panel, and React state
-        const resetBtn = infoPanel.querySelector('.route-reset-btn');
-        resetBtn.addEventListener('click', () => {
-            this.clearRoute();
-            infoPanel.remove();
-            if (typeof this.onResetCallback === 'function') {
-                this.onResetCallback();
-            }
-        });
     }
 }

@@ -1,5 +1,41 @@
 /* Современные стили для indoor карты */
 
+/* ── Full-screen map page layout ── */
+.map-page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.map-wrapper {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.map-wrapper .leaflet-container {
+    flex: 1;
+    min-height: 0;
+}
+
+/* ── Route info bar (above map, not overlapping) ── */
+.route-info-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+    flex-wrap: wrap;
+    animation: slideDown 0.3s ease-out;
+}
+
 /* Кастомные маркеры */
 .custom-shop-marker {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -216,6 +252,7 @@
     cursor: grab;
     user-select: none;
     -webkit-user-select: none;
+    touch-action: none; /* prevent mobile page scroll during drag */
 }
 
 .bottom-sheet__header:active {
@@ -643,35 +680,16 @@
     }
 }
 
-.route-info-panel {
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 24px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    max-width: 90%;
-    animation: slideDown 0.3s ease-out;
-}
+/* .route-info-panel is now replaced by .route-info-bar rendered by React above the map */
 
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateX(-50%) translateY(-12px);
+        transform: translateY(-8px);
     }
     to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
     }
 }
 
@@ -1022,8 +1040,14 @@
         font-size: 15px;
     }
 
-    .route-info-panel {
-        top: 8px;
+    .route-info-bar {
+        padding: 6px 10px;
+        gap: 6px;
+    }
+
+    .route-info-bar .route-chip {
+        font-size: 11px;
+        padding: 3px 8px;
     }
 
     .custom-shop-marker {
