@@ -1,16 +1,22 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import L from 'leaflet';
 
-/**
- * BottomSheet component with three states:
- * - 'hidden'    — not visible
- * - 'expanded'  — covers ~95% of the map area
- * - 'collapsed' — covers ~40% so user can see map results
- */
-export function BottomSheet({ state, title, onClose, children }) {
-    const sheetRef = useRef(null);
+const NAV_BAR_HEIGHT = 56;
+const EXPANDED_RATIO = 0.92;   // 92% of wrapper
+const COLLAPSED_RATIO = 0.12;  // 12% of wrapper
+const SNAP_THRESHOLD = 0.35;   // drag past 35% → snap to other state
 
-    // Block Leaflet scroll/click propagation inside the sheet
+/**
+ * BottomSheet with drag-to-resize.
+ * States: 'hidden' | 'expanded' | 'collapsed'
+ * User can drag between expanded and collapsed via the handle.
+ */
+export function BottomSheet({ state, title, onClose, onChangeState, children }) {
+    const sheetRef = useRef(null);
+    const dragRef = useRef({ active: false, startY: 0, startH: 0 });
+    const [dragHeight, setDragHeight] = useState(null);
+
+    // Block Leaflet scroll/click propagation
     useEffect(() => {
         const el = sheetRef.current;
         if (!el) return;
@@ -18,16 +24,94 @@ export function BottomSheet({ state, title, onClose, children }) {
         L.DomEvent.disableClickPropagation(el);
     }, []);
 
+    const getWrapperHeight = useCallback(() => {
+        const wrapper = sheetRef.current?.parentElement;
+        return wrapper ? wrapper.clientHeight - NAV_BAR_HEIGHT : 600;
+    }, []);
+
+    const getHeightForState = useCallback((s) => {
+        const wh = getWrapperHeight();
+        return s === 'expanded' ? wh * EXPANDED_RATIO : wh * COLLAPSED_RATIO;
+    }, [getWrapperHeight]);
+
+    // ── Drag handlers ──
+    const onDragStart = useCallback((clientY) => {
+        const el = sheetRef.current;
+        if (!el) return;
+        dragRef.current = { active: true, startY: clientY, startH: el.offsetHeight };
+        el.style.transition = 'none';
+    }, []);
+
+    const onDragMove = useCallback((clientY) => {
+        if (!dragRef.current.active) return;
+        const delta = dragRef.current.startY - clientY;
+        const newH = Math.max(40, dragRef.current.startH + delta);
+        setDragHeight(newH);
+    }, []);
+
+    const onDragEnd = useCallback(() => {
+        if (!dragRef.current.active) return;
+        dragRef.current.active = false;
+        const el = sheetRef.current;
+        if (!el) return;
+        el.style.transition = '';
+
+        const wh = getWrapperHeight();
+        const currentH = el.offsetHeight;
+        const ratio = currentH / wh;
+
+        // Snap to expanded or collapsed
+        if (ratio > SNAP_THRESHOLD) {
+            onChangeState?.('expanded');
+        } else {
+            onChangeState?.('collapsed');
+        }
+        setDragHeight(null);
+    }, [getWrapperHeight, onChangeState]);
+
+    // Mouse events
+    const handleMouseDown = useCallback((e) => {
+        e.preventDefault();
+        onDragStart(e.clientY);
+        const onMove = (ev) => onDragMove(ev.clientY);
+        const onUp = () => { onDragEnd(); window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+    }, [onDragStart, onDragMove, onDragEnd]);
+
+    // Touch events
+    const handleTouchStart = useCallback((e) => {
+        onDragStart(e.touches[0].clientY);
+    }, [onDragStart]);
+
+    const handleTouchMove = useCallback((e) => {
+        onDragMove(e.touches[0].clientY);
+    }, [onDragMove]);
+
+    const handleTouchEnd = useCallback(() => {
+        onDragEnd();
+    }, [onDragEnd]);
+
     if (state === 'hidden') return null;
 
-    const stateClass = state === 'expanded' ? 'bottom-sheet--expanded' : 'bottom-sheet--collapsed';
+    const height = dragHeight != null ? dragHeight : getHeightForState(state);
 
     return (
-        <div className={`bottom-sheet ${stateClass}`} ref={sheetRef}>
-            <div className="bottom-sheet__header">
+        <div
+            className="bottom-sheet"
+            ref={sheetRef}
+            style={{ height: height + 'px' }}
+        >
+            <div
+                className="bottom-sheet__header"
+                onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+            >
                 <div className="bottom-sheet__handle" />
                 <div className="bottom-sheet__title">{title}</div>
-                <button className="bottom-sheet__close" onClick={onClose}>✕</button>
+                <button className="bottom-sheet__close" onClick={onClose} onMouseDown={e => e.stopPropagation()}>✕</button>
             </div>
             <div className="bottom-sheet__content">
                 {children}

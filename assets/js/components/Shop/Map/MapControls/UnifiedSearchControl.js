@@ -24,7 +24,6 @@ export function UnifiedSearchControl({
 
     const handleToggle = (sheetId) => {
         if (activeSheet === sheetId && sheetState !== 'hidden') {
-            // Tap same icon → close
             setSheetState('hidden');
             setActiveSheet(null);
         } else {
@@ -47,19 +46,23 @@ export function UnifiedSearchControl({
         setActiveSheet(null);
     };
 
-    // Wrap category select: collapse sheet, then call parent
+    // Drag-to-resize callback from BottomSheet
+    const handleChangeState = (newState) => {
+        setSheetState(newState);
+    };
+
+    // Search: hide sheet completely on category/product select
     const handleCategorySelect = (category) => {
-        handleCollapse();
+        handleHide();
         onCategorySelect(category);
     };
 
-    // Wrap product select: collapse sheet, then call parent
     const handleProductSelect = (product) => {
-        handleCollapse();
+        handleHide();
         onProductSelect(product);
     };
 
-    // Wrap AI result: collapse on results, hide on route build
+    // AI: collapse on results, hide on route build
     const handleAIResult = (result) => {
         if (result.buildRoute) {
             handleHide();
@@ -69,7 +72,7 @@ export function UnifiedSearchControl({
         onAIResult(result);
     };
 
-    // Wrap collection select: hide (route is built immediately)
+    // Collection: hide (route is built immediately)
     const handleCollectionSelect = (collection) => {
         handleHide();
         onCollectionSelect(collection);
@@ -88,6 +91,7 @@ export function UnifiedSearchControl({
                 state={activeSheet === 'ai' ? sheetState : 'hidden'}
                 title={sheetTitles.ai}
                 onClose={handleClose}
+                onChangeState={handleChangeState}
             >
                 <AIAssistant
                     shopId={shopId}
@@ -99,6 +103,7 @@ export function UnifiedSearchControl({
                 state={activeSheet === 'search' ? sheetState : 'hidden'}
                 title={sheetTitles.search}
                 onClose={handleClose}
+                onChangeState={handleChangeState}
             >
                 <div className="search-switcher">
                     <button
@@ -132,6 +137,7 @@ export function UnifiedSearchControl({
                 state={activeSheet === 'collection' ? sheetState : 'hidden'}
                 title={sheetTitles.collection}
                 onClose={handleClose}
+                onChangeState={handleChangeState}
             >
                 <CollectionPicker
                     shopId={shopId}

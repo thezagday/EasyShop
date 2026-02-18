@@ -204,25 +204,8 @@
     overflow: hidden;
 }
 
-.bottom-sheet--expanded {
-    height: calc(100% - 56px - 5%); /* ~95% of map minus nav bar, 5% peek at top */
-    animation: sheetSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.bottom-sheet--collapsed {
-    height: 40%;
-    animation: sheetCollapse 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes sheetSlideUp {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0); }
-}
-
-@keyframes sheetCollapse {
-    from { height: calc(100% - 56px - 5%); }
-    to   { height: 40%; }
-}
+/* Height is now controlled via inline style from JS (drag-to-resize) */
+/* Transition is applied unless dragging (JS removes it during drag) */
 
 .bottom-sheet__header {
     display: flex;
@@ -230,6 +213,13 @@
     padding: 10px 16px 8px;
     flex-shrink: 0;
     position: relative;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.bottom-sheet__header:active {
+    cursor: grabbing;
 }
 
 .bottom-sheet__handle {
@@ -655,7 +645,7 @@
 
 .route-info-panel {
     position: absolute;
-    bottom: 68px; /* above bottom nav bar */
+    top: 12px;
     left: 50%;
     transform: translateX(-50%);
     background: rgba(255, 255, 255, 0.88);
@@ -671,13 +661,13 @@
     gap: 8px;
     flex-wrap: wrap;
     max-width: 90%;
-    animation: slideUp 0.3s ease-out;
+    animation: slideDown 0.3s ease-out;
 }
 
-@keyframes slideUp {
+@keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateX(-50%) translateY(12px);
+        transform: translateX(-50%) translateY(-12px);
     }
     to {
         opacity: 1;
@@ -1003,10 +993,6 @@
         font-size: 9px;
     }
 
-    .bottom-sheet--expanded {
-        height: calc(100% - 52px - 5%);
-    }
-
     .bottom-sheet {
         bottom: 52px;
     }
@@ -1037,7 +1023,7 @@
     }
 
     .route-info-panel {
-        bottom: 64px;
+        top: 8px;
     }
 
     .custom-shop-marker {
@@ -1156,4 +1142,41 @@
 .collection-build-route-btn:hover {
     opacity: 0.9;
     transform: translateY(-1px);
+}
+
+/* Category quick-tap list (inside search sheet) */
+.category-quick-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 8px;
+}
+
+.category-quick-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.category-quick-item:hover {
+    background: rgba(102, 126, 234, 0.08);
+}
+
+.category-quick-item:active {
+    background: rgba(102, 126, 234, 0.16);
+}
+
+.category-quick-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.category-quick-name {
+    font-size: 14px;
+    color: #2d3748;
+    font-weight: 500;
 }

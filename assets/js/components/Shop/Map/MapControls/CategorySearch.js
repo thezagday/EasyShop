@@ -38,6 +38,15 @@ export function CategorySearch({ shopId, categories, onSelect }) {
         onSelect(category);
     };
 
+    // Full category list for quick-tap when no search query
+    const allCategories = categories.map(cat => ({
+        id: cat.id,
+        name: cat.category?.title || 'Без названия',
+        category: cat.category?.parent?.title || 'Общее',
+        x: cat.x_coordinate,
+        y: cat.y_coordinate
+    }));
+
     return (
         <div className="search-input-wrapper">
             <div style={{ position: 'relative' }}>
@@ -71,6 +80,22 @@ export function CategorySearch({ shopId, categories, onSelect }) {
                     <div className="search-result-item" style={{ cursor: 'default', color: '#a0aec0' }}>
                         Ничего не найдено
                     </div>
+                </div>
+            )}
+
+            {/* Show all categories when no search query — quick tap to select */}
+            {!isSearching && searchQuery.length < 2 && allCategories.length > 0 && (
+                <div className="category-quick-list">
+                    {allCategories.map((category, index) => (
+                        <div
+                            key={index}
+                            className="category-quick-item"
+                            onClick={() => handleSelectCategory(category)}
+                        >
+                            <span className="category-quick-icon">📂</span>
+                            <span className="category-quick-name">{category.name}</span>
+                        </div>
+                    ))}
                 </div>
             )}
         </div>
