@@ -30,29 +30,36 @@ export class CustomMarker {
             marker.categoryId = categoryId;
         }
 
-        if (isTarget && commodities && commodities.length > 0) {
-            // Target with commodities: popup shows items to get, no "Построить маршрут"
-            const commoditiesHtml = `<div class="shop-popup-commodities">
-                    <div class="shop-popup-commodities-title">🛒 Нужно взять:</div>
-                    <ul class="shop-popup-commodities-list">
-                        ${commodities.map(c => `<li>${c}</li>`).join('')}
-                    </ul>
-                </div>`;
-            marker.bindPopup(`
-                <div class="shop-popup">
-                    <h3>${shopName}</h3>
-                    ${commoditiesHtml}
-                </div>
-            `);
-        } else if (isTarget) {
-            // Target without commodities (category search): label only, no popup
+        if (isTarget) {
+            // Always show permanent label for target markers (AI-highlighted categories)
             marker.bindTooltip(shopName, {
                 permanent: true,
                 direction: 'bottom',
-                className: 'room-tooltip'
+                className: 'target-label-tooltip'
             });
+
+            if (commodities && commodities.length > 0) {
+                // Also bind popup with commodities list
+                const commoditiesHtml = `<div class="shop-popup-commodities">
+                        <div class="shop-popup-commodities-title">🛒 Нужно взять:</div>
+                        <ul class="shop-popup-commodities-list">
+                            ${commodities.map(c => `<li>${c}</li>`).join('')}
+                        </ul>
+                    </div>`;
+                marker.bindPopup(`
+                    <div class="shop-popup">
+                        <h3>${shopName}</h3>
+                        ${commoditiesHtml}
+                    </div>
+                `);
+            }
         } else {
-            // Regular category: popup with "Построить маршрут"
+            // Regular category: permanent label + popup with "Построить маршрут"
+            marker.bindTooltip(shopName, {
+                permanent: true,
+                direction: 'bottom',
+                className: 'target-label-tooltip'
+            });
             marker.bindPopup(`
                 <div class="shop-popup">
                     <h3>${shopName}</h3>

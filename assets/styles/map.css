@@ -670,6 +670,22 @@
     white-space: nowrap;
 }
 
+.target-label-tooltip {
+    background: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+    color: #1a202c;
+}
+
+.target-label-tooltip::before {
+    display: none;
+}
+
 @keyframes dash {
     to {
         stroke-dashoffset: -20;
