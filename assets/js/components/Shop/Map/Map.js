@@ -151,6 +151,10 @@ export default function Map({
                 commodities.push(selectedProduct.name);
             }
 
+            // Clear search state — route markers replace category markers
+            setSelectedCategory(null);
+            setSelectedProduct(null);
+
             // Pass actual coordinates for direct route drawing
             setRouteSource({
                 name: 'Вход',
@@ -164,7 +168,6 @@ export default function Map({
                 categoryId: categoryId,
                 commodities: commodities
             });
-            console.log('Building route from entrance to:', targetCategory.category?.title);
         }
     };
 

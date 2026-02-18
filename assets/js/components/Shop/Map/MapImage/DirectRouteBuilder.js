@@ -267,9 +267,12 @@ export class DirectRouteBuilder {
         explicitWaypoints.forEach((wp, index) => {
             const isFirst = index === 0;
             const isLast = index === explicitWaypoints.length - 1;
+            const isMultiPoint = explicitWaypoints.length > 2;
 
-            // Skip entrance (first) and exit (last) — their markers already exist on the map
-            if (isFirst || isLast) return;
+            // For multi-point routes: skip entrance (first) and exit (last) — already on map
+            // For simple 2-point routes: skip only entrance, keep destination marker
+            if (isFirst) return;
+            if (isMultiPoint && isLast) return;
 
             const wpLeaflet = adminToLeaflet(wp.x, wp.y);
             const wpPoint = Array.isArray(sourceCoords)
