@@ -24,6 +24,7 @@ services:
     build:
       context: .
       dockerfile: docker/nginx/Dockerfile
+      target: prod
     image: easyshop-nginx:prod
     container_name: easyshop-nginx
     # No ports exposed - only accessible through Caddy

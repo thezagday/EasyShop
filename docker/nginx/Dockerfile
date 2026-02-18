@@ -1,7 +1,15 @@
-FROM nginx:alpine
+# Development stage
+FROM nginx:alpine AS dev
 
-# Copy custom configuration
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+
+WORKDIR /app
+# Code is mounted as volume in dev - no COPY needed
+
+# Production stage
+FROM nginx:alpine AS prod
+
+COPY docker/nginx/default.prod.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /app
 

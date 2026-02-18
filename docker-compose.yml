@@ -31,7 +31,8 @@ services:
     build:
       context: .
       dockerfile: docker/nginx/Dockerfile
-    image: easyshop-nginx:latest
+      target: dev
+    image: easyshop-nginx:dev
     container_name: easyshop-nginx
     ports:
       - "80:80"
