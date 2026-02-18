@@ -21,6 +21,8 @@ export function UnifiedSearchControl({
     const [sheetState, setSheetState] = useState('hidden');
     // Search sub-mode: 'category' | 'product'
     const [searchMode, setSearchMode] = useState('category');
+    // AI chat messages — lifted here so they persist across tab switches
+    const [aiMessages, setAIMessages] = useState([]);
 
     const handleToggle = (sheetId) => {
         if (activeSheet === sheetId && sheetState !== 'hidden') {
@@ -96,6 +98,8 @@ export function UnifiedSearchControl({
                 <AIAssistant
                     shopId={shopId}
                     onResult={handleAIResult}
+                    messages={aiMessages}
+                    setMessages={setAIMessages}
                 />
             </BottomSheet>
 

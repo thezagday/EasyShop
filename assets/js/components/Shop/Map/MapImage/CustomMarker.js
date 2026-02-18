@@ -1,12 +1,22 @@
 import L from 'leaflet';
 
 export class CustomMarker {
-    static createShopMarker(position, shopName, category, categoryId = null, commodities = []) {
+    /**
+     * @param {Object}  position
+     * @param {string}  shopName
+     * @param {number}  categoryId
+     * @param {Array}   commodities  - list of items to pick up
+     * @param {boolean} isTarget     - true = search/route target (🎯), false = regular category (🏪)
+     */
+    static createShopMarker(position, shopName, categoryId = null, commodities = [], isTarget = false) {
+        const emoji = isTarget ? '🎯' : '🏪';
+        const markerClass = isTarget ? 'custom-shop-marker target-marker' : 'custom-shop-marker';
+
         const icon = L.divIcon({
             className: 'custom-marker-wrapper',
             html: `
-                <div class="custom-shop-marker">
-                    <div class="icon">🏪</div>
+                <div class="${markerClass}">
+                    <div class="icon">${emoji}</div>
                 </div>
             `,
             iconSize: [40, 40],
@@ -15,42 +25,43 @@ export class CustomMarker {
         });
 
         const marker = L.marker(position, { icon });
-        
-        // Сохраняем categoryId в маркере для дальнейшего использования
+
         if (categoryId) {
             marker.categoryId = categoryId;
         }
 
-        const commoditiesHtml = commodities && commodities.length > 0
-            ? `<div class="shop-popup-commodities">
+        if (isTarget && commodities && commodities.length > 0) {
+            // Target with commodities: popup shows items to get, no "Построить маршрут"
+            const commoditiesHtml = `<div class="shop-popup-commodities">
                     <div class="shop-popup-commodities-title">🛒 Нужно взять:</div>
                     <ul class="shop-popup-commodities-list">
                         ${commodities.map(c => `<li>${c}</li>`).join('')}
                     </ul>
-                </div>`
-            : '';
-        
-        marker.bindPopup(`
-            <div class="shop-popup">
-                <h3>${shopName}</h3>
-                <div class="shop-popup-info">
-                    <div class="shop-popup-row">
-                        <span class="shop-popup-icon">📂</span>
-                        <span>${category}</span>
-                    </div>
+                </div>`;
+            marker.bindPopup(`
+                <div class="shop-popup">
+                    <h3>${shopName}</h3>
+                    ${commoditiesHtml}
                 </div>
-                ${commoditiesHtml}
-                <button class="shop-popup-button" data-category-id="${categoryId || ''}" data-action="build-route">
-                    Построить маршрут
-                </button>
-            </div>
-        `);
-
-        marker.bindTooltip(shopName, {
-            permanent: false,
-            direction: 'top',
-            className: 'room-tooltip'
-        });
+            `);
+        } else if (isTarget) {
+            // Target without commodities (category search): label only, no popup
+            marker.bindTooltip(shopName, {
+                permanent: true,
+                direction: 'bottom',
+                className: 'room-tooltip'
+            });
+        } else {
+            // Regular category: popup with "Построить маршрут"
+            marker.bindPopup(`
+                <div class="shop-popup">
+                    <h3>${shopName}</h3>
+                    <button class="shop-popup-button" data-category-id="${categoryId || ''}" data-action="build-route">
+                        Построить маршрут
+                    </button>
+                </div>
+            `);
+        }
 
         return marker;
     }

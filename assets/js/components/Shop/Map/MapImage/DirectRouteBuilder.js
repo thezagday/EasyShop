@@ -273,7 +273,7 @@ export class DirectRouteBuilder {
             let markerIcon;
             
             if (index === 0) {
-                // Start marker
+                // Start marker (entrance)
                 markerIcon = L.divIcon({
                     className: 'route-marker-start',
                     html: `
@@ -285,27 +285,29 @@ export class DirectRouteBuilder {
                     iconSize: [60, 60],
                     iconAnchor: [30, 30]
                 });
-            } else if (index === explicitWaypoints.length - 1) {
-                // End marker
+            } else if (index === explicitWaypoints.length - 1 && explicitWaypoints.length === 2) {
+                // End marker for simple 2-point route (no number needed)
+                const wpName = waypointNames[index] || wp.name || 'Категория';
                 markerIcon = L.divIcon({
                     className: 'route-marker-end',
                     html: `
                         <div class="route-marker">
                             <div class="route-marker-icon end">🎯</div>
-                            <div class="route-marker-label">${waypointNames[waypointNames.length - 1]}</div>
+                            <div class="route-marker-label">${wpName}</div>
                         </div>
                     `,
                     iconSize: [60, 60],
                     iconAnchor: [30, 30]
                 });
             } else {
-                // Intermediate explicit waypoint (for multi-point routes)
+                // Multi-point route: numbered waypoint markers
+                const wpName = waypointNames[index] || wp.name || 'Категория';
                 markerIcon = L.divIcon({
                     className: 'route-marker-waypoint',
                     html: `
                         <div class="route-marker">
                             <div class="route-marker-icon waypoint">${index}</div>
-                            <div class="route-marker-label">${wp.name}</div>
+                            <div class="route-marker-label">${wpName}</div>
                         </div>
                     `,
                     iconSize: [60, 60],
@@ -315,18 +317,20 @@ export class DirectRouteBuilder {
 
             const marker = L.marker(wpPoint, { icon: markerIcon }).addTo(this.map);
 
-            // Добавляем popup с товарами для промежуточных точек маршрута
-            if (wp.commodities && wp.commodities.length > 0) {
-                const commoditiesHtml = wp.commodities.map(c => `<li>${c}</li>`).join('');
+            // Popup only for waypoints that have commodities (AI/product routes)
+            // Category-only routes: no popup on target
+            if (index > 0 && wp.commodities && wp.commodities.length > 0) {
+                const wpName = waypointNames[index] || wp.name || 'Категория';
+                const commoditiesHtml = `<div class="shop-popup-commodities">
+                        <div class="shop-popup-commodities-title">🛒 Нужно взять:</div>
+                        <ul class="shop-popup-commodities-list">
+                            ${wp.commodities.map(c => `<li>${c}</li>`).join('')}
+                        </ul>
+                    </div>`;
                 marker.bindPopup(`
                     <div class="shop-popup">
-                        <h3>${wp.name}</h3>
-                        <div class="shop-popup-commodities">
-                            <div class="shop-popup-commodities-title">🛒 Нужно взять:</div>
-                            <ul class="shop-popup-commodities-list">
-                                ${commoditiesHtml}
-                            </ul>
-                        </div>
+                        <h3>${wpName}</h3>
+                        ${commoditiesHtml}
                     </div>
                 `);
             }

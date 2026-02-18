@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 export default function Navbar() {
+    const [menuOpen, setMenuOpen] = useState(false);
     const rootElement = document.getElementById('root');
     const username = rootElement ? rootElement.getAttribute('data-user') : '';
     const rolesData = rootElement ? rootElement.getAttribute('data-roles') : '[]';
@@ -18,7 +19,7 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg">
+            <nav className="navbar navbar-expand-lg" style={{ position: 'relative', zIndex: 1100 }}>
                 <div className="container-fluid">
                     <a className="navbar-brand" href="/" style={{ display: 'flex', alignItems: 'center' }}>
                         <img src="/img/logo.png" alt="EasyShop" style={{ height: '40px', marginRight: '10px' }} />
@@ -32,15 +33,14 @@ export default function Navbar() {
                     <button
                         className="navbar-toggler"
                         type="button"
-                        data-toggle="collapse"
-                        data-target="#navbarSupportedContent"
+                        onClick={() => setMenuOpen(prev => !prev)}
                         aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
+                        aria-expanded={menuOpen}
                         aria-label="Toggle navigation"
                     >
                         <i className="fas fa-bars"></i>
                     </button>
-                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div className={`navbar-collapse collapse ${menuOpen ? 'show' : ''}`} id="navbarSupportedContent">
                         <ul className="navbar-nav ml-auto mb-2 mb-lg-0">
                             <li className="nav-item">
                                 <NavLink

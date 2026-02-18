@@ -31,7 +31,6 @@ export default function Shop() {
             root.style.display = 'flex';
             root.style.flexDirection = 'column';
             root.style.height = '100vh';
-            root.style.overflow = 'hidden';
         }
 
         return () => {
@@ -44,7 +43,6 @@ export default function Shop() {
                 root.style.display = '';
                 root.style.flexDirection = '';
                 root.style.height = '';
-                root.style.overflow = '';
             }
         };
     }, []);

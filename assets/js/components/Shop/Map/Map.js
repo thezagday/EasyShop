@@ -62,6 +62,11 @@ export default function Map({
         // If buildRoute flag is set, build multi-point route
         if (result.buildRoute && result.categories && result.categories.length > 0) {
             buildAIRoute(result.categories);
+        } else {
+            // Clear any existing route when AI highlights new categories (Task 3)
+            setRouteSource(null);
+            setRouteDestination(null);
+            setRouteInfo(null);
         }
 
         console.log('AI result:', result);
@@ -140,6 +145,12 @@ export default function Map({
         const targetCategory = categories.find(cat => cat.id === categoryId);
 
         if (targetCategory) {
+            // If a product was searched for this category, include it as commodity
+            const commodities = [];
+            if (selectedProduct && selectedProduct.categoryId === categoryId) {
+                commodities.push(selectedProduct.name);
+            }
+
             // Pass actual coordinates for direct route drawing
             setRouteSource({
                 name: 'Вход',
@@ -150,7 +161,8 @@ export default function Map({
                 name: targetCategory.category?.title || 'Категория',
                 x: targetCategory.x_coordinate,
                 y: targetCategory.y_coordinate,
-                categoryId: categoryId
+                categoryId: categoryId,
+                commodities: commodities
             });
             console.log('Building route from entrance to:', targetCategory.category?.title);
         }

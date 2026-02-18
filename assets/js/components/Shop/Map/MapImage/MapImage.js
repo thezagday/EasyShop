@@ -83,8 +83,17 @@ export default function MapImage({
         ? categories.filter(cat => activeCategoryIds.has(cat.id))
         : categories;
 
-    // Показываем категории с кастомными маркерами (передаём aiCategories для товаров в popup)
-    ShowAllCategories(map, visibleCategories, shop, aiCategories);
+    // Category IDs that have route waypoint markers — hide their regular markers (Task 2)
+    const routeCategoryIds = new Set();
+    if (destination?.categoryId) routeCategoryIds.add(destination.categoryId);
+    if (Array.isArray(source)) {
+        source.forEach(wp => {
+            if (wp.categoryId) routeCategoryIds.add(wp.categoryId);
+        });
+    }
+
+    // Показываем категории с кастомными маркерами
+    ShowAllCategories(map, visibleCategories, shop, aiCategories, routeCategoryIds, selectedCategory, selectedProduct);
 
     // CategorySearch(map, searchedCategory);
     CommoditySearch(map, searchedCategoryByCommodity);
@@ -101,7 +110,7 @@ export default function MapImage({
             else if (source && destination && typeof source === 'object' && typeof destination === 'object') {
                 routeBuilderRef.current.buildRoute(
                     { x: source.x, y: source.y },
-                    { x: destination.x, y: destination.y },
+                    { x: destination.x, y: destination.y, commodities: destination.commodities || [] },
                     source.name,
                     destination.name
                 );

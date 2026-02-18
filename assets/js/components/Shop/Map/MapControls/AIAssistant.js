@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TrackingService } from '../../../../services/TrackingService';
 
-export function AIAssistant({ shopId, onResult }) {
+export function AIAssistant({ shopId, onResult, messages, setMessages }) {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [messages, setMessages] = useState([]);
     const chatBodyRef = useRef(null);
     const wrapperRef = useRef(null);
     const fileInputRef = useRef(null);

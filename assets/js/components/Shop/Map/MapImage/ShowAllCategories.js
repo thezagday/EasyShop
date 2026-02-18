@@ -5,7 +5,7 @@ import { CustomMarker } from "./CustomMarker";
 // Хранилище маркеров для каждой карты
 const markersStorage = new WeakMap();
 
-export function ShowAllCategories(map, categories, shop, aiCategories = []) {
+export function ShowAllCategories(map, categories, shop, aiCategories = [], routeCategoryIds = new Set(), selectedCategory = null, selectedProduct = null) {
     // Получаем или создаем массив маркеров для этой карты
     if (!markersStorage.has(map)) {
         markersStorage.set(map, []);
@@ -20,30 +20,38 @@ export function ShowAllCategories(map, categories, shop, aiCategories = []) {
 
     // Построим карту categoryId → commodities из AI-результата
     const aiCommoditiesMap = {};
+    const aiCategoryIds = new Set();
     if (Array.isArray(aiCategories)) {
         aiCategories.forEach(cat => {
-            if (cat.id && cat.commodities && cat.commodities.length > 0) {
-                aiCommoditiesMap[cat.id] = cat.commodities;
+            if (cat.id) {
+                aiCategoryIds.add(cat.id);
+                if (cat.commodities && cat.commodities.length > 0) {
+                    aiCommoditiesMap[cat.id] = cat.commodities;
+                }
             }
         });
     }
 
     if (Array.isArray(categories) && categories.length > 0) {
         categories.forEach(categoryData => {
+            // Skip categories that have route waypoint markers (Task 2)
+            if (routeCategoryIds.has(categoryData.id)) return;
+
             if (categoryData.x_coordinate !== undefined && categoryData.y_coordinate !== undefined) {
                 const categoryPoint = adminToLeaflet(categoryData.x_coordinate, categoryData.y_coordinate);
                 
-                // Используем кастомный маркер вместо простого красного
                 const title = categoryData.title || categoryData.category?.title || 'Категория';
-                const categoryName = categoryData.category?.parent?.title || 'Общее';
+
                 const commodities = aiCommoditiesMap[categoryData.id] || [];
-                
+                // Only AI-found categories are targets
+                const isTarget = aiCategoryIds.has(categoryData.id);
+
                 const marker = CustomMarker.createShopMarker(
                     categoryPoint,
                     title,
-                    categoryName,
                     categoryData.id,
-                    commodities
+                    commodities,
+                    isTarget
                 );
                 
                 marker.addTo(map);
