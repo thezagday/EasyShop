@@ -299,8 +299,22 @@ export class DirectRouteBuilder {
                     iconSize: [60, 60],
                     iconAnchor: [30, 30]
                 });
+            } else if (index === explicitWaypoints.length - 1) {
+                // Last waypoint in multi-point route is the exit
+                const wpName = waypointNames[index] || wp.name || 'Выход';
+                markerIcon = L.divIcon({
+                    className: 'route-marker-end',
+                    html: `
+                        <div class="route-marker">
+                            <div class="route-marker-icon exit">🚶</div>
+                            <div class="route-marker-label">${wpName}</div>
+                        </div>
+                    `,
+                    iconSize: [60, 60],
+                    iconAnchor: [30, 30]
+                });
             } else {
-                // Multi-point route: numbered waypoint markers
+                // Multi-point route: numbered intermediate waypoint markers
                 const wpName = waypointNames[index] || wp.name || 'Категория';
                 markerIcon = L.divIcon({
                     className: 'route-marker-waypoint',

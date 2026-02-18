@@ -45,11 +45,12 @@ export default function Navbar() {
                             <li className="nav-item">
                                 <NavLink
                                     className={({ isActive }) => (isActive ? "nav-link nav-link-1 active" : 'nav-link nav-link-1')}
-                                    end to={"/"} aria-current="page">Магазины</NavLink>
+                                    end to={"/"} aria-current="page"
+                                    onClick={() => setMenuOpen(false)}>Магазины</NavLink>
                             </li>
                             {isAdmin && (
                                 <li className="nav-item">
-                                    <a className="nav-link nav-link-1" href={adminUrl}>Управление</a>
+                                    <a className="nav-link nav-link-1" href={adminUrl} onClick={() => setMenuOpen(false)}>Управление</a>
                                 </li>
                             )}
                             {/* <li className="nav-item">
