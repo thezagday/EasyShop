@@ -203,8 +203,10 @@
     </button>
 
     <script>
+        const nav = document.querySelector('nav');
         const scrollBtn = document.getElementById('scroll-top');
         window.addEventListener('scroll', () => {
+            nav.classList.toggle('nav--scrolled', window.scrollY > 60);
             scrollBtn.classList.toggle('scroll-top-btn--visible', window.scrollY > 400);
         });
         scrollBtn.addEventListener('click', () => {
