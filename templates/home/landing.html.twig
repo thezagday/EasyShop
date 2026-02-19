@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyShop — Умные маршруты для ваших покупок</title>
-    <meta name="description" content="Экономьте время в гипермаркетах с помощью оптимальных маршрутов EasyShop. Все товары по списку в один клик.">
+    <title>EasyShop — Оптимальные маршруты для магазинов и складов</title>
+    <meta name="description" content="EasyShop строит оптимальные маршруты по магазину или складу. Для покупателей, курьеров, сборщиков заказов и мерчендайзеров.">
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -15,22 +15,28 @@
         
         <nav>
             <div class="container">
-                <a href="#" class="logo">Easy<span>Shop</span></a>
-                <div class="nav-links">
-                    <a href="#features">Возможности</a>
-                    <a href="#ai">AI-помощник</a>
-                    <a href="#maps">Карты</a>
-                    <a href="#business">Для бизнеса</a>
+                <a href="#" class="logo"><img src="{{ asset('img/logo-white.svg') }}" alt="EasyShop" style="height:36px;"></a>
+                <div class="nav-links" id="nav-links">
+                    <a href="#features" class="nav-link-item">Возможности</a>
+                    <a href="#ai" class="nav-link-item">AI-помощник</a>
+                    <a href="#maps" class="nav-link-item">Карты</a>
+                    <a href="#warehouse" class="nav-link-item">Склад</a>
+                    <a href="#business" class="nav-link-item">Для бизнеса</a>
                     <a href="{{ main_url }}" class="btn-primary">Запустить сервис</a>
                 </div>
+                <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
         </nav>
 
         <div class="container">
             <div class="hero">
                 <div class="hero-content">
-                    <h1>Покупки станут быстрее, чем когда-либо</h1>
-                    <p>EasyShop строит идеальный маршрут по магазину, чтобы вы не тратили время на лишние круги между рядами.</p>
+                    <h1>Оптимальный маршрут — меньше шагов, больше результата</h1>
+                    <p>EasyShop использует алгоритм оптимизации маршрутов, чтобы вы проходили магазин или склад по кратчайшему пути. Никаких лишних кругов — только нужные товары в правильном порядке.</p>
                     <div class="hero-btns">
                         <a href="{{ main_url }}" class="btn-primary">Начать пользоваться бесплатно</a>
                     </div>
@@ -46,7 +52,7 @@
         <div class="container">
             <div class="section-title">
                 <h2>Как это работает?</h2>
-                <p>Простые шаги к эффективному шоппингу</p>
+                <p>Три шага до оптимального маршрута</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
@@ -54,21 +60,21 @@
                         <i class="fas fa-list-check"></i>
                     </div>
                     <h3>Составьте список</h3>
-                    <p>Добавьте все необходимые товары в корзину через наш удобный поиск.</p>
+                    <p>Импортируйте список товаров с телефона или просто напишите запрос AI-ассистенту — он сам подберёт нужные позиции.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-route"></i>
                     </div>
-                    <h3>Получите маршрут</h3>
-                    <p>Алгоритм рассчитает кратчайший путь через все отделы магазина.</p>
+                    <h3>Оптимальный маршрут</h3>
+                    <p>Алгоритм рассчитывает кратчайший путь через все нужные отделы с учётом препятствий — как GPS, только для торгового зала.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-clock"></i>
                     </div>
                     <h3>Экономьте время</h3>
-                    <p>Забудьте о хаотичных перемещениях. Проходите магазин быстро и по делу.</p>
+                    <p>Забудьте о хаотичных перемещениях. Проходите магазин по оптимальному пути — быстро и без лишних шагов.</p>
                 </div>
             </div>
         </div>
@@ -78,16 +84,16 @@
         <div class="container">
             <div class="ai-inner">
                 <div class="ai-badge"><i class="fas fa-robot"></i> AI-помощник</div>
-                <h2>Умный ассистент знает, что вам нужно</h2>
-                <p>EasyShop использует искусственный интеллект, чтобы помочь вам с любым запросом. Просто напишите, что хотите приготовить или купить — ИИ сам подберёт нужные товары, зная актуальные остатки в магазине.</p>
+                <h2>Просто напишите — AI сам составит список</h2>
+                <p>Не нужно вручную искать каждый товар. Напишите AI-ассистенту что хотите купить или приготовить — он подберёт нужные позиции из каталога магазина. Список товаров также можно импортировать с телефона.</p>
                 <div class="ai-examples">
                     <div class="ai-example">
-                        <div class="ai-chat-bubble user">Хочу приготовить плов</div>
-                        <div class="ai-chat-bubble bot"><i class="fas fa-robot"></i> Нашёл для вас: рис, баранина, морковь, лук, специи — всё есть в наличии. Построить маршрут?</div>
+                        <div class="ai-chat-bubble user">Хочу приготовить плов на 4 человека</div>
+                        <div class="ai-chat-bubble bot"><i class="fas fa-robot"></i> Подобрал: рис 1 кг, баранина 800 г, морковь, лук, специи для плова. Построить маршрут по магазину?</div>
                     </div>
                     <div class="ai-example">
-                        <div class="ai-chat-bubble user">Нужны ингредиенты для торта</div>
-                        <div class="ai-chat-bubble bot"><i class="fas fa-robot"></i> Подобрал: мука, яйца, сахар, масло, разрыхлитель, сливки. Добавить в список покупок?</div>
+                        <div class="ai-chat-bubble user">Нужны продукты для завтрака на неделю</div>
+                        <div class="ai-chat-bubble bot"><i class="fas fa-robot"></i> Составил список: яйца, овсянка, молоко, хлеб, масло, творог, фрукты. Показать маршрут?</div>
                     </div>
                 </div>
             </div>
@@ -136,11 +142,40 @@
         </div>
     </section>
 
+    <section id="warehouse" class="warehouse-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Для складов и внутренней логистики</h2>
+                <p>Оптимальные маршруты работают не только в магазинах — но и на любом складе</p>
+            </div>
+            <div class="warehouse-intro">
+                <p>Если у вас есть склад с товарами на полках — EasyShop поможет вашим сотрудникам двигаться по кратчайшему пути. Загрузите план склада, расставьте товары по зонам и получите готовый инструмент для оптимизации перемещений.</p>
+            </div>
+            <div class="warehouse-grid">
+                <div class="warehouse-card">
+                    <div class="feature-icon"><i class="fas fa-shipping-fast"></i></div>
+                    <h3>Курьеры и сборщики заказов</h3>
+                    <p>Алгоритм строит оптимальный маршрут сбора заказа по складу или торговому залу. Сборщик проходит минимальное расстояние — заказы комплектуются быстрее, очереди не накапливаются.</p>
+                </div>
+                <div class="warehouse-card">
+                    <div class="feature-icon"><i class="fas fa-tags"></i></div>
+                    <h3>Мерчендайзеры</h3>
+                    <p>Нужно быстро найти где что лежит? Мерчендайзер вводит список позиций — и получает маршрут обхода по залу. Никаких блужданий, только нужные полки в правильном порядке.</p>
+                </div>
+                <div class="warehouse-card">
+                    <div class="feature-icon"><i class="fas fa-warehouse"></i></div>
+                    <h3>Любой склад или магазин</h3>
+                    <p>Загрузите план помещения, укажите расположение товаров — и система готова к работе. Подходит для розничных магазинов, складов интернет-магазинов и распределительных центров.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="business" class="business-section">
         <div class="container">
             <div class="section-title">
-                <h2>Для бизнеса и ритейлеров</h2>
-                <p>Мощная платформа для управления магазином и изучения покупателей</p>
+                <h2>Для ритейлеров и управляющих</h2>
+                <p>Инструменты для подключения магазина и понимания покупателей. Маршрут строится через A* (A-star) — тот же алгоритм, что используют GPS-навигаторы. Порядок обхода нескольких отделов оптимизируется эвристикой ближайшего соседа + 2-opt.</p>
             </div>
             <div class="business-grid">
                 <div class="business-card">
@@ -148,7 +183,7 @@
                         <i class="fas fa-store"></i>
                     </div>
                     <h3>Управление товарами</h3>
-                    <p>Добавляйте и обновляйте информацию о товарах и продуктах через удобную административную панель. Всё в одном месте — от описания до наличия на полке.</p>
+                    <p>Добавляйте товары через административную панель: наименование, цена и расположение на карте. Просто и без лишнего — только то, что нужно для маршрута.</p>
                 </div>
                 <div class="business-card">
                     <div class="feature-icon">
@@ -161,29 +196,29 @@
                     <div class="feature-icon">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <h3>Аналитика поведения</h3>
-                    <p>Отслеживайте маршруты покупателей по магазину, время пребывания в каждом отделе и интересующие их товары. Принимайте решения на основе реальных данных.</p>
+                    <h3>Аналитика маршрутов</h3>
+                    <p>Отслеживайте популярные маршруты покупателей по магазину. Узнайте, какие зоны посещают чаще всего — и принимайте решения на основе реальных данных.</p>
+                </div>
+                <div class="business-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3>Умная расстановка товаров</h3>
+                    <p>Зная популярные маршруты, вы можете планировать выкладку: разгружать перегруженные зоны, размещать акционные товары на пути большинства покупателей и балансировать трафик по залу.</p>
                 </div>
                 <div class="business-card">
                     <div class="feature-icon">
                         <i class="fas fa-ad"></i>
                     </div>
                     <h3>Реклама на карте</h3>
-                    <p>Размещайте рекламные баннеры и акционные предложения прямо на карте магазина. Привлекайте внимание покупателей в нужном месте и в нужный момент.</p>
-                </div>
-                <div class="business-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-user-clock"></i>
-                    </div>
-                    <h3>Изучение аудитории</h3>
-                    <p>Узнайте, сколько времени покупатель провёл в магазине, какие зоны посетил и что искал. Оптимизируйте выкладку товаров и повышайте конверсию.</p>
+                    <p>Размещайте акционные предложения прямо на интерактивной карте магазина. Покупатель видит их в процессе построения маршрута — в нужный момент.</p>
                 </div>
                 <div class="business-card">
                     <div class="feature-icon">
                         <i class="fas fa-building"></i>
                     </div>
-                    <h3>Для крупного ритейла</h3>
-                    <p>Платформа масштабируется под сети магазинов любого размера. Управляйте несколькими торговыми точками из единого личного кабинета.</p>
+                    <h3>Масштабируется под сети</h3>
+                    <p>Платформа работает для одного магазина и для сети из десятков точек. Управляйте всеми торговыми объектами из единого личного кабинета.</p>
                 </div>
             </div>
             <div class="business-cta">
@@ -198,6 +233,18 @@
         </div>
     </footer>
 
+    <div class="nav-mobile-overlay" id="nav-mobile-overlay">
+        <button class="nav-overlay-close" id="nav-overlay-close" aria-label="Закрыть меню">
+            <i class="fas fa-times"></i>
+        </button>
+        <a href="#features" class="nav-link-item">Возможности</a>
+        <a href="#ai" class="nav-link-item">AI-помощник</a>
+        <a href="#maps" class="nav-link-item">Карты</a>
+        <a href="#warehouse" class="nav-link-item">Склад</a>
+        <a href="#business" class="nav-link-item">Для бизнеса</a>
+        <a href="{{ main_url }}" class="btn-primary">Запустить сервис</a>
+    </div>
+
     <button id="scroll-top" class="scroll-top-btn" aria-label="Наверх" title="Наверх">
         <i class="fas fa-chevron-up"></i>
     </button>
@@ -205,12 +252,53 @@
     <script>
         const nav = document.querySelector('nav');
         const scrollBtn = document.getElementById('scroll-top');
+        const burger = document.getElementById('burger');
+        const overlay = document.getElementById('nav-mobile-overlay');
+
+        const navLinkItems = document.querySelectorAll('.nav-links a.nav-link-item');
+        const sections = ['features', 'ai', 'maps', 'warehouse', 'business'].map(id => document.getElementById(id)).filter(Boolean);
+
+        const updateActiveNav = () => {
+            const scrollY = window.scrollY;
+            let current = '';
+            sections.forEach(section => {
+                if (scrollY >= section.offsetTop - 120) {
+                    current = section.id;
+                }
+            });
+            navLinkItems.forEach(link => {
+                link.classList.toggle('nav-active', link.getAttribute('href') === '#' + current);
+            });
+        };
+
         window.addEventListener('scroll', () => {
             nav.classList.toggle('nav--scrolled', window.scrollY > 60);
             scrollBtn.classList.toggle('scroll-top-btn--visible', window.scrollY > 400);
+            updateActiveNav();
         });
+
         scrollBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        const closeOverlay = () => {
+            overlay.classList.remove('nav-mobile-overlay--open');
+            burger.classList.remove('burger--open');
+            burger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        };
+
+        burger.addEventListener('click', () => {
+            const isOpen = overlay.classList.toggle('nav-mobile-overlay--open');
+            burger.classList.toggle('burger--open', isOpen);
+            burger.setAttribute('aria-expanded', isOpen);
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        });
+
+        document.getElementById('nav-overlay-close').addEventListener('click', closeOverlay);
+
+        overlay.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', closeOverlay);
         });
     </script>
 </body>

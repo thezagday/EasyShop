@@ -492,6 +492,12 @@ figure.effect-ming:hover img { opacity: 0.4; }
     font-weight: 800;
 }
 
+.app-footer__logo-img {
+    height: 28px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .app-footer__copy {
     font-size: 0.82rem;
     color: #a0aec0;

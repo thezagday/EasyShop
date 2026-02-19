@@ -46,6 +46,8 @@ header {
     justify-content: center;
     position: relative;
     overflow: hidden;
+    padding-top: 80px;
+    box-sizing: border-box;
 }
 
 .bg-gradient {
@@ -76,7 +78,7 @@ nav {
     left: 0;
     width: 100%;
     padding: 2rem 0;
-    z-index: 100;
+    z-index: 300;
     transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -120,6 +122,22 @@ nav .container {
 
 .nav-links a:hover {
     color: #fff;
+}
+
+.nav-links a.nav-active {
+    color: #fff;
+    position: relative;
+}
+
+.nav-links a.nav-active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
 }
 
 .nav-links .btn-primary,
@@ -348,6 +366,26 @@ nav .container {
     margin-right: 0.4rem;
 }
 
+/* AI note */
+.ai-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--gray);
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    margin-bottom: 3rem;
+    text-align: left;
+}
+
+.ai-note i {
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
 /* Maps Section */
 .maps-section {
     padding: 10rem 0;
@@ -380,6 +418,51 @@ nav .container {
 
 .map-card p {
     color: var(--gray);
+}
+
+/* Warehouse Section */
+.warehouse-section {
+    padding: 10rem 0;
+    background: linear-gradient(180deg, transparent, rgba(99, 102, 241, 0.04), transparent);
+}
+
+.warehouse-intro {
+    max-width: 760px;
+    margin: 0 auto 4rem;
+    text-align: center;
+    color: var(--gray);
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.warehouse-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.warehouse-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 3rem 2rem;
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s, border-color 0.3s;
+}
+
+.warehouse-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary);
+}
+
+.warehouse-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.warehouse-card p {
+    color: var(--gray);
+    line-height: 1.7;
 }
 
 /* Business Section */
@@ -466,6 +549,125 @@ footer {
     box-shadow: 0 8px 24px rgba(99, 102, 241, 0.55);
 }
 
+/* ── Mobile nav overlay (independent from nav stacking context) ── */
+.nav-mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 20, 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    z-index: 350;
+    padding-top: 70px;
+}
+
+.nav-mobile-overlay--open {
+    display: flex;
+}
+
+.nav-mobile-overlay .nav-link-item {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.nav-mobile-overlay .nav-link-item:hover {
+    color: var(--primary);
+}
+
+.nav-mobile-overlay .btn-primary {
+    font-size: 1.1rem;
+    padding: 0.9rem 2.5rem;
+    margin-top: 0.5rem;
+}
+
+.nav-overlay-close {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.5rem;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.nav-overlay-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Burger button ── */
+.burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 400;
+    position: relative;
+}
+
+.burger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform-origin: center;
+}
+
+.burger.burger--open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.burger.burger--open span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.burger.burger--open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (max-width: 768px) {
+    header {
+        padding-top: 72px;
+        justify-content: flex-start;
+        padding-bottom: 3rem;
+    }
+
+    .hero-content {
+        padding-top: 2.5rem;
+    }
+
+    .burger {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+    }
+}
+
 @media (max-width: 992px) {
     .hero {
         grid-template-columns: 1fr;
@@ -473,7 +675,11 @@ footer {
     }
 
     .hero-content h1 {
-        font-size: 3.5rem;
+        font-size: 3rem;
+    }
+
+    .hero-image {
+        display: none;
     }
 
     .hero-content p {
@@ -483,6 +689,7 @@ footer {
 
     .features-grid,
     .maps-grid,
+    .warehouse-grid,
     .business-grid {
         grid-template-columns: 1fr;
     }

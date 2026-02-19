@@ -22,8 +22,7 @@ export default function Navbar() {
             <nav className="navbar navbar-expand-lg" style={{ position: 'relative', zIndex: 1100 }}>
                 <div className="container-fluid">
                     <a className="navbar-brand" href="/" style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src="/img/logo.png" alt="EasyShop" style={{ height: '40px', marginRight: '10px' }} />
-                        EasyShop
+                        <img src="/img/logo.svg" alt="EasyShop" style={{ height: '36px' }} />
                     </a>
                     {username && (
                         <span className="navbar-text ml-3 d-none d-sm-inline-block" style={{ color: '#666' }}>
