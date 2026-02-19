@@ -6,7 +6,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4 shadow-sm">
     <div class="container tm-container-small">
         <a class="navbar-brand" href="/">
-            <i class="fas fa-film mr-2"></i> EasyShop
+            <img src="/img/logo.svg" alt="EasyShop" style="height:32px;">
         </a>
     </div>
 </nav>
@@ -14,7 +14,7 @@
 <div class="container tm-container-small tm-mt-60 tm-mb-74">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <h1 class="text-center tm-text-primary mb-4">Вход</h1>
+            <h1 class="text-center mb-4" style="color:#111;">Вход</h1>
             <div class="tm-bg-gray p-5 rounded shadow-sm">
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>

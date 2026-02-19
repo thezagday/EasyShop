@@ -1,7 +1,8 @@
-const CACHE_NAME = 'easyshop-v8';
+const CACHE_NAME = 'easyshop-v9';
 const STATIC_ASSETS = [
     '/',
     '/img/logo.svg',
+    '/img/icon.svg',
     '/img/icon-192.png',
     '/img/icon-512.png'
 ];
@@ -29,17 +30,14 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// Fetch — network-first для API, cache-first для статики
+// Fetch strategy
 self.addEventListener('fetch', (event) => {
-    // Пропускаем POST-запросы (tracking, API mutations) — не кэшируем
     if (event.request.method !== 'GET') return;
 
     const url = new URL(event.request.url);
-
-    // Пропускаем не-http(s) схемы (chrome-extension://, etc.)
     if (!url.protocol.startsWith('http')) return;
 
-    // API запросы — всегда из сети
+    // API — network only
     if (url.pathname.startsWith('/api/')) {
         event.respondWith(
             fetch(event.request).catch(() => {
@@ -51,21 +49,31 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Статика — cache-first, потом сеть
-    event.respondWith(
-        caches.match(event.request).then((cached) => {
-            const fetched = fetch(event.request).then((response) => {
-                // Кэшируем новые ответы
-                if (response.ok) {
-                    const clone = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, clone);
-                    });
-                }
-                return response;
-            }).catch(() => cached);
+    // Картинки — cache-first (они меняются редко)
+    if (/\.(png|jpg|jpeg|gif|webp|svg|ico)(\?|$)/i.test(url.pathname)) {
+        event.respondWith(
+            caches.match(event.request).then((cached) => {
+                const fetched = fetch(event.request).then((response) => {
+                    if (response.ok) {
+                        const clone = response.clone();
+                        caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
+                    }
+                    return response;
+                }).catch(() => cached);
+                return cached || fetched;
+            })
+        );
+        return;
+    }
 
-            return cached || fetched;
-        })
+    // HTML, CSS, JS — network-first (чтобы обновления стилей/кода применялись сразу)
+    event.respondWith(
+        fetch(event.request).then((response) => {
+            if (response.ok) {
+                const clone = response.clone();
+                caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
+            }
+            return response;
+        }).catch(() => caches.match(event.request))
     );
 });

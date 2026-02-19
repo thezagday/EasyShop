@@ -171,12 +171,12 @@ a {
     text-decoration: none;
     transition: all 0.3s ease; 
 }
-a:hover { color:#009999; }
+a:hover { color:#111; }
 .container-fluid { max-width: 1770px; }
 .tm-container-small { max-width: 1050px; }
 .btn { border-radius: 0; }
 .btn-primary {
-    background-color: #009999;
+    background-color: #111;
     border: 0;
     border-radius: 5px;
     padding: 12px 50px 14px;
@@ -185,12 +185,12 @@ a:hover { color:#009999; }
 
 .btn-primary:hover,
 .btn-primary:focus {
-    background-color:#086969;
+    background-color: #333;
 }
 
 .btn-primary.disabled, 
 .btn-primary:disabled {
-    background-color: #009999;
+    background-color: #555;
     pointer-events: all;
     cursor: not-allowed;
 }
