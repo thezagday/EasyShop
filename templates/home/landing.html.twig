@@ -197,5 +197,19 @@
             <p>&copy; {{ "now"|date("Y") }} EasyShop Project. Сделано профессионально.</p>
         </div>
     </footer>
+
+    <button id="scroll-top" class="scroll-top-btn" aria-label="Наверх" title="Наверх">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script>
+        const scrollBtn = document.getElementById('scroll-top');
+        window.addEventListener('scroll', () => {
+            scrollBtn.classList.toggle('scroll-top-btn--visible', window.scrollY > 400);
+        });
+        scrollBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
 </body>
 </html>

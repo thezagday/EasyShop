@@ -23,6 +23,43 @@
     min-height: 0;
 }
 
+/* ── Shop header bar ── */
+.shop-header-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    z-index: 10;
+}
+
+.shop-header-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a202c;
+    white-space: nowrap;
+}
+
+.shop-header-address {
+    font-size: 13px;
+    color: #718096;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.shop-header-icon {
+    color: #667eea;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
 /* ── Route info bar (above map, not overlapping) ── */
 .route-info-bar {
     flex-shrink: 0;

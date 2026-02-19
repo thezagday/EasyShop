@@ -3,6 +3,7 @@ twig:
     globals:
         admin_host: '%admin_host%'
         main_host: '%main_host%'
+        app_scheme: '%app_scheme%'
 
 when@test:
     twig:

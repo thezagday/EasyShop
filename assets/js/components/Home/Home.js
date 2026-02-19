@@ -25,7 +25,7 @@ export default function Home() {
     }
 
     return (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
             <SearchInput onChange={updateShopList} />
             <ShopList shops={shops}/>
         </div>

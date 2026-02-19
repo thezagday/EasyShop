@@ -171,8 +171,23 @@ export default function Map({
         }
     };
 
+    const shopName = shop?.title ? shop.title.split(' - ')[0] : '';
+    const shopAddress = shop?.title && shop.title.includes(' - ') ? shop.title.split(' - ').slice(1).join(' - ') : '';
+
     return (
         <div className="map-wrapper">
+            {/* Shop header bar */}
+            {shop?.title && (
+                <div className="shop-header-bar">
+                    <span className="shop-header-name">{shopName}</span>
+                    {shopAddress && (
+                        <span className="shop-header-address">
+                            <i className="fas fa-map-marker-alt shop-header-icon"></i>
+                            {shopAddress}
+                        </span>
+                    )}
+                </div>
+            )}
             {/* Route info bar — above the map, not overlapping */}
             {routeInfo && (
                 <div className="route-info-bar">
