@@ -1,9 +1,9 @@
-const CACHE_NAME = 'easyshop-v7';
+const CACHE_NAME = 'easyshop-v8';
 const STATIC_ASSETS = [
     '/',
-    '/img/logo.png',
-    '/img/icons/icon-192.png',
-    '/img/icons/icon-512.png'
+    '/img/logo.svg',
+    '/img/icon-192.png',
+    '/img/icon-512.png'
 ];
 
 // Install — кэшируем статику

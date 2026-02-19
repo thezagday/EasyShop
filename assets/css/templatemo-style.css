@@ -161,6 +161,8 @@ body {
 
 .app-footer {
     margin-top: auto;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
 p { line-height: 1.8; }
@@ -264,26 +266,26 @@ a.tm-text-primary:hover { color:#666666; }
     width: 360px;
     border-radius: 0;
     padding: 12px 15px;
-    color: #009999;
+    color: #2d3748;
 }
 
 .tm-search-input:focus {
-    border-color: #009999;
-    box-shadow: 0 0 0 0.25rem rgb(0 153 153 / 0.25);
+    border-color: #111;
+    box-shadow: 0 0 0 0.25rem rgba(17, 17, 17, 0.1);
 }
 
 .tm-search-input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: #009999;
+    color: #a0aec0;
     opacity: 1; /* Firefox */
 }
   
 .tm-search-input::-ms-input-placeholder { /* Microsoft Edge */
-    color: #009999;
+    color: #a0aec0;
 }
 
 .tm-search-btn {
     color: white;
-    background-color: #009999;
+    background-color: #2d3748;
     border: none;
     width: 100px;
     height: 50px;
@@ -385,7 +387,7 @@ p, .tm-text-gray { color: #999; }
 
 .tm-paging-link:hover,
 .tm-paging-link.active {
-    background-color: #009999;
+    background-color: #2d3748;
     color: #fff; 
 }
 
@@ -465,7 +467,7 @@ figure.effect-ming:hover img { opacity: 0.4; }
 
 .tm-social-links li a:hover {
     color: #fff;
-    background-color: #009999;
+    background-color: #2d3748;
 }
 
 .tm-footer { font-size: 0.95rem; }
@@ -578,8 +580,8 @@ figure.effect-ming:hover img { opacity: 0.4; }
 
 .nav-link-1.active,
 .nav-link-1:hover {
-    color: #667eea !important;
-    border-color: #667eea;
+    color: #111 !important;
+    border-color: #111;
 }
 
 /* ── Search area ── */
@@ -590,7 +592,7 @@ figure.effect-ming:hover img { opacity: 0.4; }
 }
 
 .tm-search-input {
-    border-radius: 12px 0 0 12px;
+    border-radius: 12px;
     border: 2px solid #e2e8f0;
     color: #2d3748;
     font-size: 1rem;
@@ -598,8 +600,8 @@ figure.effect-ming:hover img { opacity: 0.4; }
 }
 
 .tm-search-input:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    border-color: #111;
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
     color: #2d3748;
 }
 
@@ -717,17 +719,17 @@ select:not([multiple]) {
 
 .tm-social li a:hover i {
     color: #fff;
-    background-color: #009999;
+    background-color: #2d3748;
 }
 
 .form-control,
 input:-internal-autofill-selected,
 select:not([multiple]) {
-    color: #009999 !important;
+    color: #2d3748 !important;
 }
 
 .form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color:  #009999;
+    color: #a0aec0;
     opacity: 1; /* Firefox */
 }
 
