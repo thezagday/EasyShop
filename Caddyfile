@@ -17,3 +17,11 @@ admin.easy-shop.by {
         output file /var/log/caddy/admin-access.log
     }
 }
+# Лендинг
+info.easy-shop.by {
+    reverse_proxy nginx:80
+    
+    log {
+        output file /var/log/caddy/info-access.log
+    }
+}

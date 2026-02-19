@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyShop — Умные маршруты для ваших покупок</title>
+    <meta name="description" content="Экономьте время в гипермаркетах с помощью оптимальных маршрутов EasyShop. Все товары по списку в один клик.">
+    <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="bg-gradient"></div>
+        <div class="bg-gradient-2"></div>
+        
+        <nav>
+            <div class="container">
+                <a href="#" class="logo">Easy<span>Shop</span></a>
+                <div class="nav-links">
+                    <a href="#features">Возможности</a>
+                    <a href="#ai">AI-помощник</a>
+                    <a href="#maps">Карты</a>
+                    <a href="#business">Для бизнеса</a>
+                    <a href="{{ main_url }}" class="btn-primary">Запустить сервис</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>Покупки станут быстрее, чем когда-либо</h1>
+                    <p>EasyShop строит идеальный маршрут по магазину, чтобы вы не тратили время на лишние круги между рядами.</p>
+                    <div class="hero-btns">
+                        <a href="{{ main_url }}" class="btn-primary">Начать пользоваться бесплатно</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="{{ asset('img/landing_hero.png') }}" alt="EasyShop App Interface">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Как это работает?</h2>
+                <p>Простые шаги к эффективному шоппингу</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-list-check"></i>
+                    </div>
+                    <h3>Составьте список</h3>
+                    <p>Добавьте все необходимые товары в корзину через наш удобный поиск.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3>Получите маршрут</h3>
+                    <p>Алгоритм рассчитает кратчайший путь через все отделы магазина.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Экономьте время</h3>
+                    <p>Забудьте о хаотичных перемещениях. Проходите магазин быстро и по делу.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="ai" class="ai-section">
+        <div class="container">
+            <div class="ai-inner">
+                <div class="ai-badge"><i class="fas fa-robot"></i> AI-помощник</div>
+                <h2>Умный ассистент знает, что вам нужно</h2>
+                <p>EasyShop использует искусственный интеллект, чтобы помочь вам с любым запросом. Просто напишите, что хотите приготовить или купить — ИИ сам подберёт нужные товары, зная актуальные остатки в магазине.</p>
+                <div class="ai-examples">
+                    <div class="ai-example">
+                        <div class="ai-chat-bubble user">Хочу приготовить плов</div>
+                        <div class="ai-chat-bubble bot"><i class="fas fa-robot"></i> Нашёл для вас: рис, баранина, морковь, лук, специи — всё есть в наличии. Построить маршрут?</div>
+                    </div>
+                    <div class="ai-example">
+                        <div class="ai-chat-bubble user">Нужны ингредиенты для торта</div>
+                        <div class="ai-chat-bubble bot"><i class="fas fa-robot"></i> Подобрал: мука, яйца, сахар, масло, разрыхлитель, сливки. Добавить в список покупок?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="maps" class="maps-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Интерактивные карты магазинов</h2>
+                <p>Ориентируйтесь в любом гипермаркете как у себя дома</p>
+            </div>
+            <div class="maps-grid">
+                <div class="map-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3>Карта магазина</h3>
+                    <p>Интерактивная схема торгового зала поможет мгновенно найти нужный товар или целую категорию — без блужданий по рядам.</p>
+                </div>
+                <div class="map-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search-location"></i>
+                    </div>
+                    <h3>Поиск по карте</h3>
+                    <p>Введите название товара или категории — и карта сразу покажет, где именно это находится в магазине.</p>
+                </div>
+                <div class="map-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3>Тематические подборки</h3>
+                    <p>Готовые наборы к праздникам и особым случаям: Новый год, день рождения, пикник. Выберите подборку — и маршрут по магазину уже готов!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="advantages" class="cta">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Умный шоппинг в вашем кармане</h2>
+                <p>Мы поддерживаем крупнейшие гипермаркеты города. Интерактивные карты, AI-ассистент и праздничные подборки — всё для того, чтобы поход в магазин был быстрым и приятным.</p>
+                <a href="{{ main_url }}" class="btn-primary">Перейти к покупкам</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="business" class="business-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Для бизнеса и ритейлеров</h2>
+                <p>Мощная платформа для управления магазином и изучения покупателей</p>
+            </div>
+            <div class="business-grid">
+                <div class="business-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3>Управление товарами</h3>
+                    <p>Добавляйте и обновляйте информацию о товарах и продуктах через удобную административную панель. Всё в одном месте — от описания до наличия на полке.</p>
+                </div>
+                <div class="business-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map"></i>
+                    </div>
+                    <h3>Загрузка карт магазина</h3>
+                    <p>Загружайте интерактивные планы торговых залов. Покупатели сразу увидят актуальную схему и смогут быстро ориентироваться в вашем магазине.</p>
+                </div>
+                <div class="business-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Аналитика поведения</h3>
+                    <p>Отслеживайте маршруты покупателей по магазину, время пребывания в каждом отделе и интересующие их товары. Принимайте решения на основе реальных данных.</p>
+                </div>
+                <div class="business-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-ad"></i>
+                    </div>
+                    <h3>Реклама на карте</h3>
+                    <p>Размещайте рекламные баннеры и акционные предложения прямо на карте магазина. Привлекайте внимание покупателей в нужном месте и в нужный момент.</p>
+                </div>
+                <div class="business-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <h3>Изучение аудитории</h3>
+                    <p>Узнайте, сколько времени покупатель провёл в магазине, какие зоны посетил и что искал. Оптимизируйте выкладку товаров и повышайте конверсию.</p>
+                </div>
+                <div class="business-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Для крупного ритейла</h3>
+                    <p>Платформа масштабируется под сети магазинов любого размера. Управляйте несколькими торговыми точками из единого личного кабинета.</p>
+                </div>
+            </div>
+            <div class="business-cta">
+                <a href="{{ main_url }}" class="btn-primary">Подключить магазин</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; {{ "now"|date("Y") }} EasyShop Project. Сделано профессионально.</p>
+        </div>
+    </footer>
+</body>
+</html>

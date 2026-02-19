@@ -6,6 +6,8 @@
 parameters:
     admin_host: '%env(resolve:ADMIN_HOST)%'
     main_host: '%env(resolve:MAIN_HOST)%'
+    landing_host: '%env(resolve:LANDING_HOST)%'
+    app_scheme: '%env(resolve:APP_SCHEME)%'
 
 services:
     # default configuration for services in *this* file

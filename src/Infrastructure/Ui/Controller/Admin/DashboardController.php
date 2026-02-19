@@ -69,7 +69,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('User Activity', 'fas fa-chart-line', UserActivity::class);
 
         yield MenuItem::section('Links');
-        $adminUrl = 'http://' . $this->getParameter('admin_host') . '/';
+        $adminUrl = $this->getParameter('app_scheme') . '://' . $this->getParameter('admin_host') . '/';
         yield MenuItem::linkToUrl('Back to Website', 'fas fa-arrow-left', $adminUrl);
     }
 }
