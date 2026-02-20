@@ -114,7 +114,7 @@ function TargetPin({ x, y, title }) {
     );
 }
 
-function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopup, popupKey, onPassed }) {
+function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopup, popupKey, onPassed, showPassedBtn }) {
     const pos = toThreePos(x, y, 0.15);
 
     const handleClick = (e) => {
@@ -146,12 +146,14 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
                                 <ul>{commodities.map((c, i) => <li key={i}>{c}</li>)}</ul>
                             </div>
                         )}
-                        <button
-                            className="marker3d-popup-btn marker3d-passed-btn"
-                            onClick={(e) => { e.stopPropagation(); onPassed && onPassed(index); onTogglePopup && onTogglePopup(null); }}
-                        >
-                            ✅ Пройдено
-                        </button>
+                        {showPassedBtn && (
+                            <button
+                                className="marker3d-popup-btn marker3d-passed-btn"
+                                onClick={(e) => { e.stopPropagation(); onPassed && onPassed(index); onTogglePopup && onTogglePopup(null); }}
+                            >
+                                ✅ Пройдено
+                            </button>
+                        )}
                     </div>
                 )}
             </Html>
@@ -159,7 +161,7 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
     );
 }
 
-export function Markers3D({ categories, entranceExit, shop, aiCategories, routeWaypoints, onBuildRoute, onWaypointPassed }) {
+export function Markers3D({ categories, entranceExit, shop, aiCategories, routeWaypoints, onBuildRoute, passedWaypointCount = 0, onWaypointPassed }) {
     const [openPopupId, setOpenPopupId] = useState(null);
 
     const handleTogglePopup = (popupKey) => {
@@ -253,6 +255,7 @@ export function Markers3D({ categories, entranceExit, shop, aiCategories, routeW
                         isPopupOpen={openPopupId === `wp-${idx}`}
                         onTogglePopup={handleTogglePopup}
                         onPassed={onWaypointPassed}
+                        showPassedBtn={idx === passedWaypointCount + 1}
                     />
                 );
             })}

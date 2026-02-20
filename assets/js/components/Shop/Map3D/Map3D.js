@@ -24,6 +24,7 @@ export default function Map3D({
 }) {
     const controlsRef = useRef(null);
     const routeBuilderRef = useRef(null);
+    const wrapperRef = useRef(null);
 
     const [resetCameraKey, setResetCameraKey] = useState(0);
     const [obstacles, setObstacles] = useState([]);
@@ -255,7 +256,7 @@ export default function Map3D({
     const mapImageUrl = shop?.mapImage ? `/img/${shop.mapImage}` : null;
 
     return (
-        <div className="map3d-wrapper">
+        <div className="map3d-wrapper" ref={wrapperRef}>
             {/* Shop header */}
             {shop?.title && (
                 <div className="shop-header-bar">
@@ -314,9 +315,9 @@ export default function Map3D({
                         MIDDLE: THREE.MOUSE.DOLLY,
                         RIGHT: THREE.MOUSE.ROTATE
                     }}
-                    /* Mobile: one finger=orbit, two fingers=zoom+pan */
+                    /* Mobile: one finger=pan, two fingers=zoom+pan (rotation via custom twist handler) */
                     touches={{
-                        ONE: THREE.TOUCH.ROTATE,
+                        ONE: THREE.TOUCH.PAN,
                         TWO: THREE.TOUCH.DOLLY_PAN
                     }}
                     target={[0, 0, 0]}
@@ -347,6 +348,7 @@ export default function Map3D({
                 {/* Route line */}
                 {routePoints.length > 0 && <Route3D points={routePoints} passedT={routeWaypoints.length > 1 ? passedWaypointCount / (routeWaypoints.length - 1) : 0} />}
                 <CameraAnimator controlsRef={controlsRef} resetKey={resetCameraKey} />
+                <TouchTwistRotation controlsRef={controlsRef} wrapperRef={wrapperRef} />
 
                 {/* Category / entrance / exit markers */}
                 <Markers3D
@@ -356,6 +358,7 @@ export default function Map3D({
                     aiCategories={aiCategories}
                     routeWaypoints={routeWaypoints}
                     onBuildRoute={handleBuildRoute}
+                    passedWaypointCount={passedWaypointCount}
                     onWaypointPassed={(idx) => setPassedWaypointCount(idx)}
                 />
             </Canvas>
@@ -380,6 +383,68 @@ export default function Map3D({
             />
         </div>
     );
+}
+
+function TouchTwistRotation({ controlsRef, wrapperRef }) {
+    const { camera } = useThree();
+    const angleDeltaRef = useRef(0);
+    const prevAngleRef = useRef(null);
+
+    useEffect(() => {
+        const el = wrapperRef.current;
+        if (!el) return;
+
+        function getAngle(touches) {
+            return Math.atan2(
+                touches[1].clientY - touches[0].clientY,
+                touches[1].clientX - touches[0].clientX
+            );
+        }
+
+        function onTouchStart(e) {
+            if (e.touches.length === 2) prevAngleRef.current = getAngle(e.touches);
+        }
+
+        function onTouchMove(e) {
+            if (e.touches.length === 2 && prevAngleRef.current !== null) {
+                const angle = getAngle(e.touches);
+                let delta = angle - prevAngleRef.current;
+                if (delta > Math.PI) delta -= 2 * Math.PI;
+                if (delta < -Math.PI) delta += 2 * Math.PI;
+                angleDeltaRef.current += delta;
+                prevAngleRef.current = angle;
+            }
+        }
+
+        function onTouchEnd(e) {
+            if (e.touches.length < 2) prevAngleRef.current = null;
+        }
+
+        el.addEventListener('touchstart', onTouchStart, { passive: true });
+        el.addEventListener('touchmove', onTouchMove, { passive: true });
+        el.addEventListener('touchend', onTouchEnd, { passive: true });
+        return () => {
+            el.removeEventListener('touchstart', onTouchStart);
+            el.removeEventListener('touchmove', onTouchMove);
+            el.removeEventListener('touchend', onTouchEnd);
+        };
+    }, [wrapperRef]);
+
+    useFrame(() => {
+        const delta = angleDeltaRef.current;
+        if (Math.abs(delta) < 0.001) return;
+        angleDeltaRef.current = 0;
+        const controls = controlsRef.current;
+        if (!controls) return;
+
+        const target = controls.target;
+        const offset = camera.position.clone().sub(target);
+        offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), -delta);
+        camera.position.copy(target).add(offset);
+        camera.lookAt(target);
+    });
+
+    return null;
 }
 
 const INIT_CAM_POS = new THREE.Vector3(0, 12, 8);
