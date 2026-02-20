@@ -3,17 +3,17 @@ import * as THREE from 'three';
 import { SCALE, HALF_W, HALF_H } from './constants';
 
 const TYPE_COLORS = {
-    shelf: '#e3e3e3',
-    wall: '#c0c0c0',
-    counter: '#e3e3e3',
-    checkout: '#e3e3e3',
+    shelf: '#d6d6d6',
+    wall: '#b3b3b3',
+    counter: '#d6d6d6',
+    checkout: '#d6d6d6',
 };
 
 const TYPE_HEIGHTS = {
-    shelf: 0.08,
-    wall: 0.12,
-    counter: 0.06,
-    checkout: 0.05,
+    shelf: 0.10,
+    wall: 0.14,
+    counter: 0.08,
+    checkout: 0.07,
 };
 
 export function Obstacles3D({ obstacles }) {
@@ -23,8 +23,8 @@ export function Obstacles3D({ obstacles }) {
         return obstacles.map((obs, idx) => {
             const w = obs.width * SCALE;
             const d = obs.height * SCALE;
-            const h = TYPE_HEIGHTS[obs.type] || 0.08;
-            const color = TYPE_COLORS[obs.type] || '#a3836a';
+            const h = TYPE_HEIGHTS[obs.type] || 0.10;
+            const color = TYPE_COLORS[obs.type] || '#d6d6d6';
 
             // Admin coords: (x, y) is top-left, Y-down
             // Three.js: center of box, admin Y maps to +Z
@@ -49,7 +49,7 @@ export function Obstacles3D({ obstacles }) {
                     <meshBasicMaterial
                         color={m.color}
                         transparent
-                        opacity={0.5}
+                        opacity={0.58}
                     />
                 </mesh>
             ))}
