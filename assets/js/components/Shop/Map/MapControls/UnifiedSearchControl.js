@@ -64,11 +64,10 @@ export function UnifiedSearchControl({
         onProductSelect(product);
     };
 
-    // AI: collapse on results, hide on route build
+    // AI: keep chat expanded so user sees the response first;
+    // only collapse when user explicitly clicks "Построить маршрут"
     const handleAIResult = (result) => {
         if (result.buildRoute) {
-            handleHide();
-        } else {
             handleCollapse();
         }
         onAIResult(result);

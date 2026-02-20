@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from "react-router-dom";
-import Map from "./Map/Map";
+import Map3D from "./Map3D/Map3D";
 
 export default function Shop() {
     // To avoid repetitive "prop drilling", see https://react.dev/learn/scaling-up-with-reducer-and-context
@@ -113,7 +113,7 @@ export default function Shop() {
 
     return (
         <div className="map-page">
-            <Map
+            <Map3D
                 shopId={id}
                 shop={shop}
                 isBuildRouteClicked={isBuildRouteClicked}

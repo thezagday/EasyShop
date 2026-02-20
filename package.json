@@ -23,6 +23,8 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@react-three/drei": "^9.122.0",
+        "@react-three/fiber": "^8.18.0",
         "@turf/turf": "^7.3.3",
         "leaflet": "^1.9.3",
         "leaflet-geometryutil": "^0.10.3",
@@ -34,6 +36,7 @@
         "react-dom": "^18.2.0",
         "react-leaflet": "^4.1.0",
         "react-router-dom": "^6.4.2",
-        "react-select": "^5.10.0"
+        "react-select": "^5.10.0",
+        "three": "^0.160.1"
     }
 }

@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import L from 'leaflet';
 
 const NAV_BAR_HEIGHT = 56;
 const EXPANDED_RATIO = 0.92;   // 92% of wrapper
@@ -16,12 +15,20 @@ export function BottomSheet({ state, title, onClose, onChangeState, children }) 
     const dragRef = useRef({ active: false, startY: 0, startH: 0 });
     const [dragHeight, setDragHeight] = useState(null);
 
-    // Block Leaflet scroll/click propagation
+    // Block scroll/click propagation to underlying canvas
     useEffect(() => {
         const el = sheetRef.current;
         if (!el) return;
-        L.DomEvent.disableScrollPropagation(el);
-        L.DomEvent.disableClickPropagation(el);
+        const stopWheel = (e) => e.stopPropagation();
+        const stopClick = (e) => e.stopPropagation();
+        el.addEventListener('wheel', stopWheel, { passive: false });
+        el.addEventListener('mousedown', stopClick);
+        el.addEventListener('touchstart', stopClick, { passive: true });
+        return () => {
+            el.removeEventListener('wheel', stopWheel);
+            el.removeEventListener('mousedown', stopClick);
+            el.removeEventListener('touchstart', stopClick);
+        };
     }, []);
 
     const getWrapperHeight = useCallback(() => {
