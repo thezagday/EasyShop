@@ -38,12 +38,8 @@ export class RouteBuilder3D {
             height: this.gridHeight
         }]);
 
-        // Mark obstacles as non-walkable
-        // Admin coords: (x, y) top-left, Y-down
-        // Pathfinding grid: same orientation as admin (Y-down)
+        // Mark obstacles as non-walkable (exact bounds, no padding to preserve narrow corridors)
         this.obstacles.forEach(obs => {
-            // Convert admin obstacle to grid coords
-            // Note: the old ObstacleMap flips Y for Leaflet, but pathfinding grid uses admin orientation
             const gx = Math.floor(obs.x / this.gridCellSize);
             const gy = Math.floor(obs.y / this.gridCellSize);
             const gw = Math.ceil(obs.width / this.gridCellSize);

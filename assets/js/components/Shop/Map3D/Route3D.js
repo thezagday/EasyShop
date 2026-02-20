@@ -9,7 +9,11 @@ export function Route3D({ points }) {
     const curve = useMemo(() => {
         if (!points || points.length < 2) return null;
         const vectors = points.map(p => new THREE.Vector3(p[0], p[1], p[2]));
-        return new THREE.CatmullRomCurve3(vectors, false, 'catmullrom', 0.3);
+        const path = new THREE.CurvePath();
+        for (let i = 0; i < vectors.length - 1; i++) {
+            path.add(new THREE.LineCurve3(vectors[i], vectors[i + 1]));
+        }
+        return path;
     }, [points]);
 
     // Animate dash offset

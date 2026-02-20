@@ -297,9 +297,6 @@ export default function Map3D({
                     /* Google Maps-like: mostly top-down, slight tilt allowed */
                     minPolarAngle={0.1}
                     maxPolarAngle={Math.PI / 3}
-                    /* Limit horizontal rotation to ±45° */
-                    minAzimuthAngle={-Math.PI / 4}
-                    maxAzimuthAngle={Math.PI / 4}
                     minDistance={3}
                     maxDistance={25}
                     /* Reduce sensitivity */
@@ -315,10 +312,10 @@ export default function Map3D({
                         MIDDLE: THREE.MOUSE.DOLLY,
                         RIGHT: THREE.MOUSE.ROTATE
                     }}
-                    /* Mobile: one finger=pan, two fingers=zoom */
+                    /* Mobile: one finger=pan, two fingers=zoom+rotate */
                     touches={{
                         ONE: THREE.TOUCH.PAN,
-                        TWO: THREE.TOUCH.DOLLY_PAN
+                        TWO: THREE.TOUCH.DOLLY_ROTATE
                     }}
                     target={[0, 0, 0]}
                     screenSpacePanning={false}

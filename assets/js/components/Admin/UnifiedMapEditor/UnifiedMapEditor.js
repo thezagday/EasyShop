@@ -376,7 +376,7 @@ const UnifiedMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
     const activeMode = drawingMode ? 'drawing' : placingMode ? 'placing' : null;
 
     // Inline styles for pin markers
-    const pinStyle = (x, y) => ({ position: 'absolute', left: pctLeft(x), top: pctTop(y), zIndex: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translate(-50%, -100%)', pointerEvents: 'auto', cursor: 'pointer', filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.4))' });
+    const pinStyle = (x, y) => ({ position: 'absolute', left: pctLeft(x), top: pctTop(y), zIndex: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translate(-50%, calc(-100% + 20px))', pointerEvents: 'auto', cursor: 'pointer', filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.4))' });
     const dotStyle = (color) => ({ width: 20, height: 20, borderRadius: '50%', border: '3px solid #fff', background: color, boxSizing: 'border-box' });
     const arrowStyle = (color) => ({ width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: `7px solid ${color}`, marginTop: -1 });
     const labelStyle = { marginTop: 2, background: 'rgba(0,0,0,0.75)', color: '#fff', fontSize: 10, fontWeight: 600, padding: '1px 5px', borderRadius: 2, whiteSpace: 'nowrap', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: '1.5' };

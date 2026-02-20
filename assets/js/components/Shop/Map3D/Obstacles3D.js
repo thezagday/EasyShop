@@ -3,10 +3,10 @@ import * as THREE from 'three';
 import { SCALE, HALF_W, HALF_H } from './constants';
 
 const TYPE_COLORS = {
-    shelf: '#d6d6d6',
-    wall: '#b3b3b3',
-    counter: '#d6d6d6',
-    checkout: '#d6d6d6',
+    shelf: '#c8c8c8',
+    wall: '#808080',
+    counter: '#a8b8d8',
+    checkout: '#a8d8a8',
 };
 
 const TYPE_HEIGHTS = {
