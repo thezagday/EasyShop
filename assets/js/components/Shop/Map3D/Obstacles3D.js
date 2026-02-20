@@ -3,10 +3,10 @@ import * as THREE from 'three';
 import { SCALE, HALF_W, HALF_H } from './constants';
 
 const TYPE_COLORS = {
-    shelf: '#a3836a',
-    wall: '#b0b8c4',
-    counter: '#7c9eb8',
-    checkout: '#6dae94',
+    shelf: '#e3e3e3',
+    wall: '#c0c0c0',
+    counter: '#e3e3e3',
+    checkout: '#e3e3e3',
 };
 
 const TYPE_HEIGHTS = {
@@ -46,12 +46,10 @@ export function Obstacles3D({ obstacles }) {
                     receiveShadow
                 >
                     <boxGeometry args={[m.w, m.h, m.d]} />
-                    <meshStandardMaterial
+                    <meshBasicMaterial
                         color={m.color}
-                        roughness={0.6}
-                        metalness={0.1}
                         transparent
-                        opacity={0.45}
+                        opacity={0.5}
                     />
                 </mesh>
             ))}

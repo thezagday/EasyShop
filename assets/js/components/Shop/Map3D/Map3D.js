@@ -279,9 +279,8 @@ export default function Map3D({
 
             {/* 3D Canvas */}
             <Canvas
-                shadows
-                gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2 }}
-                style={{ width: '100%', height: '100%', background: '#ffffff' }}
+                gl={{ antialias: true, toneMapping: THREE.NoToneMapping, alpha: true }}
+                style={{ width: '100%', height: '100%', backgroundColor: '#ffffff' }}
             >
                 <PerspectiveCamera
                     makeDefault
@@ -316,12 +315,17 @@ export default function Map3D({
                         MIDDLE: THREE.MOUSE.DOLLY,
                         RIGHT: THREE.MOUSE.ROTATE
                     }}
+                    /* Mobile: one finger=pan, two fingers=zoom */
+                    touches={{
+                        ONE: THREE.TOUCH.PAN,
+                        TWO: THREE.TOUCH.DOLLY_PAN
+                    }}
                     target={[0, 0, 0]}
                     screenSpacePanning={false}
                 />
 
                 {/* Lighting */}
-                <ambientLight intensity={0.8} />
+                <ambientLight intensity={1.2} />
                 <directionalLight
                     position={[8, 15, 5]}
                     intensity={1.2}

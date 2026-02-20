@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { Suspense, useEffect, useMemo } from 'react';
 import { useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import { SCALE, MAP_WIDTH, MAP_HEIGHT } from './constants';
@@ -6,42 +6,107 @@ import { SCALE, MAP_WIDTH, MAP_HEIGHT } from './constants';
 const FLOOR_W = MAP_WIDTH * SCALE;
 const FLOOR_H = MAP_HEIGHT * SCALE;
 
-export function Floor({ mapImageUrl }) {
-    const texture = useMemo(() => {
-        if (!mapImageUrl) return null;
-        const loader = new THREE.TextureLoader();
-        const tex = loader.load(mapImageUrl);
-        tex.minFilter = THREE.LinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-        tex.colorSpace = THREE.SRGBColorSpace;
-        return tex;
-    }, [mapImageUrl]);
+function FloorWithTexture({ mapImageUrl }) {
+    const texture = useLoader(THREE.TextureLoader, mapImageUrl);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.colorSpace = THREE.SRGBColorSpace;
+
+    const processedTexture = useMemo(() => {
+        const image = texture?.image;
+        if (!image || !image.width || !image.height) {
+            return texture;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            return texture;
+        }
+
+        ctx.drawImage(image, 0, 0);
+        const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = img.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const luma = (r + g + b) / 3;
+
+            if (luma > 190) {
+                data[i] = 255;
+                data[i + 1] = 255;
+                data[i + 2] = 255;
+            }
+        }
+
+        ctx.putImageData(img, 0, 0);
+
+        const nextTexture = new THREE.CanvasTexture(canvas);
+        nextTexture.minFilter = THREE.LinearFilter;
+        nextTexture.magFilter = THREE.LinearFilter;
+        nextTexture.colorSpace = THREE.SRGBColorSpace;
+        nextTexture.needsUpdate = true;
+        return nextTexture;
+    }, [texture]);
+
+    useEffect(() => {
+        return () => {
+            if (processedTexture !== texture) {
+                processedTexture.dispose();
+            }
+        };
+    }, [processedTexture, texture]);
 
     return (
-        <group>
-            {/* Main floor plane */}
-            <mesh
-                rotation={[-Math.PI / 2, 0, 0]}
-                position={[0, -0.01, 0]}
-                receiveShadow
-            >
-                <planeGeometry args={[FLOOR_W, FLOOR_H]} />
-                <meshStandardMaterial
-                    color={texture ? '#ffffff' : '#e8ecf1'}
-                    map={texture}
-                    roughness={0.8}
-                    metalness={0.0}
-                />
-            </mesh>
+        <mesh
+            rotation={[-Math.PI / 2, 0, 0]}
+            position={[0, -0.01, 0]}
+            receiveShadow
+        >
+            <planeGeometry args={[FLOOR_W, FLOOR_H]} />
+            <meshBasicMaterial map={processedTexture} />
+        </mesh>
+    );
+}
 
-            {/* Subtle ground plane beneath (shadow catcher) */}
+function FloorFallback() {
+    return (
+        <mesh
+            rotation={[-Math.PI / 2, 0, 0]}
+            position={[0, -0.01, 0]}
+            receiveShadow
+        >
+            <planeGeometry args={[FLOOR_W, FLOOR_H]} />
+            <meshBasicMaterial color="#ffffff" />
+        </mesh>
+    );
+}
+
+export function Floor({ mapImageUrl }) {
+    return (
+        <group>
+            {/* Main floor plane with map texture */}
+            {mapImageUrl ? (
+                <Suspense fallback={<FloorFallback />}>
+                    <FloorWithTexture mapImageUrl={mapImageUrl} />
+                </Suspense>
+            ) : (
+                <FloorFallback />
+            )}
+
+            {/* Ground plane beneath (shadow catcher + border) */}
             <mesh
                 rotation={[-Math.PI / 2, 0, 0]}
                 position={[0, -0.02, 0]}
                 receiveShadow
             >
                 <planeGeometry args={[FLOOR_W + 4, FLOOR_H + 4]} />
-                <meshStandardMaterial color="#f0f0f0" roughness={1} />
+                <meshBasicMaterial color="#ffffff" />
             </mesh>
         </group>
     );
