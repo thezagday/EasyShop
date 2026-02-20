@@ -33,6 +33,7 @@ export default function Map3D({
     const [routeWaypoints, setRouteWaypoints] = useState([]);
     const [routeInfo, setRouteInfo] = useState(null);
     const [passedWaypointCount, setPassedWaypointCount] = useState(0);
+    const [waypointT, setWaypointT] = useState([]);
 
     // Search/AI state
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -91,6 +92,8 @@ export default function Map3D({
                 setRoutePoints(result.points);
                 setRouteWaypoints(result.waypoints);
                 setRouteInfo(result.info);
+                setWaypointT(result.waypointT || []);
+                setPassedWaypointCount(0);
             }
         }
         // Simple two-point route
@@ -100,6 +103,8 @@ export default function Map3D({
                 setRoutePoints(result.points);
                 setRouteWaypoints(result.waypoints);
                 setRouteInfo(result.info);
+                setWaypointT([0, 1]);
+                setPassedWaypointCount(0);
             }
         }
         // Clear
@@ -107,6 +112,8 @@ export default function Map3D({
             setRoutePoints([]);
             setRouteWaypoints([]);
             setRouteInfo(null);
+            setWaypointT([]);
+            setPassedWaypointCount(0);
         }
     }, [routeSource, routeDestination, source, destination, obstacles]);
 
@@ -346,7 +353,7 @@ export default function Map3D({
                 <Obstacles3D obstacles={obstacles} />
 
                 {/* Route line */}
-                {routePoints.length > 0 && <Route3D points={routePoints} passedT={routeWaypoints.length > 1 ? passedWaypointCount / (routeWaypoints.length - 1) : 0} />}
+                {routePoints.length > 0 && <Route3D points={routePoints} passedT={waypointT[passedWaypointCount] || 0} />}
                 <CameraAnimator controlsRef={controlsRef} resetKey={resetCameraKey} />
                 <TouchTwistRotation controlsRef={controlsRef} wrapperRef={wrapperRef} />
 
@@ -439,7 +446,7 @@ function TouchTwistRotation({ controlsRef, wrapperRef }) {
 
         const target = controls.target;
         const offset = camera.position.clone().sub(target);
-        offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), -delta);
+        offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), delta);
         camera.position.copy(target).add(offset);
         camera.lookAt(target);
     });

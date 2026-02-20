@@ -59,6 +59,59 @@ export class RouteBuilder3D {
         console.log('3D Pathfinding initialized:', this.gridWidth, 'x', this.gridHeight, 'obstacles:', this.obstacles.length);
     }
 
+    centerPathInCorridors(pathYX) {
+        if (!pathYX || pathYX.length < 3) return pathYX;
+        if (!this.pathfinding.grid) return pathYX;
+
+        const MAX_SCAN = 15;
+        const grid = this.pathfinding.grid;
+        const result = [pathYX[0]];
+
+        for (let i = 1; i < pathYX.length - 1; i++) {
+            const [y, x] = pathYX[i];
+            const [py, px] = pathYX[i - 1];
+            const [ny, nx] = pathYX[i + 1];
+            const dx = nx - px;
+            const dy = ny - py;
+
+            let newX = x, newY = y;
+
+            // If moving mostly horizontally, center vertically
+            if (Math.abs(dx) >= Math.abs(dy)) {
+                let dUp = MAX_SCAN, dDown = MAX_SCAN;
+                for (let d = 1; d <= MAX_SCAN; d++) {
+                    if (dUp === MAX_SCAN && (y - d < 0 || !grid.isWalkableAt(x, y - d))) dUp = d;
+                    if (dDown === MAX_SCAN && (y + d >= this.gridHeight || !grid.isWalkableAt(x, y + d))) dDown = d;
+                }
+                if (dUp < MAX_SCAN && dDown < MAX_SCAN) {
+                    newY = y + Math.round((dDown - dUp) / 2);
+                }
+            }
+
+            // If moving mostly vertically, center horizontally
+            if (Math.abs(dy) >= Math.abs(dx)) {
+                let dLeft = MAX_SCAN, dRight = MAX_SCAN;
+                for (let d = 1; d <= MAX_SCAN; d++) {
+                    if (dLeft === MAX_SCAN && (x - d < 0 || !grid.isWalkableAt(x - d, y))) dLeft = d;
+                    if (dRight === MAX_SCAN && (x + d >= this.gridWidth || !grid.isWalkableAt(x + d, y))) dRight = d;
+                }
+                if (dLeft < MAX_SCAN && dRight < MAX_SCAN) {
+                    newX = x + Math.round((dRight - dLeft) / 2);
+                }
+            }
+
+            if (newX >= 0 && newX < this.gridWidth && newY >= 0 && newY < this.gridHeight &&
+                grid.isWalkableAt(newX, newY)) {
+                result.push([newY, newX]);
+            } else {
+                result.push([y, x]);
+            }
+        }
+
+        result.push(pathYX[pathYX.length - 1]);
+        return result;
+    }
+
     findPath(startAdmin, endAdmin) {
         if (!this.pathfinding) return null;
 
@@ -83,11 +136,11 @@ export class RouteBuilder3D {
             ];
         }
 
-        // Smooth on grid
-        const smoothed = this.pathfinding.smoothPathOnGrid(path) || path;
+        // Center path between obstacles
+        const centered = this.centerPathInCorridors(path);
 
         // Convert grid path [y, x] back to admin coords, then to Three.js
-        const threePoints = smoothed.map(([gridY, gridX]) => {
+        const threePoints = centered.map(([gridY, gridX]) => {
             const adminX = (gridX + 0.5) * this.gridCellSize;
             const adminY = (gridY + 0.5) * this.gridCellSize;
             return adminToThreeRoute(adminX, adminY);
@@ -191,32 +244,39 @@ export class RouteBuilder3D {
         const optimizedWaypoints = optimizedOrder.map(i => waypoints[i]);
         const optimizedAdmin = optimizedOrder.map(i => adminWaypoints[i]);
 
-        // Build path segments
+        // Build path segments and track waypoint boundaries
         const allPoints = [];
+        const segmentBoundaries = [0]; // point index for each waypoint
         for (let i = 0; i < optimizedAdmin.length - 1; i++) {
             const segment = this.findPath(optimizedAdmin[i], optimizedAdmin[i + 1]);
             if (segment) {
                 if (i === 0) allPoints.push(...segment);
                 else allPoints.push(...segment.slice(1));
             }
+            segmentBoundaries.push(allPoints.length - 1);
         }
 
         if (allPoints.length === 0) return null;
 
-        // Calculate distance
-        let distance = 0;
+        // Compute cumulative arc lengths at each point
+        const cumLen = [0];
         for (let i = 1; i < allPoints.length; i++) {
             const dx = allPoints[i][0] - allPoints[i - 1][0];
             const dz = allPoints[i][2] - allPoints[i - 1][2];
-            distance += Math.sqrt(dx * dx + dz * dz);
+            cumLen.push(cumLen[i - 1] + Math.sqrt(dx * dx + dz * dz));
         }
-        // Convert Three.js units to approximate meters
-        const distMeters = Math.round(distance / SCALE * 0.1);
+        const totalLen = cumLen[cumLen.length - 1];
+
+        // Compute passedT fraction for each waypoint boundary
+        const waypointT = segmentBoundaries.map(idx => totalLen > 0 ? cumLen[idx] / totalLen : 0);
+
+        const distMeters = Math.round(totalLen / SCALE * 0.1);
         const timeMin = Math.ceil(distMeters / 80);
 
         return {
             points: allPoints,
             waypoints: optimizedWaypoints,
+            waypointT,
             info: {
                 from: optimizedWaypoints[0]?.name || 'Вход',
                 to: optimizedWaypoints[optimizedWaypoints.length - 1]?.name || 'Выход',
