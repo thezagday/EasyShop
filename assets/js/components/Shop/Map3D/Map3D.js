@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import { Floor } from './Floor';
@@ -25,6 +25,7 @@ export default function Map3D({
     const controlsRef = useRef(null);
     const routeBuilderRef = useRef(null);
 
+    const [resetCameraKey, setResetCameraKey] = useState(0);
     const [obstacles, setObstacles] = useState([]);
     const [entranceExit, setEntranceExit] = useState(null);
     const [routePoints, setRoutePoints] = useState([]);
@@ -300,7 +301,7 @@ export default function Map3D({
                     minDistance={3}
                     maxDistance={25}
                     /* Reduce sensitivity */
-                    rotateSpeed={0.3}
+                    rotateSpeed={0.7}
                     panSpeed={0.5}
                     zoomSpeed={0.6}
                     /* Smooth damping */
@@ -344,6 +345,7 @@ export default function Map3D({
 
                 {/* Route line */}
                 {routePoints.length > 0 && <Route3D points={routePoints} />}
+                <CameraAnimator controlsRef={controlsRef} resetKey={resetCameraKey} />
 
                 {/* Category / entrance / exit markers */}
                 <Markers3D
@@ -356,6 +358,15 @@ export default function Map3D({
                 />
             </Canvas>
 
+            {/* Compass reset button */}
+            <button
+                className="map3d-compass-btn"
+                title="Сбросить вид"
+                onClick={() => setResetCameraKey(k => k + 1)}
+            >
+                🧭
+            </button>
+
             {/* Search controls overlay (pure React, reused from old Map) */}
             <UnifiedSearchControl
                 shopId={shopId}
@@ -367,4 +378,35 @@ export default function Map3D({
             />
         </div>
     );
+}
+
+const INIT_CAM_POS = new THREE.Vector3(0, 12, 8);
+const INIT_TARGET  = new THREE.Vector3(0, 0, 0);
+
+function CameraAnimator({ controlsRef, resetKey }) {
+    const { camera } = useThree();
+    const animating = useRef(false);
+
+    useEffect(() => {
+        if (resetKey > 0) animating.current = true;
+    }, [resetKey]);
+
+    useFrame(() => {
+        if (!animating.current) return;
+        camera.position.lerp(INIT_CAM_POS, 0.06);
+        if (controlsRef.current) {
+            controlsRef.current.target.lerp(INIT_TARGET, 0.06);
+            controlsRef.current.update();
+        }
+        if (camera.position.distanceTo(INIT_CAM_POS) < 0.01) {
+            camera.position.copy(INIT_CAM_POS);
+            if (controlsRef.current) {
+                controlsRef.current.target.copy(INIT_TARGET);
+                controlsRef.current.update();
+            }
+            animating.current = false;
+        }
+    });
+
+    return null;
 }

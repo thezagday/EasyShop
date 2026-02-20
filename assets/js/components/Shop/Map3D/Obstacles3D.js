@@ -3,17 +3,17 @@ import * as THREE from 'three';
 import { SCALE, HALF_W, HALF_H } from './constants';
 
 const TYPE_COLORS = {
-    shelf: '#c8c8c8',
-    wall: '#808080',
-    counter: '#a8b8d8',
-    checkout: '#a8d8a8',
+    shelf: '#b0bece',
+    wall: '#3a4a5a',
+    counter: '#6890c0',
+    checkout: '#5cb87c',
 };
 
 const TYPE_HEIGHTS = {
-    shelf: 0.10,
-    wall: 0.14,
-    counter: 0.08,
-    checkout: 0.07,
+    shelf: 0.20,
+    wall: 0.28,
+    counter: 0.16,
+    checkout: 0.14,
 };
 
 export function Obstacles3D({ obstacles }) {
