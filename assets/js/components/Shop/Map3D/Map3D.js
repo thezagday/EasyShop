@@ -31,6 +31,7 @@ export default function Map3D({
     const [routePoints, setRoutePoints] = useState([]);
     const [routeWaypoints, setRouteWaypoints] = useState([]);
     const [routeInfo, setRouteInfo] = useState(null);
+    const [passedWaypointCount, setPassedWaypointCount] = useState(0);
 
     // Search/AI state
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -313,10 +314,10 @@ export default function Map3D({
                         MIDDLE: THREE.MOUSE.DOLLY,
                         RIGHT: THREE.MOUSE.ROTATE
                     }}
-                    /* Mobile: one finger=pan, two fingers=zoom+rotate */
+                    /* Mobile: one finger=orbit, two fingers=zoom+pan */
                     touches={{
-                        ONE: THREE.TOUCH.PAN,
-                        TWO: THREE.TOUCH.DOLLY_ROTATE
+                        ONE: THREE.TOUCH.ROTATE,
+                        TWO: THREE.TOUCH.DOLLY_PAN
                     }}
                     target={[0, 0, 0]}
                     screenSpacePanning={false}
@@ -344,7 +345,7 @@ export default function Map3D({
                 <Obstacles3D obstacles={obstacles} />
 
                 {/* Route line */}
-                {routePoints.length > 0 && <Route3D points={routePoints} />}
+                {routePoints.length > 0 && <Route3D points={routePoints} passedT={routeWaypoints.length > 1 ? passedWaypointCount / (routeWaypoints.length - 1) : 0} />}
                 <CameraAnimator controlsRef={controlsRef} resetKey={resetCameraKey} />
 
                 {/* Category / entrance / exit markers */}
@@ -355,6 +356,7 @@ export default function Map3D({
                     aiCategories={aiCategories}
                     routeWaypoints={routeWaypoints}
                     onBuildRoute={handleBuildRoute}
+                    onWaypointPassed={(idx) => setPassedWaypointCount(idx)}
                 />
             </Canvas>
 

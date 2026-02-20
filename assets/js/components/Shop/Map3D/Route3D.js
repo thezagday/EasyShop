@@ -2,10 +2,7 @@ import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-export function Route3D({ points }) {
-    const tubeRef = useRef();
-    const glowRef = useRef();
-
+export function Route3D({ points, passedT = 0 }) {
     const curve = useMemo(() => {
         if (!points || points.length < 2) return null;
         const vectors = points.map(p => new THREE.Vector3(p[0], p[1], p[2]));
@@ -16,45 +13,80 @@ export function Route3D({ points }) {
         return path;
     }, [points]);
 
-    // Animate dash offset
-    useFrame((_, delta) => {
-        if (tubeRef.current && tubeRef.current.material) {
-            tubeRef.current.material.dashOffset -= delta * 0.5;
+    const { passedCurve, aheadCurve } = useMemo(() => {
+        if (!curve) return { passedCurve: null, aheadCurve: null };
+        const t = Math.max(0, Math.min(1, passedT));
+        if (t <= 0) return { passedCurve: null, aheadCurve: curve };
+        if (t >= 1) return { passedCurve: curve, aheadCurve: null };
+
+        const splitPoint = curve.getPointAt(t);
+        const STEPS = 200;
+
+        const passedVecs = [];
+        for (let i = 0; i <= STEPS * t; i++) {
+            passedVecs.push(curve.getPointAt(i / STEPS));
         }
-    });
+        passedVecs.push(splitPoint);
+
+        const aheadVecs = [splitPoint];
+        for (let i = Math.ceil(STEPS * t); i <= STEPS; i++) {
+            aheadVecs.push(curve.getPointAt(i / STEPS));
+        }
+
+        const buildPath = (vecs) => {
+            const p = new THREE.CurvePath();
+            for (let i = 0; i < vecs.length - 1; i++) {
+                p.add(new THREE.LineCurve3(vecs[i], vecs[i + 1]));
+            }
+            return p;
+        };
+
+        return {
+            passedCurve: passedVecs.length >= 2 ? buildPath(passedVecs) : null,
+            aheadCurve: aheadVecs.length >= 2 ? buildPath(aheadVecs) : null,
+        };
+    }, [curve, passedT]);
 
     if (!curve) return null;
 
     return (
         <group>
-            {/* Main route tube */}
-            <mesh ref={tubeRef}>
-                <tubeGeometry args={[curve, 128, 0.03, 8, false]} />
-                <meshStandardMaterial
-                    color="#22c55e"
-                    emissive="#22c55e"
-                    emissiveIntensity={0.6}
-                    roughness={0.3}
-                    metalness={0.4}
-                />
-            </mesh>
+            {/* Passed segment – gray */}
+            {passedCurve && (
+                <mesh>
+                    <tubeGeometry args={[passedCurve, 128, 0.03, 8, false]} />
+                    <meshStandardMaterial color="#9ca3af" roughness={0.8} metalness={0} />
+                </mesh>
+            )}
 
-            {/* Glow tube (slightly larger, transparent) */}
-            <mesh ref={glowRef}>
-                <tubeGeometry args={[curve, 128, 0.06, 8, false]} />
-                <meshStandardMaterial
-                    color="#22c55e"
-                    emissive="#22c55e"
-                    emissiveIntensity={0.3}
-                    transparent
-                    opacity={0.15}
-                    roughness={1}
-                    metalness={0}
-                />
-            </mesh>
-
-            {/* Direction dots along the path */}
-            <RouteDirectionDots curve={curve} />
+            {/* Ahead segment – green */}
+            {aheadCurve && (
+                <>
+                    <mesh>
+                        <tubeGeometry args={[aheadCurve, 128, 0.03, 8, false]} />
+                        <meshStandardMaterial
+                            color="#22c55e"
+                            emissive="#22c55e"
+                            emissiveIntensity={0.6}
+                            roughness={0.3}
+                            metalness={0.4}
+                        />
+                    </mesh>
+                    <mesh>
+                        <tubeGeometry args={[aheadCurve, 128, 0.06, 8, false]} />
+                        <meshStandardMaterial
+                            color="#22c55e"
+                            emissive="#22c55e"
+                            emissiveIntensity={0.3}
+                            transparent
+                            opacity={0.15}
+                            roughness={1}
+                            metalness={0}
+                        />
+                    </mesh>
+                    <RouteDirectionDots curve={aheadCurve} />
+                </>
+            )}
         </group>
     );
 }

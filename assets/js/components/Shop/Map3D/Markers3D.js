@@ -114,7 +114,7 @@ function TargetPin({ x, y, title }) {
     );
 }
 
-function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopup, popupKey }) {
+function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopup, popupKey, onPassed }) {
     const pos = toThreePos(x, y, 0.15);
 
     const handleClick = (e) => {
@@ -137,13 +137,21 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
                     <span className="marker3d-index">{index}</span>
                     <span className="marker3d-title">{name}</span>
                 </div>
-                {isPopupOpen && commodities && commodities.length > 0 && (
+                {isPopupOpen && (
                     <div className="marker3d-popup" onClick={e => e.stopPropagation()}>
                         <div className="marker3d-popup-title">{name}</div>
-                        <div className="marker3d-popup-commodities">
-                            <div className="marker3d-popup-commodities-title">🛒 Нужно взять:</div>
-                            <ul>{commodities.map((c, i) => <li key={i}>{c}</li>)}</ul>
-                        </div>
+                        {commodities && commodities.length > 0 && (
+                            <div className="marker3d-popup-commodities">
+                                <div className="marker3d-popup-commodities-title">🛒 Нужно взять:</div>
+                                <ul>{commodities.map((c, i) => <li key={i}>{c}</li>)}</ul>
+                            </div>
+                        )}
+                        <button
+                            className="marker3d-popup-btn marker3d-passed-btn"
+                            onClick={(e) => { e.stopPropagation(); onPassed && onPassed(index); onTogglePopup && onTogglePopup(null); }}
+                        >
+                            ✅ Пройдено
+                        </button>
                     </div>
                 )}
             </Html>
@@ -151,7 +159,7 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
     );
 }
 
-export function Markers3D({ categories, entranceExit, shop, aiCategories, routeWaypoints, onBuildRoute }) {
+export function Markers3D({ categories, entranceExit, shop, aiCategories, routeWaypoints, onBuildRoute, onWaypointPassed }) {
     const [openPopupId, setOpenPopupId] = useState(null);
 
     const handleTogglePopup = (popupKey) => {
@@ -244,6 +252,7 @@ export function Markers3D({ categories, entranceExit, shop, aiCategories, routeW
                         popupKey={`wp-${idx}`}
                         isPopupOpen={openPopupId === `wp-${idx}`}
                         onTogglePopup={handleTogglePopup}
+                        onPassed={onWaypointPassed}
                     />
                 );
             })}
