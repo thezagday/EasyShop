@@ -15,11 +15,14 @@ import ReactDOM from "react-dom/client";
 import React from 'react';
 import App from "./js/components/App";
 import { BrowserRouter } from 'react-router-dom';
+import { AppProvider } from "./js/context/AppContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const content = (
     <BrowserRouter>
-        <App />
+        <AppProvider>
+            <App />
+        </AppProvider>
     </BrowserRouter>
 );
 

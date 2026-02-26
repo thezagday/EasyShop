@@ -19,7 +19,7 @@ final class RegisterUserHandler implements CommandHandlerInterface
     {
         $user = new User();
         $user->setEmail($command->getEmail());
-        $user->setRoles(['ROLE_ADMIN']);
+        $user->setRoles(['ROLE_USER']);
         
         $hashedPassword = $this->passwordHasher->hashPassword(
             $user,

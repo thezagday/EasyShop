@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/shops/{shopId}/obstacles', name: 'api_obstacle_')]
 class ObstacleController extends AbstractController
@@ -27,6 +28,7 @@ class ObstacleController extends AbstractController
     }
 
     #[Route('', name: 'create', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function create(#[FromRequest] CreateObstacleCommand $command): JsonResponse
     {
         $obstacle = $this->command($command);
@@ -35,6 +37,7 @@ class ObstacleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function update(#[FromRequest] UpdateObstacleCommand $command): JsonResponse
     {
         $obstacle = $this->command($command);
@@ -43,6 +46,7 @@ class ObstacleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(#[FromRequest] DeleteObstacleCommand $command): JsonResponse
     {
         $this->command($command);

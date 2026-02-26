@@ -27,6 +27,37 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return parent::find($id);
     }
 
+    public function findByEmail(string $email): ?User
+    {
+        return $this->findOneBy(['email' => $email]);
+    }
+
+    public function findAdminByEmail(string $email): ?User
+    {
+        $user = $this->findByEmail($email);
+
+        if (!$user || !$user->hasStoredRole('ROLE_ADMIN')) {
+            return null;
+        }
+
+        return $user;
+    }
+
+    public function findMainUserByEmail(string $email): ?User
+    {
+        $user = $this->findByEmail($email);
+
+        if (!$user) {
+            return null;
+        }
+
+        if (!$user->hasStoredRole('ROLE_USER') || $user->hasStoredRole('ROLE_ADMIN')) {
+            return null;
+        }
+
+        return $user;
+    }
+
     public function save(User $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);

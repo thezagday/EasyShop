@@ -41,6 +41,7 @@
             </div>
             <div id="root" 
                  data-user="{{ app.user ? app.user.userIdentifier : '' }}"
+                 data-user-id="{{ app.user ? app.user.id : '' }}"
                  data-roles="{{ app.user ? app.user.roles|json_encode : '[]' }}"
                  data-admin-url="{{ app_scheme }}://{{ admin_host }}/admin"
                  data-main-url="{{ app_scheme }}://{{ main_host }}/">

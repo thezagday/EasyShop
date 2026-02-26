@@ -5,10 +5,10 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         users_in_memory: { memory: null }
-        app_user_provider:
-            entity:
-                class: App\Domain\Entity\User
-                property: email
+        admin_user_provider:
+            id: App\Infrastructure\Security\AdminUserProvider
+        main_user_provider:
+            id: App\Infrastructure\Security\MainUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -16,7 +16,7 @@ security:
         admin:
             lazy: true
             host: '%admin_host%'
-            provider: app_user_provider
+            provider: admin_user_provider
             form_login:
                 login_path: app_login
                 check_path: app_login
@@ -26,7 +26,12 @@ security:
                 path: /logout
         main:
             lazy: true
-            provider: app_user_provider
+            provider: main_user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: /
+                always_use_default_target_path: false
             logout:
                 path: /logout
 
@@ -39,9 +44,12 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { host: '%admin_host%', path: ^/register, roles: ROLE_ADMIN }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/logout, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { host: '%admin_host%', route: app_login, roles: PUBLIC_ACCESS }
-        - { host: '%admin_host%', path: ^/, roles: IS_AUTHENTICATED_FULLY }
+        - { host: '%admin_host%', path: ^/, roles: ROLE_ADMIN }
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER

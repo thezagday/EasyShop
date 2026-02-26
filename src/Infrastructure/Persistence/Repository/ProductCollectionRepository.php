@@ -24,13 +24,27 @@ class ProductCollectionRepository extends ServiceEntityRepository implements Pro
     }
 
     /** @return ProductCollection[] */
-    public function findActiveByShop(Shop $shop): array
+    public function findActiveByShop(Shop $shop, ?int $userId = null): array
     {
-        return $this->createQueryBuilder('c')
+        $qb = $this->createQueryBuilder('c')
             ->andWhere('c.shop = :shop')
             ->andWhere('c.active = true')
-            ->setParameter('shop', $shop)
-            ->orderBy('c.sortOrder', 'ASC')
+            ->setParameter('shop', $shop);
+
+        if ($userId) {
+            $qb
+                ->andWhere('(c.user IS NULL OR IDENTITY(c.user) = :userId)')
+                ->addSelect('CASE WHEN IDENTITY(c.user) = :userId THEN 0 ELSE 1 END AS HIDDEN personalSort')
+                ->setParameter('userId', $userId)
+                ->orderBy('personalSort', 'ASC');
+        } else {
+            $qb
+                ->andWhere('c.user IS NULL')
+                ->orderBy('c.sortOrder', 'ASC');
+        }
+
+        return $qb
+            ->addOrderBy('c.sortOrder', 'ASC')
             ->addOrderBy('c.title', 'ASC')
             ->getQuery()
             ->getResult();

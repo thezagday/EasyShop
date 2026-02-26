@@ -27,6 +27,10 @@ class ProductCollection
     #[ORM\JoinColumn(nullable: false)]
     private ?Shop $shop = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'collections')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?User $user = null;
+
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $active = true;
 
@@ -88,6 +92,17 @@ class ProductCollection
     public function setShop(?Shop $shop): self
     {
         $this->shop = $shop;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
         return $this;
     }
 

@@ -1,24 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { TrackingService } from '../../../../services/TrackingService';
 
 export function CollectionPicker({ shopId, onSelect }) {
     const [collections, setCollections] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!shopId) return;
+        setLoading(true);
+
+        if (!shopId) {
+            setCollections([]);
+            setLoading(false);
+            return;
+        }
 
         fetch(`/api/shops/${shopId}/collections`)
-            .then(r => r.json())
+            .then(r => r.ok ? r.json() : [])
             .then(data => {
-                setCollections(data);
+                const rawCollections = Array.isArray(data)
+                    ? data
+                    : (Array.isArray(data?.collections) ? data.collections : []);
+
+                const normalizedCollections = rawCollections
+                    .map((collection) => ({
+                        ...collection,
+                        items: Array.isArray(collection?.items) ? collection.items : []
+                    }))
+                    .sort((a, b) => Number(Boolean(b?.isPersonal)) - Number(Boolean(a?.isPersonal)));
+
+                setCollections(normalizedCollections);
                 setLoading(false);
             })
-            .catch(() => setLoading(false));
+            .catch(() => {
+                setCollections([]);
+                setLoading(false);
+            });
     }, [shopId]);
 
-    const handleSelect = async (collection) => {
-        await TrackingService.trackSearch(parseInt(shopId, 10), `Подборка: ${collection.title}`);
+    const handleSelect = (collection) => {
         onSelect(collection);
     };
 
@@ -32,7 +50,11 @@ export function CollectionPicker({ shopId, onSelect }) {
 
     return (
         <div className="collection-picker">
-            {collections.map(col => (
+            {collections.map(col => {
+                const items = Array.isArray(col.items) ? col.items : [];
+                const hasItems = items.length > 0;
+
+                return (
                 <div key={col.id} className="collection-card">
                     <div className="collection-card-header">
                         <div className="collection-card-emoji">{col.emoji || '📦'}</div>
@@ -44,7 +66,7 @@ export function CollectionPicker({ shopId, onSelect }) {
                         </div>
                     </div>
                     <div className="collection-card-items">
-                        {col.items.map(item => (
+                        {items.map(item => (
                             <div key={item.id} className="collection-item">
                                 <span className="collection-item-dot">•</span>
                                 <span className="collection-item-name">{item.commodityTitle}</span>
@@ -53,12 +75,14 @@ export function CollectionPicker({ shopId, onSelect }) {
                     </div>
                     <button
                         className="collection-build-route-btn"
+                        disabled={!hasItems}
+                        title={hasItems ? 'Построить маршрут' : 'В подборке нет товаров с координатами'}
                         onClick={() => handleSelect(col)}
                     >
                         🗺️ Построить маршрут
                     </button>
                 </div>
-            ))}
+            )})}
         </div>
     );
 }

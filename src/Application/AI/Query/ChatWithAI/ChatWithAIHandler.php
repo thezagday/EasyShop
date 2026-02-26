@@ -6,6 +6,7 @@ use App\Application\Contract\QueryHandlerInterface;
 use App\Domain\Entity\Commodity;
 use App\Domain\Entity\ShopCategory;
 use App\Domain\Repository\ShopRepositoryInterface;
+use App\Domain\Repository\UserRepositoryInterface;
 use App\Infrastructure\AI\AIService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -13,7 +14,8 @@ final class ChatWithAIHandler implements QueryHandlerInterface
 {
     public function __construct(
         private AIService $aiService,
-        private ShopRepositoryInterface $shopRepository
+        private ShopRepositoryInterface $shopRepository,
+        private UserRepositoryInterface $userRepository
     ) {
     }
 
@@ -44,8 +46,32 @@ final class ChatWithAIHandler implements QueryHandlerInterface
             $commoditiesAndCategories
         ));
 
+        // Build context-aware prompt
+        $contextParts = [];
+        
+        // Shop context
+        $shopContext = $shop->getAiContext();
+        if ($shopContext) {
+            $contextParts[] = "Контекст заведения: {$shopContext}";
+        }
+        
+        // User context
+        if ($query->userId) {
+            $user = $this->userRepository->findById($query->userId);
+            if ($user) {
+                $userContext = $user->getUserContext();
+                if ($userContext) {
+                    $contextParts[] = "Пожелания пользователя: {$userContext}";
+                }
+            }
+        }
+        
+        $contextPrefix = !empty($contextParts) 
+            ? implode("\n", $contextParts) . "\n\n" 
+            : '';
+
         $prompt = <<<PROMPT
-            Ты консультант интернет-магазина. Вот список товаров и их категорий: $productList.
+            {$contextPrefix}Ты консультант интернет-магазина. Вот список товаров и их категорий: $productList.
             Пользователь спрашивает: "{$query->message}"
             
             Выбери из этого списка подходящие товары к запросу пользователя и запиши их с категориями в JSON-массив, ОБЯЗАТЕЛЬНО без каких-либо дополнительных символов (например, без ``` или подписи json!). Массив должен быть вот так:

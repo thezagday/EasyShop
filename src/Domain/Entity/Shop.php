@@ -5,13 +5,15 @@ namespace App\Domain\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity]
-#[ApiResource]
+#[ApiResource(operations: [new Get(), new GetCollection()])]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'ipartial'])]
 class Shop
 {
@@ -56,6 +58,9 @@ class Shop
 
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $exitY = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $aiContext = null;
 
     public function __construct()
     {
@@ -222,6 +227,17 @@ class Shop
     public function setExitY(?float $exitY): self
     {
         $this->exitY = $exitY;
+        return $this;
+    }
+
+    public function getAiContext(): ?string
+    {
+        return $this->aiContext;
+    }
+
+    public function setAiContext(?string $aiContext): self
+    {
+        $this->aiContext = $aiContext;
         return $this;
     }
 

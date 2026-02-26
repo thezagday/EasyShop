@@ -35,6 +35,12 @@ class UserActivity
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $routeTimeMinutes = null;
 
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2, nullable: true)]
+    private ?string $routeCost = null;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $purchasedItems = null;
+
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
@@ -114,6 +120,28 @@ class UserActivity
         return $this;
     }
 
+    public function getRouteCost(): ?string
+    {
+        return $this->routeCost;
+    }
+
+    public function setRouteCost(?string $routeCost): self
+    {
+        $this->routeCost = $routeCost;
+        return $this;
+    }
+
+    public function getPurchasedItems(): ?array
+    {
+        return $this->purchasedItems;
+    }
+
+    public function setPurchasedItems(?array $purchasedItems): self
+    {
+        $this->purchasedItems = $purchasedItems;
+        return $this;
+    }
+
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
@@ -135,7 +163,28 @@ class UserActivity
         if (!$this->routeCategories || count($this->routeCategories) === 0) {
             return '-';
         }
-        return implode(' → ', $this->routeCategories);
+
+        $labels = array_values(array_filter(array_map(function ($category): string {
+            if (is_string($category)) {
+                return trim($category);
+            }
+
+            if (is_array($category)) {
+                $name = $category['name'] ?? $category['title'] ?? null;
+
+                if (is_string($name)) {
+                    return trim($name);
+                }
+            }
+
+            return '';
+        }, $this->routeCategories)));
+
+        if (count($labels) === 0) {
+            return '-';
+        }
+
+        return implode(' → ', $labels);
     }
 
     public function __toString(): string

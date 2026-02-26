@@ -3,6 +3,15 @@ framework:
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
     http_method_override: false
+    rate_limiter:
+        ai_public:
+            policy: 'fixed_window'
+            limit: 15
+            interval: '1 minute'
+        tracking_public:
+            policy: 'fixed_window'
+            limit: 90
+            interval: '1 minute'
 
     # Enables session support. Note that the session will ONLY be started if you read or write from it.
     # Remove or comment this section to explicitly disable session support.

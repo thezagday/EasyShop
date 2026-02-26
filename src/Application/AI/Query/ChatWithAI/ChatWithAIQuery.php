@@ -13,5 +13,8 @@ final class ChatWithAIQuery implements QueryInterface
 
     #[Assert\NotBlank]
     public string $message;
+
+    #[Assert\Positive]
+    public ?int $userId = null;
 }
 

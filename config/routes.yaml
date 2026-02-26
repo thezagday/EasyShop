@@ -6,6 +6,10 @@ controllers_home:
     resource: ../src/Infrastructure/Ui/Controller/Home/
     type: attribute
 
+controllers_auth:
+    resource: ../src/Infrastructure/Ui/Controller/Auth/
+    type: attribute
+
 admin:
     resource: ../src/Infrastructure/Ui/Controller/Admin/
     type: attribute

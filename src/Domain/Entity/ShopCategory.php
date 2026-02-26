@@ -5,6 +5,8 @@ namespace App\Domain\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Domain\Repository\ShopCategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
-#[ApiResource(normalizationContext: ['groups' => ['shopCategory:read']])] // https://github.com/dunglas/vulcain
+#[ApiResource(operations: [new Get(), new GetCollection()], normalizationContext: ['groups' => ['shopCategory:read']])] // https://github.com/dunglas/vulcain
 #[ApiFilter(SearchFilter::class, properties: ['shop' => 'exact'])]
 class ShopCategory
 {

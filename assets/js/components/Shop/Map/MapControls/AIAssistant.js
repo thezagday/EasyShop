@@ -52,7 +52,7 @@ export function AIAssistant({ shopId, onResult, messages, setMessages }) {
             const response = await fetch('/api/ai', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: trimmed, shopId: parsedShopId }),
+                body: JSON.stringify({ message: trimmed, shopId: parsedShopId, website: '' }),
             });
             const data = await response.json();
 

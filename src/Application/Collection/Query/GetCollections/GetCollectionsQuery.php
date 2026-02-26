@@ -10,4 +10,6 @@ final class GetCollectionsQuery implements QueryInterface
     #[Assert\NotBlank]
     #[Assert\Positive]
     public int $shopId;
+
+    public ?int $userId = null;
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Ui\Controller\Admin;
+namespace App\Infrastructure\Ui\Controller\Auth;
 
 use App\Application\User\Command\RegisterUser\RegisterUserCommand;
 use App\Domain\Entity\User;

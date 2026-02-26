@@ -13,7 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_ADMIN')]
 class ProductCollectionCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -26,6 +28,7 @@ class ProductCollectionCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Подборка')
             ->setEntityLabelInPlural('Подборки')
+            ->setSearchFields(['title', 'description', 'user.email'])
             ->setDefaultSort(['sortOrder' => 'ASC', 'title' => 'ASC']);
     }
 
@@ -35,6 +38,7 @@ class ProductCollectionCrudController extends AbstractCrudController
         yield TextField::new('emoji')->setLabel('Emoji');
         yield TextField::new('title')->setLabel('Название');
         yield TextareaField::new('description')->setLabel('Описание');
+        yield AssociationField::new('user')->setLabel('Пользователь (владелец)');
         $shopField = AssociationField::new('shop')->setLabel('Магазин');
         if ($pageName === Crud::PAGE_EDIT) {
             $shopField->setDisabled();

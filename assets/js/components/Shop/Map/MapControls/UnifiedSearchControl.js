@@ -5,6 +5,7 @@ import { AIAssistant } from './AIAssistant';
 import { CollectionPicker } from './CollectionPicker';
 import { BottomNavBar } from './BottomNavBar';
 import { BottomSheet } from './BottomSheet';
+import { TrackingService } from '../../../../services/TrackingService';
 
 export function UnifiedSearchControl({ 
     shopId,
@@ -55,11 +56,13 @@ export function UnifiedSearchControl({
 
     // Search: hide sheet completely on category/product select
     const handleCategorySelect = (category) => {
+        TrackingService.trackSearch(shopId, category?.name || 'Категория');
         handleHide();
         onCategorySelect(category);
     };
 
     const handleProductSelect = (product) => {
+        TrackingService.trackSearch(shopId, product?.name || 'Товар');
         handleHide();
         onProductSelect(product);
     };
@@ -74,7 +77,8 @@ export function UnifiedSearchControl({
     };
 
     // Collection: hide (route is built immediately)
-    const handleCollectionSelect = (collection) => {
+    const handleCollectionSelect = async (collection) => {
+        await TrackingService.trackSearch(shopId, `Подборка: ${collection?.title || 'Без названия'}`);
         handleHide();
         onCollectionSelect(collection);
     };

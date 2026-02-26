@@ -17,6 +17,11 @@ class CollectionController extends AbstractController
     #[Route('', name: 'list', methods: ['GET'])]
     public function list(#[FromRequest] GetCollectionsQuery $query): JsonResponse
     {
+        $user = $this->getUser();
+        if ($user && method_exists($user, 'getId')) {
+            $query->userId = $user->getId();
+        }
+
         $collections = $this->query($query);
 
         return $this->json($collections);

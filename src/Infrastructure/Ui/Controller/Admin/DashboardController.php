@@ -11,6 +11,7 @@ use App\Domain\Entity\ShopCategory;
 use App\Domain\Entity\User;
 use App\Domain\Entity\UserActivity;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -42,6 +43,13 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('EasyShop Управление');
+    }
+
+    public function configureAssets(): Assets
+    {
+        return Assets::new()
+            ->addHtmlContentToHead('<link rel="icon" href="/img/icon.svg" type="image/svg+xml">')
+            ->addHtmlContentToHead('<link rel="icon" href="/favicon.ico" sizes="any">');
     }
 
     public function configureUserMenu(\Symfony\Component\Security\Core\User\UserInterface $user): \EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu

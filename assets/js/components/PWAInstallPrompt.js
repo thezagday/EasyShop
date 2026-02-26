@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
+const DISMISS_COOKIE_NAME = 'pwa_install_prompt_dismissed';
+const DISMISS_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
+
+function hasDismissCookie() {
+    return document.cookie
+        .split(';')
+        .map((item) => item.trim())
+        .some((item) => item.startsWith(`${DISMISS_COOKIE_NAME}=1`));
+}
+
+function setDismissCookie() {
+    document.cookie = `${DISMISS_COOKIE_NAME}=1; Max-Age=${DISMISS_COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`;
+}
+
 export default function PWAInstallPrompt() {
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showPrompt, setShowPrompt] = useState(false);
@@ -7,6 +21,10 @@ export default function PWAInstallPrompt() {
     useEffect(() => {
         // Слушаем событие beforeinstallprompt
         const handler = (e) => {
+            if (hasDismissCookie()) {
+                return;
+            }
+
             // Предотвращаем стандартное отображение
             e.preventDefault();
             // Сохраняем событие для последующего использования
@@ -36,18 +54,14 @@ export default function PWAInstallPrompt() {
 
     const handleDismiss = () => {
         setShowPrompt(false);
-        // Запоминаем, что пользователь отклонил (можно использовать localStorage)
-        localStorage.setItem('pwa-install-dismissed', Date.now());
+        setDeferredPrompt(null);
+        setDismissCookie();
     };
 
-    // Проверяем, не отклонял ли пользователь недавно (последние 7 дней)
     useEffect(() => {
-        const dismissed = localStorage.getItem('pwa-install-dismissed');
-        if (dismissed) {
-            const daysSinceDismiss = (Date.now() - parseInt(dismissed)) / (1000 * 60 * 60 * 24);
-            if (daysSinceDismiss < 7) {
-                setShowPrompt(false);
-            }
+        if (hasDismissCookie()) {
+            setShowPrompt(false);
+            setDeferredPrompt(null);
         }
     }, []);
 

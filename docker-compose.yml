@@ -65,6 +65,20 @@ services:
     networks:
       - easyshop
 
+  redis:
+    image: redis:7-alpine
+    container_name: easyshop-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - easyshop
+
   node:
     build:
       context: .
@@ -85,6 +99,7 @@ services:
 
 volumes:
   db_data:
+  redis_data:
   vendor:
   node_modules:
 

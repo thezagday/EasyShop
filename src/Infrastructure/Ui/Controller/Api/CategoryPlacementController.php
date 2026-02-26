@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/shops/{shopId}', name: 'api_placement_')]
 class CategoryPlacementController extends AbstractController
@@ -19,6 +20,7 @@ class CategoryPlacementController extends AbstractController
     use CommandQueryTrait;
 
     #[Route('/categories', name: 'categories_list', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function listCategories(#[FromRequest] GetCategoriesQuery $query): JsonResponse
     {
         $data = $this->query($query);
@@ -27,6 +29,7 @@ class CategoryPlacementController extends AbstractController
     }
 
     #[Route('/categories/{id}/coordinates', name: 'category_update_coords', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function updateCategoryCoordinates(#[FromRequest] UpdateCategoryCoordinatesCommand $command): JsonResponse
     {
         $result = $this->command($command);
@@ -43,6 +46,7 @@ class CategoryPlacementController extends AbstractController
     }
 
     #[Route('/entrance-exit', name: 'entrance_exit_update', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function updateEntranceExit(#[FromRequest] UpdateEntranceExitCommand $command): JsonResponse
     {
         $result = $this->command($command);

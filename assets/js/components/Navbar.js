@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAppContext } from '../context/AppContext';
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const rootElement = document.getElementById('root');
-    const username = rootElement ? rootElement.getAttribute('data-user') : '';
-    const rolesData = rootElement ? rootElement.getAttribute('data-roles') : '[]';
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const userMenuRef = useRef(null);
+    const { username, isAdmin, isAdminHost, adminUrl, isLoggedIn } = useAppContext();
 
-    let roles = [];
-    try {
-        roles = JSON.parse(rolesData);
-    } catch (e) {
-        console.error("Error parsing roles", e);
-    }
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!userMenuRef.current) return;
+            if (!userMenuRef.current.contains(event.target)) {
+                setUserMenuOpen(false);
+            }
+        };
 
-    const isAdmin = roles.includes('ROLE_ADMIN');
-    const adminUrl = rootElement ? rootElement.getAttribute('data-admin-url') : '/admin';
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const closeAllMenus = () => {
+        setMenuOpen(false);
+        setUserMenuOpen(false);
+    };
 
     return (
         <>
@@ -41,36 +51,70 @@ export default function Navbar() {
                     </button>
                     <div className={`navbar-collapse collapse ${menuOpen ? 'show' : ''}`} id="navbarSupportedContent">
                         <ul className="navbar-nav ml-auto mb-2 mb-lg-0">
-                            <li className="nav-item">
-                                <NavLink
-                                    className={({ isActive }) => (isActive ? "nav-link nav-link-1 active" : 'nav-link nav-link-1')}
-                                    end to={"/"} aria-current="page"
-                                    onClick={() => setMenuOpen(false)}>Магазины</NavLink>
-                            </li>
-                            {isAdmin && (
-                                <li className="nav-item">
-                                    <a className="nav-link nav-link-1" href={adminUrl} onClick={() => setMenuOpen(false)}>Управление</a>
-                                </li>
+                            {isAdminHost ? (
+                                // На admin хосте показываем только "Управление" и вход без регистрации
+                                <>
+                                    {isAdmin ? (
+                                        <li className="nav-item">
+                                            <a className="nav-link nav-link-1" href="/admin" onClick={() => setMenuOpen(false)}>Управление</a>
+                                        </li>
+                                    ) : (
+                                        <li className="nav-item">
+                                            <a className="nav-link nav-link-1" href="/login" onClick={() => setMenuOpen(false)}>Вход</a>
+                                        </li>
+                                    )}
+                                    {isLoggedIn && (
+                                        <li className="nav-item">
+                                            <a className="nav-link nav-link-1" href="/logout" onClick={() => setMenuOpen(false)}>Выход</a>
+                                        </li>
+                                    )}
+                                </>
+                            ) : (
+                                // На основном хосте показываем полное меню БЕЗ "Управление"
+                                <>
+                                    <li className="nav-item">
+                                        <NavLink
+                                            className={({ isActive }) => (isActive ? "nav-link nav-link-1 active" : 'nav-link nav-link-1')}
+                                            end to={"/"} aria-current="page"
+                                            onClick={closeAllMenus}>Магазины</NavLink>
+                                    </li>
+                                    {username ? (
+                                        <>
+                                            <li className="nav-item nav-user-menu" ref={userMenuRef}>
+                                                <button
+                                                    type="button"
+                                                    className="nav-link nav-link-1 nav-user-menu-btn"
+                                                    onClick={() => setUserMenuOpen(prev => !prev)}
+                                                    aria-haspopup="true"
+                                                    aria-expanded={userMenuOpen}
+                                                >
+                                                    <i className="fas fa-user-circle"></i>
+                                                    <span>Аккаунт</span>
+                                                </button>
+                                                <div className={`nav-user-menu-dropdown ${userMenuOpen ? 'show' : ''}`}>
+                                                    <NavLink
+                                                        className={({ isActive }) => (isActive ? 'nav-user-menu-item active' : 'nav-user-menu-item')}
+                                                        to={"/profile"}
+                                                        onClick={closeAllMenus}
+                                                    >
+                                                        Личный кабинет
+                                                    </NavLink>
+                                                    <a className="nav-user-menu-item" href="/logout" onClick={closeAllMenus}>Выход</a>
+                                                </div>
+                                            </li>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <li className="nav-item">
+                                                <a className="nav-link nav-link-1" href="/login" onClick={closeAllMenus}>Вход</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a className="nav-link nav-link-1" href="/register" onClick={closeAllMenus}>Регистрация</a>
+                                            </li>
+                                        </>
+                                    )}
+                                </>
                             )}
-                            {/* <li className="nav-item">
-                                <NavLink
-                                    className={({ isActive }) => (isActive ? "nav-link nav-link-1 active" : 'nav-link nav-link-1')}
-                                    to={"/contact"} aria-current="page">Контакты</NavLink>
-                            </li> */}
-                            {/* <li className="nav-item">
-    <a aria-current="page" className="nav-link nav-link-1" href="/leaflet">Leaflet</a>
-</li>
-<li className="nav-item">
-    <a aria-current="page" className="nav-link nav-link-1" href="/seadragon">Seadragon</a>
-</li>
-<li className="nav-item">
-    <a aria-current="page" className="nav-link nav-link-1" href="/ai">AI</a>
-</li>
-{username && (
-    <li className="nav-item">
-        <a className="nav-link nav-link-1" href="/logout">Выход</a>
-    </li>
-)} */}
                         </ul>
                     </div>
                 </div>

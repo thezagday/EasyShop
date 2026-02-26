@@ -3,6 +3,8 @@
 namespace App\Domain\Entity;
 
 use App\Domain\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -32,6 +34,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $userContext = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserActivity::class)]
+    private Collection $activities;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ProductCollection::class)]
+    private Collection $collections;
+
+    public function __construct()
+    {
+        $this->activities = new ArrayCollection();
+        $this->collections = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -88,6 +105,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
+     * @return list<string>
+     */
+    public function getStoredRoles(): array
+    {
+        return $this->roles;
+    }
+
+    public function hasStoredRole(string $role): bool
+    {
+        return in_array($role, $this->roles, true);
+    }
+
+    /**
      * @see PasswordAuthenticatedUserInterface
      */
     public function getPassword(): ?string
@@ -100,6 +130,89 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
 
         return $this;
+    }
+
+    public function getUserContext(): ?string
+    {
+        return $this->userContext;
+    }
+
+    public function setUserContext(?string $userContext): static
+    {
+        $this->userContext = $userContext;
+        return $this;
+    }
+
+    public function getActivities(): Collection
+    {
+        return $this->activities;
+    }
+
+    public function getCollections(): Collection
+    {
+        return $this->collections;
+    }
+
+    public function getCollectionsCount(): int
+    {
+        return $this->collections->count();
+    }
+
+    public function getStatsTotalRoutes(): int
+    {
+        $totalRoutes = 0;
+
+        foreach ($this->activities as $activity) {
+            if ($activity->hasRoute()) {
+                $totalRoutes++;
+            }
+        }
+
+        return $totalRoutes;
+    }
+
+    public function getStatsTotalDistanceMeters(): int
+    {
+        $totalDistance = 0;
+
+        foreach ($this->activities as $activity) {
+            if ($activity->hasRoute()) {
+                $totalDistance += $activity->getRouteDistanceMeters() ?? 0;
+            }
+        }
+
+        return $totalDistance;
+    }
+
+    public function getStatsTotalTimeMinutes(): int
+    {
+        $totalTime = 0;
+
+        foreach ($this->activities as $activity) {
+            if ($activity->hasRoute()) {
+                $totalTime += $activity->getRouteTimeMinutes() ?? 0;
+            }
+        }
+
+        return $totalTime;
+    }
+
+    public function getStatsTotalCostDisplay(): string
+    {
+        $totalCost = 0.0;
+
+        foreach ($this->activities as $activity) {
+            if (!$activity->hasRoute()) {
+                continue;
+            }
+
+            $cost = $activity->getRouteCost();
+            if ($cost !== null) {
+                $totalCost += (float) $cost;
+            }
+        }
+
+        return number_format($totalCost, 2, '.', '');
     }
 
     /**

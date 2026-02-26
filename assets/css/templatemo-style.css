@@ -155,8 +155,8 @@ body {
 #root {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-height: 0;
+    flex: 1 0 auto;
+    min-height: auto;
 }
 
 .app-footer {
@@ -584,6 +584,55 @@ figure.effect-ming:hover img { opacity: 0.4; }
     border-color: #111;
 }
 
+.nav-user-menu {
+    position: relative;
+}
+
+.nav-user-menu-btn {
+    border: none;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.nav-user-menu-btn i {
+    font-size: 1.1rem;
+}
+
+.nav-user-menu-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 190px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+    padding: 0.35rem 0;
+    display: none;
+    z-index: 1200;
+}
+
+.nav-user-menu-dropdown.show {
+    display: block;
+}
+
+.nav-user-menu-item {
+    display: block;
+    padding: 0.55rem 0.9rem;
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.95rem;
+    line-height: 1.25;
+}
+
+.nav-user-menu-item:hover,
+.nav-user-menu-item.active {
+    background: #f3f7f4;
+    color: #111;
+}
+
 /* ── Search area ── */
 .tm-hero {
     padding: 2.5rem 0 1.5rem;
@@ -659,10 +708,10 @@ figure.effect-ming:hover img { opacity: 0.4; }
 .tm-about-img-text { max-width: 940px; }
 
 /* Contact */
-select.form-control { border-radius: 0; }
+select.form-control:not(.form-control--select) { border-radius: 0; }
 select.form-control option { height: 30px; }
 
-select:not([multiple]) {
+select:not([multiple]):not(.form-control--select) {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -741,6 +790,24 @@ select:not([multiple]) {
         background: white;
         width: 150px;
         padding: 15px;
+    }
+
+    .nav-user-menu-btn {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .nav-user-menu-dropdown {
+        position: static;
+        min-width: 0;
+        margin-top: 0.25rem;
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .nav-user-menu-item {
+        padding: 0.35rem 0;
     }
 
     .tm-container-content { max-width: 870px; }

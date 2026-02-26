@@ -1,0 +1,175 @@
+{% extends 'base_simple.html.twig' %}
+
+{% block title %}EasyShop API Docs{% endblock %}
+
+{% block body %}
+    <main class="api-docs-page" style="max-width: 1280px; margin: 24px auto; padding: 0 16px; font-family: 'Open Sans', sans-serif;">
+        <header style="margin-bottom: 16px;">
+            <h1 style="margin: 0 0 8px; font-size: 28px;">All API Endpoints</h1>
+            <p style="margin: 0; color: #4b5563;">
+                Всего: <strong>{{ total }}</strong> · Сгенерировано: <strong>{{ generatedAt }}</strong>
+            </p>
+            <p style="margin: 8px 0 0;">
+                <a href="/api/docs" target="_blank" rel="noopener noreferrer">API Platform docs</a>
+                ·
+                <a href="/api/docs/all" target="_blank" rel="noopener noreferrer">JSON view</a>
+            </p>
+        </header>
+
+        <section style="display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: 8px; margin-bottom: 14px;">
+            <input id="apiFilterText" type="text" placeholder="Поиск: path / route / controller" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; grid-column: span 2;">
+
+            <select id="apiFilterSource" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                <option value="">Любой source</option>
+                <option value="api_platform">api_platform</option>
+                <option value="custom_controller">custom_controller</option>
+            </select>
+
+            <select id="apiFilterMethod" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                <option value="">Любой method</option>
+                {% for method in methodOptions %}
+                    <option value="{{ method }}">{{ method }}</option>
+                {% endfor %}
+            </select>
+
+            <select id="apiFilterSecurity" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                <option value="">Любая защита</option>
+                <option value="__no_rule__">Без IsGranted</option>
+                {% for rule in securityRules %}
+                    <option value="{{ rule }}">{{ rule }}</option>
+                {% endfor %}
+            </select>
+
+            <select id="apiFilterProtection" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; grid-column: span 2;">
+                <option value="">Любой статус protection</option>
+                <option value="protected">Protected (green)</option>
+                <option value="public_expected">Public expected (amber)</option>
+                <option value="review">Unprotected review (red)</option>
+            </select>
+        </section>
+
+        <section style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; font-size: 13px;">
+            <span style="padding: 4px 8px; border-radius: 999px; background: #dcfce7; color: #166534; border: 1px solid #86efac;">Protected</span>
+            <span style="padding: 4px 8px; border-radius: 999px; background: #ffedd5; color: #9a3412; border: 1px solid #fdba74;">Public expected (guest/product)</span>
+            <span style="padding: 4px 8px; border-radius: 999px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">Unprotected review required</span>
+        </section>
+
+        <div style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff;">
+            <table id="apiDocsTable" style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <thead style="background: #f8fafc;">
+                    <tr>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Path</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Methods</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Source</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Protection</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">IsGranted</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Controller</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Route name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for endpoint in endpoints %}
+                        {% set protectionStyles = {
+                            'protected': 'background:#f0fdf4;color:#166534;',
+                            'public_expected': 'background:#fff7ed;color:#9a3412;',
+                            'review': 'background:#fef2f2;color:#991b1b;'
+                        } %}
+                        {% set protectionBadgeStyles = {
+                            'protected': 'background:#dcfce7;color:#166534;border:1px solid #86efac;',
+                            'public_expected': 'background:#ffedd5;color:#9a3412;border:1px solid #fdba74;',
+                            'review': 'background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;'
+                        } %}
+                        <tr
+                            data-source="{{ endpoint.source }}"
+                            data-methods="{{ endpoint.methods|join(',') }}"
+                            data-security="{{ endpoint.isGranted|length > 0 ? endpoint.isGranted|join(',') : '__no_rule__' }}"
+                            data-protection="{{ endpoint.protectionStatus }}"
+                            data-search="{{ (endpoint.path ~ ' ' ~ endpoint.name ~ ' ' ~ (endpoint.controller ?? ''))|lower }}"
+                            style="{{ protectionStyles[endpoint.protectionStatus] ?? '' }}"
+                        >
+                            <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><code>{{ endpoint.path }}</code></td>
+                            <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">{{ endpoint.methods|join(', ') }}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">{{ endpoint.source }}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">
+                                <span title="{{ endpoint.protectionReason }}" style="display:inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; {{ protectionBadgeStyles[endpoint.protectionStatus] ?? '' }}">
+                                    {{ endpoint.protectionLabel }}
+                                </span>
+                            </td>
+                            <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">
+                                {% if endpoint.isGranted is not empty %}
+                                    {{ endpoint.isGranted|join(', ') }}
+                                {% else %}
+                                    <span style="color: #9ca3af;">—</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">
+                                {% if endpoint.controller %}
+                                    <code>{{ endpoint.controller }}</code>
+                                {% else %}
+                                    <span style="color: #9ca3af;">—</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><code>{{ endpoint.name }}</code></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p id="apiDocsVisibleCount" style="margin-top: 8px; color: #4b5563;"></p>
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        (function () {
+            const rows = Array.from(document.querySelectorAll('#apiDocsTable tbody tr'));
+            const textFilter = document.getElementById('apiFilterText');
+            const sourceFilter = document.getElementById('apiFilterSource');
+            const methodFilter = document.getElementById('apiFilterMethod');
+            const securityFilter = document.getElementById('apiFilterSecurity');
+            const protectionFilter = document.getElementById('apiFilterProtection');
+            const visibleCount = document.getElementById('apiDocsVisibleCount');
+
+            function applyFilters() {
+                const textValue = textFilter.value.trim().toLowerCase();
+                const sourceValue = sourceFilter.value;
+                const methodValue = methodFilter.value;
+                const securityValue = securityFilter.value;
+                const protectionValue = protectionFilter.value;
+
+                let count = 0;
+
+                rows.forEach((row) => {
+                    const rowSearch = row.dataset.search || '';
+                    const rowSource = row.dataset.source || '';
+                    const rowMethods = (row.dataset.methods || '').split(',');
+                    const rowSecurity = (row.dataset.security || '').split(',');
+                    const rowProtection = row.dataset.protection || '';
+
+                    const textOk = !textValue || rowSearch.includes(textValue);
+                    const sourceOk = !sourceValue || rowSource === sourceValue;
+                    const methodOk = !methodValue || rowMethods.includes(methodValue);
+                    const securityOk = !securityValue || rowSecurity.includes(securityValue);
+                    const protectionOk = !protectionValue || rowProtection === protectionValue;
+
+                    const show = textOk && sourceOk && methodOk && securityOk && protectionOk;
+                    row.style.display = show ? '' : 'none';
+
+                    if (show) {
+                        count += 1;
+                    }
+                });
+
+                visibleCount.textContent = `Показано ${count} из ${rows.length}`;
+            }
+
+            [textFilter, sourceFilter, methodFilter, securityFilter, protectionFilter].forEach((el) => {
+                el.addEventListener('input', applyFilters);
+                el.addEventListener('change', applyFilters);
+            });
+
+            applyFilters();
+        })();
+    </script>
+{% endblock %}

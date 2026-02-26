@@ -8,6 +8,7 @@ import { Markers3D } from './Markers3D';
 import { Route3D } from './Route3D';
 import { RouteBuilder3D } from './RouteBuilder3D';
 import { UnifiedSearchControl } from '../Map/MapControls/UnifiedSearchControl';
+import { TrackingService } from '../../../services/TrackingService';
 import './Map3D.css';
 
 export default function Map3D({
@@ -25,6 +26,8 @@ export default function Map3D({
     const controlsRef = useRef(null);
     const routeBuilderRef = useRef(null);
     const wrapperRef = useRef(null);
+    const lastTrackedRouteKeyRef = useRef(null);
+    const suppressNextRouteTrackRef = useRef(false);
 
     const [resetCameraKey, setResetCameraKey] = useState(0);
     const [obstacles, setObstacles] = useState([]);
@@ -41,6 +44,79 @@ export default function Map3D({
     const [aiCategories, setAICategories] = useState([]);
     const [routeSource, setRouteSource] = useState(null);
     const [routeDestination, setRouteDestination] = useState(null);
+
+    useEffect(() => {
+        if (!shopId) return;
+
+        const params = new URLSearchParams(window.location.search);
+        const activityId = params.get('historyActivity');
+        if (!activityId) return;
+
+        const storageKey = `eshop:history-route:${activityId}`;
+        const rawPayload = window.sessionStorage.getItem(storageKey);
+        if (!rawPayload) return;
+
+        try {
+            const payload = JSON.parse(rawPayload);
+            if (String(payload?.shopId) !== String(shopId)) return;
+
+            const replayWaypoints = Array.isArray(payload?.waypoints)
+                ? payload.waypoints
+                    .map((waypoint) => {
+                        if (!waypoint || typeof waypoint !== 'object') return null;
+
+                        const x = Number(waypoint.x);
+                        const y = Number(waypoint.y);
+                        if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+
+                        return {
+                            name: waypoint.name || waypoint.title || 'Точка',
+                            x,
+                            y,
+                            categoryId: waypoint.categoryId,
+                            commodities: Array.isArray(waypoint.commodities) ? waypoint.commodities : []
+                        };
+                    })
+                    .filter(Boolean)
+                : [];
+
+            if (replayWaypoints.length >= 2) {
+                suppressNextRouteTrackRef.current = true;
+                setSelectedCategory(null);
+                setSelectedProduct(null);
+                setAICategories([]);
+                setRouteDestination(null);
+                setRouteSource(replayWaypoints);
+            }
+        } catch (_) {
+            // ignore malformed replay payload
+        } finally {
+            window.sessionStorage.removeItem(storageKey);
+            window.history.replaceState(window.history.state, '', window.location.pathname);
+        }
+    }, [shopId]);
+
+    const trackRouteInHistory = useCallback((result) => {
+        if (!shopId || !result?.info) return;
+
+        if (suppressNextRouteTrackRef.current) {
+            suppressNextRouteTrackRef.current = false;
+            return;
+        }
+
+        const waypointNames = (result.waypoints || [])
+            .map(wp => wp?.title || wp?.name || '')
+            .join('|');
+        const routeKey = `${shopId}:${waypointNames}:${result.info.distance}:${result.info.time}`;
+
+        // Guard against duplicate tracking on internal recalculations (e.g., obstacles state updates)
+        if (lastTrackedRouteKeyRef.current === routeKey) {
+            return;
+        }
+        lastTrackedRouteKeyRef.current = routeKey;
+
+        TrackingService.trackRoute(parseInt(shopId, 10), result.waypoints || [], result.info.distance, result.info.time);
+    }, [shopId]);
 
     // Load obstacles
     useEffect(() => {
@@ -94,6 +170,7 @@ export default function Map3D({
                 setRouteInfo(result.info);
                 setWaypointT(result.waypointT || []);
                 setPassedWaypointCount(0);
+                trackRouteInHistory(result);
             }
         }
         // Simple two-point route
@@ -105,6 +182,7 @@ export default function Map3D({
                 setRouteInfo(result.info);
                 setWaypointT([0, 1]);
                 setPassedWaypointCount(0);
+                trackRouteInHistory(result);
             }
         }
         // Clear
@@ -114,8 +192,9 @@ export default function Map3D({
             setRouteInfo(null);
             setWaypointT([]);
             setPassedWaypointCount(0);
+            lastTrackedRouteKeyRef.current = null;
         }
-    }, [routeSource, routeDestination, source, destination, obstacles]);
+    }, [routeSource, routeDestination, source, destination, obstacles, trackRouteInHistory]);
 
     // Handlers (same logic as old Map.js)
     const handleCategorySelect = useCallback((category) => {
@@ -201,15 +280,22 @@ export default function Map3D({
         setRouteInfo(null);
         setRoutePoints([]);
         setRouteWaypoints([]);
+        lastTrackedRouteKeyRef.current = null;
     }, []);
 
-    const handleBuildRoute = useCallback((categoryId) => {
+    const handleBuildRoute = useCallback(async (categoryId) => {
         const targetCategory = categories.find(cat => cat.id === categoryId);
         if (!targetCategory) return;
 
         const commodities = [];
         if (selectedProduct && selectedProduct.categoryId === categoryId) {
             commodities.push(selectedProduct.name);
+        }
+
+        const isDirectMapSelection = !selectedCategory && !selectedProduct && aiCategories.length === 0;
+        if (isDirectMapSelection) {
+            const categoryQuery = targetCategory.title || targetCategory.category?.title || 'Категория';
+            await TrackingService.trackSearch(shopId, categoryQuery);
         }
 
         setSelectedCategory(null);
@@ -227,7 +313,7 @@ export default function Map3D({
             categoryId: categoryId,
             commodities: commodities
         });
-    }, [categories, shop, selectedProduct]);
+    }, [aiCategories.length, categories, selectedCategory, shop, shopId, selectedProduct]);
 
     // Determine visible categories
     const activeCategoryIds = useMemo(() => {

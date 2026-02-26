@@ -23,9 +23,9 @@ final class GetCollectionsHandler implements QueryHandlerInterface
             throw new NotFoundHttpException('Shop not found');
         }
 
-        $collections = $this->collectionRepository->findActiveByShop($shop);
+        $collections = $this->collectionRepository->findActiveByShop($shop, $query->userId);
 
-        return array_map(function ($collection) {
+        return array_map(function ($collection) use ($query) {
             $items = [];
             foreach ($collection->getCommodities() as $commodity) {
                 // Find the ShopCategory for this commodity in this shop
@@ -54,6 +54,7 @@ final class GetCollectionsHandler implements QueryHandlerInterface
                 'title' => $collection->getTitle(),
                 'description' => $collection->getDescription(),
                 'emoji' => $collection->getEmoji(),
+                'isPersonal' => $query->userId !== null && $collection->getUser()?->getId() === $query->userId,
                 'items' => $items,
             ];
         }, $collections);

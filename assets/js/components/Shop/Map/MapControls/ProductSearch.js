@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TrackingService } from '../../../../services/TrackingService';
 
 export function ProductSearch({ shopId, onSelect }) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -32,7 +31,6 @@ export function ProductSearch({ shopId, onSelect }) {
         abortRef.current = new AbortController();
 
         setLoading(true);
-        TrackingService.trackSearch(shopId, query);
         try {
             const response = await fetch(`/api/commodities?title=${encodeURIComponent(query)}&shopCategories.shop=${shopId}`, {
                 signal: abortRef.current.signal
