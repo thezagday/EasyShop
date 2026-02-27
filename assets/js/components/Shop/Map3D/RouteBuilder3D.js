@@ -2,6 +2,7 @@ import { PathfindingService } from '../Map/MapImage/PathfindingService';
 import { SCALE, MAP_WIDTH, MAP_HEIGHT, HALF_W, HALF_H } from './constants';
 
 const ROUTE_Y = 0.08; // Route floats slightly above floor
+const OBSTACLE_CLEARANCE = 6; // Admin-map units (~small visual padding from obstacles)
 
 function adminToThreeRoute(x, y) {
     return [
@@ -15,7 +16,7 @@ export class RouteBuilder3D {
     constructor() {
         this.obstacles = [];
         this.pathfinding = null;
-        this.gridCellSize = 10;
+        this.gridCellSize = 8;
         this.gridWidth = 0;
         this.gridHeight = 0;
     }
@@ -38,12 +39,17 @@ export class RouteBuilder3D {
             height: this.gridHeight
         }]);
 
-        // Mark obstacles as non-walkable (exact bounds, no padding to preserve narrow corridors)
+        // Mark obstacles as non-walkable with a small clearance so route keeps distance.
         this.obstacles.forEach(obs => {
-            const gx = Math.floor(obs.x / this.gridCellSize);
-            const gy = Math.floor(obs.y / this.gridCellSize);
-            const gw = Math.ceil(obs.width / this.gridCellSize);
-            const gh = Math.ceil(obs.height / this.gridCellSize);
+            const paddedLeft = obs.x - OBSTACLE_CLEARANCE;
+            const paddedTop = obs.y - OBSTACLE_CLEARANCE;
+            const paddedRight = obs.x + obs.width + OBSTACLE_CLEARANCE;
+            const paddedBottom = obs.y + obs.height + OBSTACLE_CLEARANCE;
+
+            const gx = Math.floor(paddedLeft / this.gridCellSize);
+            const gy = Math.floor(paddedTop / this.gridCellSize);
+            const gw = Math.ceil((paddedRight - paddedLeft) / this.gridCellSize);
+            const gh = Math.ceil((paddedBottom - paddedTop) / this.gridCellSize);
 
             for (let y = gy; y < gy + gh; y++) {
                 for (let x = gx; x < gx + gw; x++) {
@@ -176,6 +182,126 @@ export class RouteBuilder3D {
         return simplified;
     }
 
+    straightenPath(pathYX, passes = 2) {
+        if (!pathYX || pathYX.length < 3) return pathYX;
+        if (!this.pathfinding) return pathYX;
+
+        let current = pathYX;
+        for (let i = 0; i < passes; i++) {
+            const next = this.pathfinding.smoothPathOnGrid(current);
+            if (!next || next.length === 0) break;
+            if (next.length >= current.length) break;
+            current = next;
+        }
+
+        return current;
+    }
+
+    gridToAdminPoint([gridY, gridX]) {
+        return {
+            x: (gridX + 0.5) * this.gridCellSize,
+            y: (gridY + 0.5) * this.gridCellSize,
+        };
+    }
+
+    pointInsideRect(point, rect) {
+        return point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom;
+    }
+
+    segmentsIntersect(p1, p2, q1, q2) {
+        const orient = (a, b, c) => {
+            const v = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+            if (Math.abs(v) < 1e-9) return 0;
+            return v > 0 ? 1 : -1;
+        };
+
+        const onSegment = (a, b, c) => (
+            Math.min(a.x, c.x) <= b.x && b.x <= Math.max(a.x, c.x) &&
+            Math.min(a.y, c.y) <= b.y && b.y <= Math.max(a.y, c.y)
+        );
+
+        const o1 = orient(p1, p2, q1);
+        const o2 = orient(p1, p2, q2);
+        const o3 = orient(q1, q2, p1);
+        const o4 = orient(q1, q2, p2);
+
+        if (o1 !== o2 && o3 !== o4) return true;
+        if (o1 === 0 && onSegment(p1, q1, p2)) return true;
+        if (o2 === 0 && onSegment(p1, q2, p2)) return true;
+        if (o3 === 0 && onSegment(q1, p1, q2)) return true;
+        if (o4 === 0 && onSegment(q1, p2, q2)) return true;
+        return false;
+    }
+
+    segmentIntersectsRect(a, b, obstacle, padding = OBSTACLE_CLEARANCE) {
+        const rect = {
+            left: obstacle.x - padding,
+            right: obstacle.x + obstacle.width + padding,
+            top: obstacle.y - padding,
+            bottom: obstacle.y + obstacle.height + padding,
+        };
+
+        if (this.pointInsideRect(a, rect) || this.pointInsideRect(b, rect)) return true;
+
+        const tl = { x: rect.left, y: rect.top };
+        const tr = { x: rect.right, y: rect.top };
+        const br = { x: rect.right, y: rect.bottom };
+        const bl = { x: rect.left, y: rect.bottom };
+
+        return (
+            this.segmentsIntersect(a, b, tl, tr) ||
+            this.segmentsIntersect(a, b, tr, br) ||
+            this.segmentsIntersect(a, b, br, bl) ||
+            this.segmentsIntersect(a, b, bl, tl)
+        );
+    }
+
+    isObstacleSafeSegment(fromYX, toYX) {
+        const a = this.gridToAdminPoint(fromYX);
+        const b = this.gridToAdminPoint(toYX);
+
+        for (const obs of this.obstacles) {
+            if (this.segmentIntersectsRect(a, b, obs)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    enforceObstacleSafePath(pathYX, fallbackPathYX) {
+        if (!Array.isArray(pathYX) || pathYX.length < 2) return pathYX;
+        if (!this.pathfinding) return pathYX;
+
+        const safe = [pathYX[0]];
+
+        for (let i = 1; i < pathYX.length; i++) {
+            const target = pathYX[i];
+            const from = safe[safe.length - 1];
+
+            if (this.isObstacleSafeSegment(from, target)) {
+                safe.push(target);
+                continue;
+            }
+
+            const bridge = this.pathfinding.findPath(from, target);
+            if (!bridge || bridge.length < 2) {
+                return fallbackPathYX;
+            }
+
+            for (let j = 1; j < bridge.length; j++) {
+                const next = bridge[j];
+                const last = safe[safe.length - 1];
+                if (!this.isObstacleSafeSegment(last, next)) {
+                    return fallbackPathYX;
+                }
+                safe.push(next);
+            }
+        }
+
+        return this.simplifyPath(safe);
+    }
+
     findPath(startAdmin, endAdmin) {
         if (!this.pathfinding) return null;
 
@@ -200,13 +326,22 @@ export class RouteBuilder3D {
             ];
         }
 
-        // Center path between obstacles
-        const centered = this.centerPathInCorridors(path);
+        // First, straighten raw A* result by line-of-sight on walkable grid.
+        const preStraight = this.straightenPath(path, 2);
+
+        // Then keep it centered in corridors and remove residual micro-jitter.
+        const centered = this.centerPathInCorridors(preStraight);
         const stabilized = this.deJitterCenteredPath(centered);
         const simplified = this.simplifyPath(stabilized);
 
+        // Final straightening pass after centering.
+        const postStraight = this.straightenPath(simplified, 1);
+        const finalPath = this.simplifyPath(postStraight);
+
+        const obstacleSafePath = this.enforceObstacleSafePath(finalPath, path);
+
         // Convert grid path [y, x] back to admin coords, then to Three.js
-        const threePoints = simplified.map(([gridY, gridX]) => {
+        const threePoints = obstacleSafePath.map(([gridY, gridX]) => {
             const adminX = (gridX + 0.5) * this.gridCellSize;
             const adminY = (gridY + 0.5) * this.gridCellSize;
             return adminToThreeRoute(adminX, adminY);

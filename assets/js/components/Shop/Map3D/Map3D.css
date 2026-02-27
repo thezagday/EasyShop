@@ -34,6 +34,16 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
+.marker3d-label-active {
+    position: relative;
+    z-index: 100001;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+}
+
+.marker3d-label-active + .marker3d-popup {
+    z-index: 100002;
+}
+
 .marker3d-emoji {
     font-size: 14px;
     line-height: 1;

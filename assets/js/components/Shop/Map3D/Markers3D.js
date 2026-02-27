@@ -1,10 +1,10 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Html } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import { SCALE, HALF_W, HALF_H } from './constants';
 
-const BASE_LABEL_Z = [0, 0];
-const ACTIVE_LABEL_Z = [5000, 5000];
+const BASE_LABEL_Z = [10, 10];
+const ACTIVE_LABEL_Z = [100000, 100000];
 
 function toThreePos(x, y, elevation = 0.2) {
     return [
@@ -44,9 +44,9 @@ function BannerPin({ x, y, title, imageUrl, targetUrl, bannerId, isPopupOpen, on
                 position={[0, 0.5, 0]}
                 center
                 zIndexRange={isPopupOpen ? ACTIVE_LABEL_Z : BASE_LABEL_Z}
-                style={{ pointerEvents: 'auto', zIndex: isPopupOpen ? 5000 : 0 }}
+                style={{ pointerEvents: 'auto', zIndex: isPopupOpen ? 100000 : 10 }}
             >
-                <div className="marker3d-label marker3d-banner" onClick={handleLabelClick}>
+                <div className={`marker3d-label marker3d-banner ${isPopupOpen ? 'marker3d-label-active' : ''}`} onClick={handleLabelClick}>
                     {imageUrl ? (
                         <img src={imageUrl} alt={title} className="marker3d-banner-thumb" />
                     ) : (
@@ -106,9 +106,9 @@ function CategoryPin({ x, y, title, isTarget, onBuildRoute, categoryId, commodit
                 position={[0, 0.5, 0]}
                 center
                 zIndexRange={isPopupOpen ? ACTIVE_LABEL_Z : BASE_LABEL_Z}
-                style={{ pointerEvents: 'auto', zIndex: isPopupOpen ? 5000 : 0 }}
+                style={{ pointerEvents: 'auto', zIndex: isPopupOpen ? 100000 : 10 }}
             >
-                <div className="marker3d-label" onClick={handleLabelClick}>
+                <div className={`marker3d-label ${isPopupOpen ? 'marker3d-label-active' : ''}`} onClick={handleLabelClick}>
                     <span className="marker3d-emoji">{emoji}</span>
                     <span className="marker3d-title">{title}</span>
                 </div>
@@ -199,9 +199,9 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
                 position={[0, 0.55, 0]}
                 center
                 zIndexRange={isPopupOpen ? ACTIVE_LABEL_Z : BASE_LABEL_Z}
-                style={{ pointerEvents: 'auto', zIndex: isPopupOpen ? 5000 : 0 }}
+                style={{ pointerEvents: 'auto', zIndex: isPopupOpen ? 100000 : 10 }}
             >
-                <div className="marker3d-label marker3d-waypoint" onClick={handleClick}>
+                <div className={`marker3d-label marker3d-waypoint ${isPopupOpen ? 'marker3d-label-active' : ''}`} onClick={handleClick}>
                     <span className="marker3d-index">{index}</span>
                     <span className="marker3d-title">{name}</span>
                 </div>
@@ -235,18 +235,42 @@ export function Markers3D({ categories, banners = [], entranceExit, shop, aiCate
     const pinScaleRef = useRef(1);
     const { camera, controls } = useThree();
 
-    useFrame(() => {
-        const distance = controls?.target
-            ? camera.position.distanceTo(controls.target)
-            : camera.position.length();
-        // Keep pin geometry visually comfortable: shrink when zooming in, grow when zooming out.
-        const nextScale = Math.max(0.74, Math.min(1.28, distance / 13.5));
+    useEffect(() => {
+        const updatePinScale = () => {
+            const distance = controls?.target
+                ? camera.position.distanceTo(controls.target)
+                : camera.position.length();
+            // Keep pin geometry visually comfortable: shrink when zooming in, grow when zooming out.
+            const nextScale = Math.max(0.74, Math.min(1.28, distance / 13.5));
 
-        if (Math.abs(nextScale - pinScaleRef.current) > 0.02) {
-            pinScaleRef.current = nextScale;
-            setPinScale(nextScale);
-        }
-    });
+            if (Math.abs(nextScale - pinScaleRef.current) > 0.02) {
+                pinScaleRef.current = nextScale;
+                setPinScale(nextScale);
+            }
+        };
+
+        updatePinScale();
+
+        if (!controls?.addEventListener) return undefined;
+
+        let rafId = null;
+        const onControlsChange = () => {
+            if (rafId !== null) return;
+            rafId = window.requestAnimationFrame(() => {
+                rafId = null;
+                updatePinScale();
+            });
+        };
+
+        controls.addEventListener('change', onControlsChange);
+
+        return () => {
+            controls.removeEventListener('change', onControlsChange);
+            if (rafId !== null) {
+                window.cancelAnimationFrame(rafId);
+            }
+        };
+    }, [camera, controls]);
 
     const handleTogglePopup = (popupKey) => {
         setOpenPopupId(prev => prev === popupKey ? null : popupKey);
@@ -272,10 +296,44 @@ export function Markers3D({ categories, banners = [], entranceExit, shop, aiCate
         return ids;
     }, [routeWaypoints]);
 
+    const activeCategoryId = useMemo(() => {
+        if (typeof openPopupId !== 'string' || !openPopupId.startsWith('cat-')) return null;
+        return openPopupId.slice(4);
+    }, [openPopupId]);
+
+    const activeCategory = useMemo(() => {
+        if (!Array.isArray(categories) || activeCategoryId == null) return null;
+        return categories.find(cat => String(cat.id) === String(activeCategoryId)) || null;
+    }, [categories, activeCategoryId]);
+
+    const activeBannerId = useMemo(() => {
+        if (typeof openPopupId !== 'string' || !openPopupId.startsWith('banner-')) return null;
+        return openPopupId.slice(7);
+    }, [openPopupId]);
+
+    const activeBanner = useMemo(() => {
+        if (!Array.isArray(banners) || activeBannerId == null) return null;
+        return banners.find(banner => String(banner.id) === String(activeBannerId)) || null;
+    }, [banners, activeBannerId]);
+
+    const orderedCategories = useMemo(() => {
+        if (!Array.isArray(categories)) return [];
+
+        if (activeCategoryId == null) return categories;
+        return categories.filter(cat => String(cat.id) !== String(activeCategoryId));
+    }, [categories, activeCategoryId]);
+
+    const orderedBanners = useMemo(() => {
+        if (!Array.isArray(banners)) return [];
+
+        if (activeBannerId == null) return banners;
+        return banners.filter(banner => String(banner.id) !== String(activeBannerId));
+    }, [banners, activeBannerId]);
+
     return (
         <group>
             {/* Category markers */}
-            {Array.isArray(categories) && categories.map(cat => {
+            {orderedCategories.map(cat => {
                 if (cat.x_coordinate == null || cat.y_coordinate == null) return null;
                 if (routeCategoryIds.has(cat.id)) return null;
 
@@ -304,7 +362,7 @@ export function Markers3D({ categories, banners = [], entranceExit, shop, aiCate
             })}
 
             {/* Advertisement banners */}
-            {Array.isArray(banners) && banners.map((banner) => {
+            {orderedBanners.map((banner) => {
                 if (banner.x_coordinate == null || banner.y_coordinate == null) return null;
 
                 return (
@@ -381,6 +439,39 @@ export function Markers3D({ categories, banners = [], entranceExit, shop, aiCate
                     />
                 );
             })()}
+
+            {/* Active category marker rendered last to guarantee visual priority */}
+            {activeCategory && !routeCategoryIds.has(activeCategory.id) && activeCategory.x_coordinate != null && activeCategory.y_coordinate != null && (
+                <CategoryPin
+                    key={`cat-active-${activeCategory.id}`}
+                    x={activeCategory.x_coordinate}
+                    y={activeCategory.y_coordinate}
+                    title={activeCategory.title || activeCategory.category?.title || 'Категория'}
+                    isTarget={aiCategoryIds.has(activeCategory.id)}
+                    categoryId={activeCategory.id}
+                    commodities={(Array.isArray(aiCategories) ? aiCategories.find(ac => ac.id === activeCategory.id) : null)?.commodities || []}
+                    onBuildRoute={onBuildRoute}
+                    isPopupOpen={openPopupId === `cat-${activeCategory.id}`}
+                    onTogglePopup={handleTogglePopup}
+                    pinScale={pinScale}
+                />
+            )}
+
+            {/* Active banner marker rendered last to guarantee visual priority */}
+            {activeBanner && activeBanner.x_coordinate != null && activeBanner.y_coordinate != null && (
+                <BannerPin
+                    key={`banner-active-${activeBanner.id}`}
+                    bannerId={activeBanner.id}
+                    x={activeBanner.x_coordinate}
+                    y={activeBanner.y_coordinate}
+                    title={activeBanner.title}
+                    imageUrl={activeBanner.imageUrl}
+                    targetUrl={activeBanner.targetUrl}
+                    isPopupOpen={openPopupId === `banner-${activeBanner.id}`}
+                    onTogglePopup={handleTogglePopup}
+                    pinScale={pinScale}
+                />
+            )}
         </group>
     );
 }

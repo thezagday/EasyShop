@@ -1,126 +1,239 @@
-import React, { useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Line } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-export function Route3D({ points, passedT = 0 }) {
-    const curve = useMemo(() => {
-        if (!points || points.length < 2) return null;
-        const vectors = points.map(p => new THREE.Vector3(p[0], p[1], p[2]));
-        const path = new THREE.CurvePath();
-        for (let i = 0; i < vectors.length - 1; i++) {
-            path.add(new THREE.LineCurve3(vectors[i], vectors[i + 1]));
+const CORNER_MAX_RADIUS = 0.12;
+const CORNER_RATIO = 0.35;
+const CORNER_STEPS = 5;
+
+function dedupeVectors(vectors, minDist = 0.0001) {
+    if (!vectors || vectors.length <= 1) return vectors || [];
+    const result = [vectors[0]];
+
+    for (let i = 1; i < vectors.length; i++) {
+        if (vectors[i].distanceTo(result[result.length - 1]) > minDist) {
+            result.push(vectors[i]);
         }
-        return path;
+    }
+
+    return result;
+}
+
+function buildRoundedVectors(vectors) {
+    if (!vectors || vectors.length < 3) return vectors || [];
+
+    const rounded = [vectors[0].clone()];
+
+    for (let i = 1; i < vectors.length - 1; i++) {
+        const prev = vectors[i - 1];
+        const curr = vectors[i];
+        const next = vectors[i + 1];
+
+        const inDir = curr.clone().sub(prev);
+        const outDir = next.clone().sub(curr);
+        const inLen = inDir.length();
+        const outLen = outDir.length();
+
+        if (inLen < 1e-6 || outLen < 1e-6) {
+            rounded.push(curr.clone());
+            continue;
+        }
+
+        inDir.normalize();
+        outDir.normalize();
+
+        // Skip almost-straight vertices to avoid unnecessary interpolation.
+        const cornerStrength = 1 - Math.abs(inDir.dot(outDir));
+        if (cornerStrength < 0.08) {
+            rounded.push(curr.clone());
+            continue;
+        }
+
+        const radius = Math.min(CORNER_MAX_RADIUS, inLen * CORNER_RATIO, outLen * CORNER_RATIO);
+        if (radius < 0.004) {
+            rounded.push(curr.clone());
+            continue;
+        }
+
+        const start = curr.clone().addScaledVector(inDir, -radius);
+        const end = curr.clone().addScaledVector(outDir, radius);
+        rounded.push(start);
+
+        for (let s = 1; s <= CORNER_STEPS; s++) {
+            const t = s / (CORNER_STEPS + 1);
+            const q1 = start.clone().lerp(curr, t);
+            const q2 = curr.clone().lerp(end, t);
+            rounded.push(q1.lerp(q2, t));
+        }
+
+        rounded.push(end);
+    }
+
+    rounded.push(vectors[vectors.length - 1].clone());
+    return dedupeVectors(rounded);
+}
+
+function splitPolylineByT(vectors, t) {
+    if (!vectors || vectors.length < 2) return { passedPoints: [], aheadPoints: vectors || [] };
+
+    const clampedT = Math.max(0, Math.min(1, t));
+    const cumulative = [0];
+
+    for (let i = 1; i < vectors.length; i++) {
+        cumulative[i] = cumulative[i - 1] + vectors[i].distanceTo(vectors[i - 1]);
+    }
+
+    const total = cumulative[cumulative.length - 1];
+    if (total <= 0) return { passedPoints: [], aheadPoints: vectors };
+
+    const targetLength = total * clampedT;
+    if (targetLength <= 0) return { passedPoints: [], aheadPoints: vectors };
+    if (targetLength >= total) return { passedPoints: vectors, aheadPoints: [] };
+
+    let splitIndex = 1;
+    while (splitIndex < cumulative.length && cumulative[splitIndex] < targetLength) splitIndex++;
+
+    const prevLen = cumulative[splitIndex - 1];
+    const segLen = cumulative[splitIndex] - prevLen;
+    const segT = segLen > 0 ? (targetLength - prevLen) / segLen : 0;
+
+    const splitPoint = vectors[splitIndex - 1].clone().lerp(vectors[splitIndex], segT);
+
+    return {
+        passedPoints: [...vectors.slice(0, splitIndex), splitPoint],
+        aheadPoints: [splitPoint, ...vectors.slice(splitIndex)],
+    };
+}
+
+function samplePolyline(points, count) {
+    if (!points || points.length === 0) return [];
+    if (points.length === 1 || count <= 1) return [points[0]];
+
+    const cumulative = [0];
+    for (let i = 1; i < points.length; i++) {
+        cumulative[i] = cumulative[i - 1] + points[i].distanceTo(points[i - 1]);
+    }
+
+    const total = cumulative[cumulative.length - 1];
+    if (total <= 1e-6) return [points[0]];
+
+    const sampled = [];
+    for (let i = 0; i < count; i++) {
+        const target = total * (i / Math.max(1, count - 1));
+
+        let idx = 1;
+        while (idx < cumulative.length && cumulative[idx] < target) idx++;
+        idx = Math.min(idx, cumulative.length - 1);
+
+        const prevLen = cumulative[idx - 1];
+        const segLen = cumulative[idx] - prevLen;
+        const segT = segLen > 0 ? (target - prevLen) / segLen : 0;
+        sampled.push(points[idx - 1].clone().lerp(points[idx], segT));
+    }
+
+    return sampled;
+}
+
+export function Route3D({ points, passedT = 0 }) {
+    const { controls } = useThree();
+    const [isInteracting, setIsInteracting] = useState(false);
+
+    useEffect(() => {
+        if (!controls?.addEventListener) return undefined;
+
+        const handleStart = () => setIsInteracting(true);
+        const handleEnd = () => setIsInteracting(false);
+
+        controls.addEventListener('start', handleStart);
+        controls.addEventListener('end', handleEnd);
+
+        return () => {
+            controls.removeEventListener('start', handleStart);
+            controls.removeEventListener('end', handleEnd);
+        };
+    }, [controls]);
+
+    const roundedPoints = useMemo(() => {
+        if (!points || points.length < 2) return [];
+        const vectors = points.map(p => new THREE.Vector3(p[0], p[1] + 0.01, p[2]));
+        return buildRoundedVectors(vectors);
     }, [points]);
 
-    const { passedCurve, aheadCurve } = useMemo(() => {
-        if (!curve) return { passedCurve: null, aheadCurve: null };
-        const t = Math.max(0, Math.min(1, passedT));
-        if (t <= 0) return { passedCurve: null, aheadCurve: curve };
-        if (t >= 1) return { passedCurve: curve, aheadCurve: null };
+    const { passedPoints, aheadPoints } = useMemo(
+        () => splitPolylineByT(roundedPoints, passedT),
+        [roundedPoints, passedT]
+    );
 
-        const splitPoint = curve.getPointAt(t);
-        const STEPS = 200;
-
-        const passedVecs = [];
-        for (let i = 0; i <= STEPS * t; i++) {
-            passedVecs.push(curve.getPointAt(i / STEPS));
-        }
-        passedVecs.push(splitPoint);
-
-        const aheadVecs = [splitPoint];
-        for (let i = Math.ceil(STEPS * t); i <= STEPS; i++) {
-            aheadVecs.push(curve.getPointAt(i / STEPS));
-        }
-
-        const buildPath = (vecs) => {
-            const p = new THREE.CurvePath();
-            for (let i = 0; i < vecs.length - 1; i++) {
-                p.add(new THREE.LineCurve3(vecs[i], vecs[i + 1]));
-            }
-            return p;
-        };
-
-        return {
-            passedCurve: passedVecs.length >= 2 ? buildPath(passedVecs) : null,
-            aheadCurve: aheadVecs.length >= 2 ? buildPath(aheadVecs) : null,
-        };
-    }, [curve, passedT]);
-
-    if (!curve) return null;
+    if (roundedPoints.length < 2) return null;
 
     return (
         <group>
-            {/* Passed segment – gray */}
-            {passedCurve && (
-                <mesh>
-                    <tubeGeometry args={[passedCurve, 128, 0.03, 8, false]} />
-                    <meshStandardMaterial color="#9ca3af" roughness={0.8} metalness={0} />
-                </mesh>
+            {/* Base route underlay */}
+            <Line
+                points={roundedPoints}
+                color="#ffffff"
+                lineWidth={8}
+                transparent
+                opacity={0.16}
+                depthWrite={false}
+            />
+
+            {/* Passed segment */}
+            {passedPoints.length >= 2 && (
+                <Line
+                    points={passedPoints}
+                    color="#94a3b8"
+                    lineWidth={5}
+                    transparent
+                    opacity={0.92}
+                    depthWrite={false}
+                />
             )}
 
-            {/* Ahead segment – green */}
-            {aheadCurve && (
+            {/* Ahead segment */}
+            {aheadPoints.length >= 2 && (
                 <>
-                    <mesh>
-                        <tubeGeometry args={[aheadCurve, 128, 0.03, 8, false]} />
-                        <meshStandardMaterial
-                            color="#22c55e"
-                            emissive="#22c55e"
-                            emissiveIntensity={0.6}
-                            roughness={0.3}
-                            metalness={0.4}
-                        />
-                    </mesh>
-                    <mesh>
-                        <tubeGeometry args={[aheadCurve, 128, 0.06, 8, false]} />
-                        <meshStandardMaterial
-                            color="#22c55e"
-                            emissive="#22c55e"
-                            emissiveIntensity={0.3}
-                            transparent
-                            opacity={0.15}
-                            roughness={1}
-                            metalness={0}
-                        />
-                    </mesh>
-                    <RouteDirectionDots curve={aheadCurve} />
+                    <Line
+                        points={aheadPoints}
+                        color="#22c55e"
+                        lineWidth={5}
+                        transparent
+                        opacity={0.98}
+                        depthWrite={false}
+                    />
+                    {!isInteracting && (
+                        <>
+                            <Line
+                                points={aheadPoints}
+                                color="#86efac"
+                                lineWidth={10}
+                                transparent
+                                opacity={0.2}
+                                depthWrite={false}
+                            />
+                            <RouteDirectionDots points={aheadPoints} />
+                        </>
+                    )}
                 </>
             )}
         </group>
     );
 }
 
-function RouteDirectionDots({ curve }) {
+function RouteDirectionDots({ points }) {
     const dotsRef = useRef();
-    const dotCount = 30;
+    const dotCount = 14;
 
     const positions = useMemo(() => {
-        const pts = [];
-        for (let i = 0; i < dotCount; i++) {
-            const t = i / dotCount;
-            const p = curve.getPointAt(t);
-            pts.push(p);
-        }
-        return pts;
-    }, [curve, dotCount]);
-
-    // Animate dots (pulsing along the path)
-    useFrame(({ clock }) => {
-        if (!dotsRef.current) return;
-        const time = clock.getElapsedTime();
-        dotsRef.current.children.forEach((dot, idx) => {
-            const phase = (time * 2 + idx * 0.3) % (dotCount * 0.3);
-            const brightness = Math.max(0.2, Math.sin(phase) * 0.8 + 0.2);
-            dot.scale.setScalar(brightness * 0.8 + 0.3);
-        });
-    });
+        return samplePolyline(points, dotCount);
+    }, [points, dotCount]);
 
     return (
         <group ref={dotsRef}>
             {positions.map((pos, idx) => (
                 <mesh key={idx} position={[pos.x, pos.y + 0.01, pos.z]}>
-                    <sphereGeometry args={[0.02, 8, 8]} />
+                    <sphereGeometry args={[0.015, 8, 8]} />
                     <meshStandardMaterial
                         color="#86efac"
                         emissive="#22c55e"
