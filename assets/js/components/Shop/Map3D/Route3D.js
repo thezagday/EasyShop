@@ -175,7 +175,7 @@ export function Route3D({ points, passedT = 0 }) {
                 color="#ffffff"
                 lineWidth={8}
                 transparent
-                opacity={0.16}
+                opacity={0.22}
                 depthWrite={false}
             />
 
@@ -183,10 +183,10 @@ export function Route3D({ points, passedT = 0 }) {
             {passedPoints.length >= 2 && (
                 <Line
                     points={passedPoints}
-                    color="#94a3b8"
+                    color="#8c99ad"
                     lineWidth={5}
                     transparent
-                    opacity={0.92}
+                    opacity={0.9}
                     depthWrite={false}
                 />
             )}
@@ -196,20 +196,20 @@ export function Route3D({ points, passedT = 0 }) {
                 <>
                     <Line
                         points={aheadPoints}
-                        color="#22c55e"
+                        color="#2f7df6"
                         lineWidth={5}
                         transparent
-                        opacity={0.98}
+                        opacity={0.97}
                         depthWrite={false}
                     />
                     {!isInteracting && (
                         <>
                             <Line
                                 points={aheadPoints}
-                                color="#86efac"
+                                color="#9ec5ff"
                                 lineWidth={10}
                                 transparent
-                                opacity={0.2}
+                                opacity={0.26}
                                 depthWrite={false}
                             />
                             <RouteDirectionDots points={aheadPoints} />
@@ -235,8 +235,8 @@ function RouteDirectionDots({ points }) {
                 <mesh key={idx} position={[pos.x, pos.y + 0.01, pos.z]}>
                     <sphereGeometry args={[0.015, 8, 8]} />
                     <meshStandardMaterial
-                        color="#86efac"
-                        emissive="#22c55e"
+                        color="#9ec5ff"
+                        emissive="#2f7df6"
                         emissiveIntensity={0.8}
                     />
                 </mesh>

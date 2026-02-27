@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useMemo } from 'react';
-import { useLoader } from '@react-three/fiber';
+import { useLoader, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { SCALE, MAP_WIDTH, MAP_HEIGHT } from './constants';
 
@@ -7,10 +7,12 @@ const FLOOR_W = MAP_WIDTH * SCALE;
 const FLOOR_H = MAP_HEIGHT * SCALE;
 
 function FloorWithTexture({ mapImageUrl }) {
+    const { gl } = useThree();
     const texture = useLoader(THREE.TextureLoader, mapImageUrl);
     texture.minFilter = THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
     texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
 
     const processedTexture = useMemo(() => {
         const image = texture?.image;
@@ -37,11 +39,25 @@ function FloorWithTexture({ mapImageUrl }) {
             const b = data[i + 2];
             const luma = (r + g + b) / 3;
 
-            if (luma > 190) {
-                data[i] = 255;
-                data[i + 1] = 255;
-                data[i + 2] = 255;
+            // Keep a white-friendly base while preserving map details.
+            const gain = 1.06;
+            const baseLift = 7;
+            const darkBoost = luma < 70 ? 8 : 0;
+
+            let nr = Math.min(255, r * gain + baseLift + darkBoost);
+            let ng = Math.min(255, g * gain + baseLift + darkBoost);
+            let nb = Math.min(255, b * gain + baseLift + darkBoost);
+
+            const boostedLuma = (nr + ng + nb) / 3;
+            if (boostedLuma > 244) {
+                nr = 255;
+                ng = 255;
+                nb = 255;
             }
+
+            data[i] = nr;
+            data[i + 1] = ng;
+            data[i + 2] = nb;
         }
 
         ctx.putImageData(img, 0, 0);
@@ -50,9 +66,10 @@ function FloorWithTexture({ mapImageUrl }) {
         nextTexture.minFilter = THREE.LinearFilter;
         nextTexture.magFilter = THREE.LinearFilter;
         nextTexture.colorSpace = THREE.SRGBColorSpace;
+        nextTexture.anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
         nextTexture.needsUpdate = true;
         return nextTexture;
-    }, [texture]);
+    }, [gl, texture]);
 
     useEffect(() => {
         return () => {
