@@ -553,18 +553,14 @@ function TouchTwistRotation({ controlsRef, wrapperRef }) {
 
 const INIT_CAM_POS = new THREE.Vector3(0, 12, 8);
 const INIT_TARGET  = new THREE.Vector3(0, 0, 0);
-const INTRO_CAM_POS = new THREE.Vector3(-11, 18, -13);
-const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
 function CameraAnimator({ controlsRef, resetKey }) {
     const { camera } = useThree();
     const isResetAnimating = useRef(false);
-    const isIntroAnimating = useRef(true);
-    const introProgress = useRef(0);
 
     useEffect(() => {
-        // Start camera a bit behind and above for modern fly-in reveal.
-        camera.position.copy(INTRO_CAM_POS);
+        // Disable startup animation: keep a stable initial camera.
+        camera.position.copy(INIT_CAM_POS);
         if (controlsRef.current) {
             controlsRef.current.target.copy(INIT_TARGET);
             controlsRef.current.update();
@@ -573,39 +569,11 @@ function CameraAnimator({ controlsRef, resetKey }) {
 
     useEffect(() => {
         if (resetKey > 0) {
-            isIntroAnimating.current = false;
             isResetAnimating.current = true;
         }
     }, [resetKey]);
 
     useFrame((_, delta) => {
-        if (isIntroAnimating.current) {
-            introProgress.current = Math.min(1, introProgress.current + delta * 0.7);
-            const t = introProgress.current;
-            const eased = 1 - Math.pow(1 - t, 3);
-
-            const base = INTRO_CAM_POS.clone().lerp(INIT_CAM_POS, eased);
-            const introSpin = (1 - eased) * 0.85;
-            const offset = base.clone().sub(INIT_TARGET).applyAxisAngle(Y_AXIS, introSpin);
-
-            camera.position.copy(INIT_TARGET).add(offset);
-            if (controlsRef.current) {
-                controlsRef.current.target.copy(INIT_TARGET);
-                controlsRef.current.update();
-            }
-
-            if (t >= 1) {
-                isIntroAnimating.current = false;
-                camera.position.copy(INIT_CAM_POS);
-                if (controlsRef.current) {
-                    controlsRef.current.target.copy(INIT_TARGET);
-                    controlsRef.current.update();
-                }
-            }
-
-            return;
-        }
-
         if (!isResetAnimating.current) return;
 
         camera.position.lerp(INIT_CAM_POS, 0.08);
