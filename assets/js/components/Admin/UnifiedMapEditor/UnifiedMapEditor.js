@@ -32,9 +32,11 @@ const UnifiedMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
 
     // Categories & entrance/exit
     const [categories, setCategories] = useState([]);
+    const [banners, setBanners] = useState([]);
     const [entranceExit, setEntranceExit] = useState({ entranceX: null, entranceY: null, exitX: null, exitY: null });
     const [placingMode, setPlacingMode] = useState(null);
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const [selectedBannerId, setSelectedBannerId] = useState(null);
 
     const [saving, setSaving] = useState(false);
 
@@ -179,6 +181,7 @@ const UnifiedMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
     useEffect(() => {
         loadObstacles();
         loadCategories();
+        loadBanners();
         loadEntranceExit();
     }, [shopId]);
 
@@ -194,6 +197,13 @@ const UnifiedMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
             const r = await fetch(`/api/shops/${shopId}/categories`);
             if (r.ok) setCategories(await r.json());
         } catch (e) { console.error('Failed to load categories:', e); }
+    };
+
+    const loadBanners = async () => {
+        try {
+            const r = await fetch(`/api/shops/${shopId}/banners`);
+            if (r.ok) setBanners(await r.json());
+        } catch (e) { console.error('Failed to load banners:', e); }
     };
 
     const loadEntranceExit = async () => {
@@ -340,6 +350,16 @@ const UnifiedMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
                     const updated = await r.json();
                     setCategories(prev => prev.map(c => c.id === updated.id ? updated : c));
                 }
+            } else if (placingMode === 'banner' && selectedBannerId) {
+                const r = await fetch(`/api/shops/${shopId}/banners/${selectedBannerId}/coordinates`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ x_coordinate: coords.x, y_coordinate: coords.y })
+                });
+                if (r.ok) {
+                    const updated = await r.json();
+                    setBanners(prev => prev.map(b => b.id === updated.id ? updated : b));
+                }
             } else if (placingMode === 'entrance') {
                 const r = await fetch(`/api/shops/${shopId}/entrance-exit`, {
                     method: 'PUT',
@@ -362,15 +382,17 @@ const UnifiedMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
         setSaving(false);
         setPlacingMode(null);
         setSelectedCategoryId(null);
+        setSelectedBannerId(null);
     };
 
     // ── Mode toggling ─────────────────────────────────────────────
-    const activateDrawing = () => { setPlacingMode(null); setSelectedCategoryId(null); setDrawingMode(true); };
+    const activateDrawing = () => { setPlacingMode(null); setSelectedCategoryId(null); setSelectedBannerId(null); setDrawingMode(true); };
     const stopDrawing = () => { setDrawingMode(false); };
-    const startPlacingCategory = (id) => { setDrawingMode(false); setPlacingMode('category'); setSelectedCategoryId(id); };
-    const startPlacingEntrance = () => { setDrawingMode(false); setPlacingMode('entrance'); setSelectedCategoryId(null); };
-    const startPlacingExit = () => { setDrawingMode(false); setPlacingMode('exit'); setSelectedCategoryId(null); };
-    const cancelPlacing = () => { setPlacingMode(null); setSelectedCategoryId(null); };
+    const startPlacingCategory = (id) => { setDrawingMode(false); setPlacingMode('category'); setSelectedCategoryId(id); setSelectedBannerId(null); };
+    const startPlacingBanner = (id) => { setDrawingMode(false); setPlacingMode('banner'); setSelectedBannerId(id); setSelectedCategoryId(null); };
+    const startPlacingEntrance = () => { setDrawingMode(false); setPlacingMode('entrance'); setSelectedCategoryId(null); setSelectedBannerId(null); };
+    const startPlacingExit = () => { setDrawingMode(false); setPlacingMode('exit'); setSelectedCategoryId(null); setSelectedBannerId(null); };
+    const cancelPlacing = () => { setPlacingMode(null); setSelectedCategoryId(null); setSelectedBannerId(null); };
 
     const cursorClass = drawingMode ? 'ume-cursor-crosshair' : placingMode ? 'ume-cursor-crosshair' : 'ume-cursor-grab';
     const activeMode = drawingMode ? 'drawing' : placingMode ? 'placing' : null;
@@ -447,11 +469,33 @@ const UnifiedMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
                     </div>
                 </div>
 
+                <div className="ume-categories">
+                    <h4>Рекламные баннеры ({banners.length})</h4>
+                    <div className="ume-cat-grid">
+                        {banners.map(banner => (
+                            <div key={banner.id} className={`ume-cat-item ${selectedBannerId === banner.id ? 'active' : ''} ${banner.x_coordinate != null ? 'placed' : ''}`}>
+                                <span className="ume-cat-name">{banner.title}</span>
+                                <span className="ume-cat-coords">
+                                    {banner.x_coordinate != null ? `(${Math.round(banner.x_coordinate)}, ${Math.round(banner.y_coordinate)})` : 'нет'}
+                                </span>
+                                <button className={`ume-btn ume-btn-sm ${selectedBannerId === banner.id && placingMode === 'banner' ? 'ume-btn-danger' : 'ume-btn-outline'}`}
+                                    onClick={() => selectedBannerId === banner.id && placingMode === 'banner' ? cancelPlacing() : startPlacingBanner(banner.id)}
+                                    disabled={saving || drawingMode || !banner.active}
+                                    title={banner.active ? 'Поставить баннер' : 'Баннер выключен в админке'}>
+                                    {selectedBannerId === banner.id && placingMode === 'banner' ? '✕' : '📢'}
+                                </button>
+                            </div>
+                        ))}
+                        {banners.length === 0 && <span className="ume-muted">Нет баннеров — создайте их в админке</span>}
+                    </div>
+                </div>
+
                 {/* Active mode hint */}
                 {activeMode && (
                     <div className="ume-hint">
                         {drawingMode && '🖱️ Зажмите и тяните для рисования прямоугольника препятствия'}
                         {placingMode === 'category' && <>📍 Кликните на карту чтобы поставить: <strong>{categories.find(c => c.id === selectedCategoryId)?.category_title}</strong></>}
+                        {placingMode === 'banner' && <>📢 Кликните на карту чтобы поставить: <strong>{banners.find(b => b.id === selectedBannerId)?.title}</strong></>}
                         {placingMode === 'entrance' && '🚪 Кликните на карту чтобы поставить Вход'}
                         {placingMode === 'exit' && '🚶 Кликните на карту чтобы поставить Выход'}
                         <button className="ume-btn ume-btn-sm ume-btn-secondary" onClick={() => { stopDrawing(); cancelPlacing(); }} style={{ marginLeft: 12 }}>Отмена</button>
@@ -506,6 +550,20 @@ const UnifiedMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
                                     <div style={dotStyle('#3b82f6')} />
                                     <div style={arrowStyle('#3b82f6')} />
                                     <div style={labelStyle}>{cat.category_title}</div>
+                                </div>
+                            )
+                        ))}
+
+                        {/* Banner markers */}
+                        {banners.map(banner => (
+                            banner.active && banner.x_coordinate != null && banner.y_coordinate != null && (
+                                <div key={`banner-pin-${banner.id}`} className="ume-pin"
+                                    style={pinStyle(banner.x_coordinate, banner.y_coordinate)}
+                                    title={`${banner.title} (${Math.round(banner.x_coordinate)}, ${Math.round(banner.y_coordinate)})`}
+                                    onClick={(e) => { e.stopPropagation(); if (!drawingMode) startPlacingBanner(banner.id); }}>
+                                    <div style={dotStyle('#f97316')} />
+                                    <div style={arrowStyle('#f97316')} />
+                                    <div style={labelStyle}>{banner.title}</div>
                                 </div>
                             )
                         ))}

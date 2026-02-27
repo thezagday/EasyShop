@@ -7,6 +7,7 @@ use App\Domain\Entity\Commodity;
 use App\Domain\Entity\ProductCollection;
 use App\Domain\Entity\Retailer;
 use App\Domain\Entity\Shop;
+use App\Domain\Entity\ShopBanner;
 use App\Domain\Entity\ShopCategory;
 use App\Domain\Entity\User;
 use App\Domain\Entity\UserActivity;
@@ -65,6 +66,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Shops', 'fas fa-store', Shop::class);
         yield MenuItem::linkToCrud('Categories', 'fas fa-list', Category::class);
         yield MenuItem::linkToCrud('Shop Categories', 'fas fa-map-marker-alt', ShopCategory::class);
+        yield MenuItem::linkToCrud('Shop Banners', 'fas fa-bullhorn', ShopBanner::class);
         yield MenuItem::linkToCrud('Commodities', 'fas fa-shopping-basket', Commodity::class);
 
         yield MenuItem::section('Collections');

@@ -73,11 +73,21 @@ export class RouteBuilder3D {
             const [ny, nx] = pathYX[i + 1];
             const dx = nx - px;
             const dy = ny - py;
+            const prevStepX = x - px;
+            const prevStepY = y - py;
+            const nextStepX = nx - x;
+            const nextStepY = ny - y;
+
+            const hasTurn =
+                (prevStepX !== 0 && nextStepX !== 0 && Math.sign(prevStepX) !== Math.sign(nextStepX)) ||
+                (prevStepY !== 0 && nextStepY !== 0 && Math.sign(prevStepY) !== Math.sign(nextStepY));
 
             let newX = x, newY = y;
+            const isMostlyHorizontal = Math.abs(dx) > Math.abs(dy);
+            const isMostlyVertical = Math.abs(dy) > Math.abs(dx);
 
             // If moving mostly horizontally, center vertically
-            if (Math.abs(dx) >= Math.abs(dy)) {
+            if (!hasTurn && isMostlyHorizontal) {
                 let dUp = MAX_SCAN, dDown = MAX_SCAN;
                 for (let d = 1; d <= MAX_SCAN; d++) {
                     if (dUp === MAX_SCAN && (y - d < 0 || !grid.isWalkableAt(x, y - d))) dUp = d;
@@ -89,7 +99,7 @@ export class RouteBuilder3D {
             }
 
             // If moving mostly vertically, center horizontally
-            if (Math.abs(dy) >= Math.abs(dx)) {
+            else if (!hasTurn && isMostlyVertical) {
                 let dLeft = MAX_SCAN, dRight = MAX_SCAN;
                 for (let d = 1; d <= MAX_SCAN; d++) {
                     if (dLeft === MAX_SCAN && (x - d < 0 || !grid.isWalkableAt(x - d, y))) dLeft = d;
@@ -110,6 +120,60 @@ export class RouteBuilder3D {
 
         result.push(pathYX[pathYX.length - 1]);
         return result;
+    }
+
+    deJitterCenteredPath(pathYX) {
+        if (!pathYX || pathYX.length < 3) return pathYX;
+        const grid = this.pathfinding?.grid;
+        const result = pathYX.map(([y, x]) => [y, x]);
+
+        for (let i = 1; i < result.length - 1; i++) {
+            const [py, px] = result[i - 1];
+            const [y, x] = result[i];
+            const [ny, nx] = result[i + 1];
+
+            const forwardX = (x - px) * (nx - x) > 0;
+            const forwardY = (y - py) * (ny - y) > 0;
+
+            // Remove one-cell vertical wobble on a horizontal run.
+            if (py === ny && y !== py && forwardX) {
+                if (!grid || grid.isWalkableAt(x, py)) {
+                    result[i] = [py, x];
+                    continue;
+                }
+            }
+
+            // Remove one-cell horizontal wobble on a vertical run.
+            if (px === nx && x !== px && forwardY) {
+                if (!grid || grid.isWalkableAt(px, y)) {
+                    result[i] = [y, px];
+                }
+            }
+        }
+
+        return result;
+    }
+
+    simplifyPath(pathYX) {
+        if (!pathYX || pathYX.length < 3) return pathYX;
+
+        const simplified = [pathYX[0]];
+        for (let i = 1; i < pathYX.length - 1; i++) {
+            const [py, px] = simplified[simplified.length - 1];
+            const [y, x] = pathYX[i];
+            const [ny, nx] = pathYX[i + 1];
+
+            const dir1Y = Math.sign(y - py);
+            const dir1X = Math.sign(x - px);
+            const dir2Y = Math.sign(ny - y);
+            const dir2X = Math.sign(nx - x);
+
+            if (dir1Y === dir2Y && dir1X === dir2X) continue;
+            simplified.push(pathYX[i]);
+        }
+
+        simplified.push(pathYX[pathYX.length - 1]);
+        return simplified;
     }
 
     findPath(startAdmin, endAdmin) {
@@ -138,9 +202,11 @@ export class RouteBuilder3D {
 
         // Center path between obstacles
         const centered = this.centerPathInCorridors(path);
+        const stabilized = this.deJitterCenteredPath(centered);
+        const simplified = this.simplifyPath(stabilized);
 
         // Convert grid path [y, x] back to admin coords, then to Three.js
-        const threePoints = centered.map(([gridY, gridX]) => {
+        const threePoints = simplified.map(([gridY, gridX]) => {
             const adminX = (gridX + 0.5) * this.gridCellSize;
             const adminY = (gridY + 0.5) * this.gridCellSize;
             return adminToThreeRoute(adminX, adminY);

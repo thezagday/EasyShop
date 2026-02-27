@@ -1,6 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Html } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
 import { SCALE, HALF_W, HALF_H } from './constants';
+
+const BASE_LABEL_Z = [0, 0];
+const ACTIVE_LABEL_Z = [5000, 5000];
 
 function toThreePos(x, y, elevation = 0.2) {
     return [
@@ -10,7 +14,67 @@ function toThreePos(x, y, elevation = 0.2) {
     ];
 }
 
-function CategoryPin({ x, y, title, isTarget, onBuildRoute, categoryId, commodities, isPopupOpen, onTogglePopup }) {
+function BannerPin({ x, y, title, imageUrl, targetUrl, bannerId, isPopupOpen, onTogglePopup, pinScale }) {
+    const pos = toThreePos(x, y, 0.15);
+
+    const handleLabelClick = (e) => {
+        e.stopPropagation();
+        if (onTogglePopup) onTogglePopup(`banner-${bannerId}`);
+    };
+
+    const handleOpenTarget = (e) => {
+        e.stopPropagation();
+        if (targetUrl) {
+            window.open(targetUrl, '_blank', 'noopener,noreferrer');
+        }
+        if (onTogglePopup) onTogglePopup(null);
+    };
+
+    return (
+        <group position={pos} scale={[pinScale * 1.22, pinScale * 1.22, pinScale * 1.22]}>
+            <mesh position={[0, 0.15, 0]}>
+                <cylinderGeometry args={[0.012, 0.012, 0.32, 10]} />
+                <meshStandardMaterial color="#f97316" />
+            </mesh>
+            <mesh position={[0, 0.35, 0]}>
+                <sphereGeometry args={[0.075, 16, 16]} />
+                <meshStandardMaterial color="#f97316" emissive="#f97316" emissiveIntensity={0.4} />
+            </mesh>
+            <Html
+                position={[0, 0.5, 0]}
+                center
+                zIndexRange={isPopupOpen ? ACTIVE_LABEL_Z : BASE_LABEL_Z}
+                style={{ pointerEvents: 'auto', zIndex: isPopupOpen ? 5000 : 0 }}
+            >
+                <div className="marker3d-label marker3d-banner" onClick={handleLabelClick}>
+                    {imageUrl ? (
+                        <img src={imageUrl} alt={title} className="marker3d-banner-thumb" />
+                    ) : (
+                        <span className="marker3d-emoji">📢</span>
+                    )}
+                    <span className="marker3d-title">{title}</span>
+                </div>
+                {isPopupOpen && (
+                    <div className="marker3d-popup" onClick={e => e.stopPropagation()}>
+                        <div className="marker3d-popup-title">{title}</div>
+                        {imageUrl && (
+                            <div className="marker3d-popup-image-wrap">
+                                <img src={imageUrl} alt={title} className="marker3d-popup-image" />
+                            </div>
+                        )}
+                        {targetUrl && (
+                            <button className="marker3d-popup-btn marker3d-banner-btn" onClick={handleOpenTarget}>
+                                Открыть предложение
+                            </button>
+                        )}
+                    </div>
+                )}
+            </Html>
+        </group>
+    );
+}
+
+function CategoryPin({ x, y, title, isTarget, onBuildRoute, categoryId, commodities, isPopupOpen, onTogglePopup, pinScale }) {
     const pos = toThreePos(x, y, 0.15);
     const emoji = isTarget ? '🎯' : '🏪';
 
@@ -26,24 +90,23 @@ function CategoryPin({ x, y, title, isTarget, onBuildRoute, categoryId, commodit
     };
 
     return (
-        <group position={pos}>
+        <group position={pos} scale={[pinScale, pinScale, pinScale]}>
             {/* Vertical pole */}
             <mesh position={[0, 0.15, 0]}>
-                <cylinderGeometry args={[0.01, 0.01, 0.3, 8]} />
+                <cylinderGeometry args={[0.011, 0.011, 0.3, 8]} />
                 <meshStandardMaterial color="#3b82f6" />
             </mesh>
             {/* Sphere head */}
             <mesh position={[0, 0.35, 0]}>
-                <sphereGeometry args={[0.06, 16, 16]} />
+                <sphereGeometry args={[0.065, 16, 16]} />
                 <meshStandardMaterial color="#3b82f6" emissive="#3b82f6" emissiveIntensity={0.3} />
             </mesh>
             {/* HTML label */}
             <Html
                 position={[0, 0.5, 0]}
                 center
-                distanceFactor={8}
-                zIndexRange={[0, 0]}
-                style={{ pointerEvents: 'auto' }}
+                zIndexRange={isPopupOpen ? ACTIVE_LABEL_Z : BASE_LABEL_Z}
+                style={{ pointerEvents: 'auto', zIndex: isPopupOpen ? 5000 : 0 }}
             >
                 <div className="marker3d-label" onClick={handleLabelClick}>
                     <span className="marker3d-emoji">{emoji}</span>
@@ -68,11 +131,11 @@ function CategoryPin({ x, y, title, isTarget, onBuildRoute, categoryId, commodit
     );
 }
 
-function SpecialPin({ x, y, label, emoji, color }) {
+function SpecialPin({ x, y, label, emoji, color, pinScale }) {
     const pos = toThreePos(x, y, 0.15);
 
     return (
-        <group position={pos}>
+        <group position={pos} scale={[pinScale * 0.96, pinScale * 0.96, pinScale * 0.96]}>
             <mesh position={[0, 0.15, 0]}>
                 <cylinderGeometry args={[0.01, 0.01, 0.3, 8]} />
                 <meshStandardMaterial color={color} />
@@ -81,7 +144,7 @@ function SpecialPin({ x, y, label, emoji, color }) {
                 <sphereGeometry args={[0.06, 16, 16]} />
                 <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.4} />
             </mesh>
-            <Html position={[0, 0.5, 0]} center distanceFactor={8} zIndexRange={[0, 0]}>
+            <Html position={[0, 0.5, 0]} center zIndexRange={[0, 0]}>
                 <div className="marker3d-label marker3d-special">
                     <span className="marker3d-emoji">{emoji}</span>
                     <span className="marker3d-title">{label}</span>
@@ -91,11 +154,11 @@ function SpecialPin({ x, y, label, emoji, color }) {
     );
 }
 
-function TargetPin({ x, y, title }) {
+function TargetPin({ x, y, title, pinScale }) {
     const pos = toThreePos(x, y, 0.15);
 
     return (
-        <group position={pos}>
+        <group position={pos} scale={[pinScale * 1.04, pinScale * 1.04, pinScale * 1.04]}>
             <mesh position={[0, 0.15, 0]}>
                 <cylinderGeometry args={[0.015, 0.015, 0.3, 8]} />
                 <meshStandardMaterial color="#ef4444" />
@@ -104,7 +167,7 @@ function TargetPin({ x, y, title }) {
                 <sphereGeometry args={[0.1, 16, 16]} />
                 <meshStandardMaterial color="#ef4444" emissive="#ef4444" emissiveIntensity={0.6} />
             </mesh>
-            <Html position={[0, 0.6, 0]} center distanceFactor={8} zIndexRange={[0, 0]}>
+            <Html position={[0, 0.6, 0]} center zIndexRange={[0, 0]}>
                 <div className="marker3d-label marker3d-target">
                     <span className="marker3d-emoji">🎯</span>
                     <span className="marker3d-title">{title}</span>
@@ -114,7 +177,7 @@ function TargetPin({ x, y, title }) {
     );
 }
 
-function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopup, popupKey, onPassed, showPassedBtn }) {
+function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopup, popupKey, onPassed, showPassedBtn, pinScale }) {
     const pos = toThreePos(x, y, 0.15);
 
     const handleClick = (e) => {
@@ -123,7 +186,7 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
     };
 
     return (
-        <group position={pos}>
+        <group position={pos} scale={[pinScale, pinScale, pinScale]}>
             <mesh position={[0, 0.15, 0]}>
                 <cylinderGeometry args={[0.01, 0.01, 0.3, 8]} />
                 <meshStandardMaterial color="#667eea" />
@@ -132,7 +195,12 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
                 <sphereGeometry args={[0.08, 16, 16]} />
                 <meshStandardMaterial color="#667eea" emissive="#667eea" emissiveIntensity={0.5} />
             </mesh>
-            <Html position={[0, 0.55, 0]} center distanceFactor={8} zIndexRange={[0, 0]} style={{ pointerEvents: 'auto' }}>
+            <Html
+                position={[0, 0.55, 0]}
+                center
+                zIndexRange={isPopupOpen ? ACTIVE_LABEL_Z : BASE_LABEL_Z}
+                style={{ pointerEvents: 'auto', zIndex: isPopupOpen ? 5000 : 0 }}
+            >
                 <div className="marker3d-label marker3d-waypoint" onClick={handleClick}>
                     <span className="marker3d-index">{index}</span>
                     <span className="marker3d-title">{name}</span>
@@ -161,8 +229,24 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
     );
 }
 
-export function Markers3D({ categories, entranceExit, shop, aiCategories, routeWaypoints, onBuildRoute, passedWaypointCount = 0, onWaypointPassed }) {
+export function Markers3D({ categories, banners = [], entranceExit, shop, aiCategories, routeWaypoints, onBuildRoute, passedWaypointCount = 0, onWaypointPassed }) {
     const [openPopupId, setOpenPopupId] = useState(null);
+    const [pinScale, setPinScale] = useState(1);
+    const pinScaleRef = useRef(1);
+    const { camera, controls } = useThree();
+
+    useFrame(() => {
+        const distance = controls?.target
+            ? camera.position.distanceTo(controls.target)
+            : camera.position.length();
+        // Keep pin geometry visually comfortable: shrink when zooming in, grow when zooming out.
+        const nextScale = Math.max(0.74, Math.min(1.28, distance / 13.5));
+
+        if (Math.abs(nextScale - pinScaleRef.current) > 0.02) {
+            pinScaleRef.current = nextScale;
+            setPinScale(nextScale);
+        }
+    });
 
     const handleTogglePopup = (popupKey) => {
         setOpenPopupId(prev => prev === popupKey ? null : popupKey);
@@ -214,6 +298,27 @@ export function Markers3D({ categories, entranceExit, shop, aiCategories, routeW
                         onBuildRoute={onBuildRoute}
                         isPopupOpen={openPopupId === `cat-${cat.id}`}
                         onTogglePopup={handleTogglePopup}
+                        pinScale={pinScale}
+                    />
+                );
+            })}
+
+            {/* Advertisement banners */}
+            {Array.isArray(banners) && banners.map((banner) => {
+                if (banner.x_coordinate == null || banner.y_coordinate == null) return null;
+
+                return (
+                    <BannerPin
+                        key={`banner-${banner.id}`}
+                        bannerId={banner.id}
+                        x={banner.x_coordinate}
+                        y={banner.y_coordinate}
+                        title={banner.title}
+                        imageUrl={banner.imageUrl}
+                        targetUrl={banner.targetUrl}
+                        isPopupOpen={openPopupId === `banner-${banner.id}`}
+                        onTogglePopup={handleTogglePopup}
+                        pinScale={pinScale}
                     />
                 );
             })}
@@ -226,6 +331,7 @@ export function Markers3D({ categories, entranceExit, shop, aiCategories, routeW
                     label="Вход"
                     emoji="🚪"
                     color="#22c55e"
+                    pinScale={pinScale}
                 />
             )}
 
@@ -237,6 +343,7 @@ export function Markers3D({ categories, entranceExit, shop, aiCategories, routeW
                     label="Выход"
                     emoji="🚶"
                     color="#ef4444"
+                    pinScale={pinScale}
                 />
             )}
 
@@ -256,6 +363,7 @@ export function Markers3D({ categories, entranceExit, shop, aiCategories, routeW
                         onTogglePopup={handleTogglePopup}
                         onPassed={onWaypointPassed}
                         showPassedBtn={idx === passedWaypointCount + 1}
+                        pinScale={pinScale}
                     />
                 );
             })}
@@ -269,6 +377,7 @@ export function Markers3D({ categories, entranceExit, shop, aiCategories, routeW
                         x={last.x}
                         y={last.y}
                         title={last.name}
+                        pinScale={pinScale}
                     />
                 );
             })()}

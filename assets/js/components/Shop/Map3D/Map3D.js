@@ -31,6 +31,7 @@ export default function Map3D({
 
     const [resetCameraKey, setResetCameraKey] = useState(0);
     const [obstacles, setObstacles] = useState([]);
+    const [banners, setBanners] = useState([]);
     const [entranceExit, setEntranceExit] = useState(null);
     const [routePoints, setRoutePoints] = useState([]);
     const [routeWaypoints, setRouteWaypoints] = useState([]);
@@ -140,6 +141,15 @@ export default function Map3D({
             .then(r => r.ok ? r.json() : null)
             .then(data => { if (data) setEntranceExit(data); })
             .catch(() => {});
+    }, [shopId]);
+
+    // Load active banners
+    useEffect(() => {
+        if (!shopId) return;
+        fetch(`/api/shops/${shopId}/banners/public`)
+            .then(r => r.ok ? r.json() : [])
+            .then(data => setBanners(Array.isArray(data) ? data : []))
+            .catch(() => setBanners([]));
     }, [shopId]);
 
     // Initialize route builder
@@ -446,6 +456,7 @@ export default function Map3D({
                 {/* Category / entrance / exit markers */}
                 <Markers3D
                     categories={visibleCategories}
+                    banners={banners}
                     entranceExit={entranceExit}
                     shop={shop}
                     aiCategories={aiCategories}
@@ -542,29 +553,74 @@ function TouchTwistRotation({ controlsRef, wrapperRef }) {
 
 const INIT_CAM_POS = new THREE.Vector3(0, 12, 8);
 const INIT_TARGET  = new THREE.Vector3(0, 0, 0);
+const INTRO_CAM_POS = new THREE.Vector3(-11, 18, -13);
+const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
 function CameraAnimator({ controlsRef, resetKey }) {
     const { camera } = useThree();
-    const animating = useRef(false);
+    const isResetAnimating = useRef(false);
+    const isIntroAnimating = useRef(true);
+    const introProgress = useRef(0);
 
     useEffect(() => {
-        if (resetKey > 0) animating.current = true;
-    }, [resetKey]);
-
-    useFrame(() => {
-        if (!animating.current) return;
-        camera.position.lerp(INIT_CAM_POS, 0.06);
+        // Start camera a bit behind and above for modern fly-in reveal.
+        camera.position.copy(INTRO_CAM_POS);
         if (controlsRef.current) {
-            controlsRef.current.target.lerp(INIT_TARGET, 0.06);
+            controlsRef.current.target.copy(INIT_TARGET);
             controlsRef.current.update();
         }
+    }, [camera, controlsRef]);
+
+    useEffect(() => {
+        if (resetKey > 0) {
+            isIntroAnimating.current = false;
+            isResetAnimating.current = true;
+        }
+    }, [resetKey]);
+
+    useFrame((_, delta) => {
+        if (isIntroAnimating.current) {
+            introProgress.current = Math.min(1, introProgress.current + delta * 0.7);
+            const t = introProgress.current;
+            const eased = 1 - Math.pow(1 - t, 3);
+
+            const base = INTRO_CAM_POS.clone().lerp(INIT_CAM_POS, eased);
+            const introSpin = (1 - eased) * 0.85;
+            const offset = base.clone().sub(INIT_TARGET).applyAxisAngle(Y_AXIS, introSpin);
+
+            camera.position.copy(INIT_TARGET).add(offset);
+            if (controlsRef.current) {
+                controlsRef.current.target.copy(INIT_TARGET);
+                controlsRef.current.update();
+            }
+
+            if (t >= 1) {
+                isIntroAnimating.current = false;
+                camera.position.copy(INIT_CAM_POS);
+                if (controlsRef.current) {
+                    controlsRef.current.target.copy(INIT_TARGET);
+                    controlsRef.current.update();
+                }
+            }
+
+            return;
+        }
+
+        if (!isResetAnimating.current) return;
+
+        camera.position.lerp(INIT_CAM_POS, 0.08);
+        if (controlsRef.current) {
+            controlsRef.current.target.lerp(INIT_TARGET, 0.08);
+            controlsRef.current.update();
+        }
+
         if (camera.position.distanceTo(INIT_CAM_POS) < 0.01) {
             camera.position.copy(INIT_CAM_POS);
             if (controlsRef.current) {
                 controlsRef.current.target.copy(INIT_TARGET);
                 controlsRef.current.update();
             }
-            animating.current = false;
+            isResetAnimating.current = false;
         }
     });
 

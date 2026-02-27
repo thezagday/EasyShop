@@ -20,7 +20,7 @@
     gap: 4px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 8px;
-    padding: 3px 8px;
+    padding: 4px 9px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     white-space: nowrap;
@@ -40,10 +40,10 @@
 }
 
 .marker3d-title {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     color: #1e293b;
-    max-width: 100px;
+    max-width: 120px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -78,6 +78,21 @@
 
 .marker3d-waypoint .marker3d-title {
     color: white;
+}
+
+.marker3d-banner {
+    border-left: 3px solid #f97316;
+    padding: 5px 10px;
+    box-shadow: 0 3px 10px rgba(249, 115, 22, 0.26);
+}
+
+.marker3d-banner-thumb {
+    width: 21px;
+    height: 21px;
+    border-radius: 4px;
+    object-fit: cover;
+    border: 1px solid #fdba74;
+    flex-shrink: 0;
 }
 
 .marker3d-index {
@@ -151,6 +166,20 @@
     padding: 1px 0;
 }
 
+.marker3d-popup-image-wrap {
+    margin-bottom: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.marker3d-popup-image {
+    display: block;
+    width: 100%;
+    max-height: 140px;
+    object-fit: cover;
+}
+
 .marker3d-popup-btn {
     display: block;
     width: 100%;
@@ -178,6 +207,14 @@
 
 .marker3d-passed-btn:hover {
     box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
+}
+
+.marker3d-banner-btn {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+.marker3d-banner-btn:hover {
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.45);
 }
 
 /* ── Compass reset button ── */
