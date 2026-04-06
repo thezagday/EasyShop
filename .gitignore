@@ -10,6 +10,11 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
+###> IDE
+.cursor
+.vscode
+###< IDE
+
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
