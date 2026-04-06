@@ -1,4 +1,4 @@
-.PHONY: help build up down restart logs shell db-shell migrate fixtures assets install clean
+.PHONY: help build up up-prod down restart logs shell db-shell migrate fixtures assets install clean
 
 # Default target
 help:
@@ -17,6 +17,7 @@ help:
 	@echo "Production:"
 	@echo "  make build-prod    - Build production image with assets"
 	@echo "  make deploy-prod   - Deploy to production (build + up)"
+	@echo "  make up-prod       - Start prod stack (docker-compose.prod.yml only)"
 	@echo "  make stop-prod     - Stop production containers"
 	@echo ""
 	@echo "Utilities:"
@@ -58,9 +59,13 @@ deploy-prod: build-prod
 stop-prod:
 	docker compose -f docker-compose.prod.yml down
 
-# Start containers (development)
+# Start containers (development — always docker-compose.yml, not prod file)
 up:
 	docker compose up -d
+
+# Start production stack (requires easyshop-php:prod / easyshop-nginx:prod images — run build-prod first)
+up-prod:
+	docker compose -f docker-compose.prod.yml up -d
 
 # Stop containers
 down:
@@ -139,7 +144,7 @@ install: env build
 	@echo ""
 	@echo "============================================"
 	@echo "EasyShop is starting..."
-	@echo "Migrations and fixtures run automatically."
+	@echo "Migrations run automatically in the PHP entrypoint; fixtures: make fixtures (dev only)."
 	@echo "Check logs: make logs-php"
 	@echo "Open http://localhost in your browser"
 	@echo "============================================"
