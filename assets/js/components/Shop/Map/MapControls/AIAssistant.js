@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TrackingService } from '../../../../services/TrackingService';
 
 export function AIAssistant({ shopId, onResult, messages, setMessages }) {
+    const { t } = useTranslation();
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const chatBodyRef = useRef(null);
     const wrapperRef = useRef(null);
     const fileInputRef = useRef(null);
 
-    // Блокируем всплытие wheel-события к Leaflet через нативный listener
+    // Block wheel event propagation to Leaflet via native listener
     useEffect(() => {
         const el = wrapperRef.current;
         if (!el) return;
@@ -19,7 +21,7 @@ export function AIAssistant({ shopId, onResult, messages, setMessages }) {
         return () => el.removeEventListener('wheel', stopWheel);
     }, []);
 
-    // Автоскролл вниз при новых сообщениях
+    // Auto-scroll down on new messages
     useEffect(() => {
         if (chatBodyRef.current) {
             chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
@@ -35,17 +37,17 @@ export function AIAssistant({ shopId, onResult, messages, setMessages }) {
             setMessages(prev => [...prev, {
                 type: 'user', text: trimmed
             }, {
-                type: 'ai', text: 'Ошибка: некорректный идентификатор магазина.', categories: []
+                type: 'ai', text: t('ai.errors.invalid_shop'), categories: []
             }]);
             return;
         }
 
-        // Добавляем сообщение пользователя
+        // Add user message
         setMessages(prev => [...prev, { type: 'user', text: trimmed }]);
         setInput('');
         setLoading(true);
 
-        // Трекинг поискового запроса
+        // Track search query
         TrackingService.trackSearch(parsedShopId, trimmed);
 
         try {
@@ -78,7 +80,7 @@ export function AIAssistant({ shopId, onResult, messages, setMessages }) {
             }
         } catch (e) {
             setMessages(prev => [...prev, {
-                type: 'ai', text: 'Ошибка при общении с сервером.', categories: []
+                type: 'ai', text: t('ai.errors.server_error'), categories: []
             }]);
         }
         setLoading(false);
@@ -92,21 +94,21 @@ export function AIAssistant({ shopId, onResult, messages, setMessages }) {
         reader.onload = (ev) => {
             const raw = ev.target.result?.trim();
             if (raw) {
-                // Разделяем по строкам, убираем пустые, соединяем через запятую
+                // Split by lines, remove empty ones, join with comma
                 const text = raw.split(/\r?\n/)
                     .map(line => line.trim())
                     .filter(Boolean)
                     .join(', ');
                 setInput(text);
-                // Показываем системное сообщение о загрузке
+                // Show system message about upload
                 setMessages(prev => [...prev, {
                     type: 'system',
-                    text: `📎 Загружен файл: ${file.name}`
+                    text: t('ai.file_uploaded', { name: file.name })
                 }]);
             }
         };
         reader.readAsText(file, 'UTF-8');
-        // Сбрасываем input чтобы можно было загрузить тот же файл повторно
+        // Reset input so the same file can be uploaded again
         e.target.value = '';
     };
 
@@ -122,11 +124,11 @@ export function AIAssistant({ shopId, onResult, messages, setMessages }) {
 
     return (
         <div className="ai-assistant-wrapper" ref={wrapperRef}>
-            {/* Область сообщений */}
+            {/* Messages area */}
             <div className="ai-chat-body" ref={chatBodyRef}>
                 {messages.length === 0 && !loading && (
                     <div className="ai-chat-empty">
-                        🤖 Привет! Напишите что вы хотите найти или приготовить, и я подберу нужные товары.
+                        {t('ai.empty_chat')}
                     </div>
                 )}
 
@@ -143,10 +145,10 @@ export function AIAssistant({ shopId, onResult, messages, setMessages }) {
                                 <div className="ai-answer-text">{msg.text}</div>
                                 {msg.categories && msg.categories.length > 0 && (
                                     <div className="ai-categories">
-                                        <div className="ai-categories-title">📍 Найденные категории ({msg.categories.length}):</div>
+                                        <div className="ai-categories-title">{t('ai.found_categories', { count: msg.categories.length })}</div>
                                         {msg.categories.map((cat, cIdx) => (
                                             <div key={cIdx} className="ai-category-item">
-                                                <div className="ai-category-name">📂 {cat.title || cat.category?.title || 'Категория'}</div>
+                                                <div className="ai-category-name">📂 {cat.title || cat.category?.title || t('ai.category')}</div>
                                                 {cat.commodities && cat.commodities.length > 0 && (
                                                     <div className="ai-commodity-list">
                                                         {cat.commodities.map((commodity, pIdx) => (
@@ -162,7 +164,7 @@ export function AIAssistant({ shopId, onResult, messages, setMessages }) {
                                             className="ai-build-route-button"
                                             onClick={() => handleBuildRoute(msg)}
                                         >
-                                            🗺️ Построить маршрут
+                                            {t('ai.build_route')}
                                         </button>
                                     </div>
                                 )}
@@ -176,14 +178,14 @@ export function AIAssistant({ shopId, onResult, messages, setMessages }) {
                         <div className="ai-chat-bubble ai-chat-bubble-ai">
                             <div className="ai-loading">
                                 <div className="spinner-small"></div>
-                                <span>AI думает...</span>
+                                <span>{t('ai.thinking')}</span>
                             </div>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* Поле ввода всегда внизу */}
+            {/* Input field is always at the bottom */}
             <div className="ai-input-group">
                 <input
                     type="file"
@@ -196,13 +198,13 @@ export function AIAssistant({ shopId, onResult, messages, setMessages }) {
                     className="ai-attach-button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={loading}
-                    title="Загрузить список товаров из файла"
+                    title={t('ai.attach_title')}
                 >
                     📎
                 </button>
                 <input
                     className="map-search-input"
-                    placeholder="Например: хочу сделать плов..."
+                    placeholder={t('ai.input_placeholder')}
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && !loading) handleSend(); }}

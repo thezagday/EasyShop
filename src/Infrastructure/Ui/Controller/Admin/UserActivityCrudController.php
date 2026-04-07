@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[IsGranted('ROLE_ADMIN')]
 class UserActivityCrudController extends AbstractCrudController
@@ -29,10 +30,10 @@ class UserActivityCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('User Activity')
-            ->setEntityLabelInPlural('User Activity')
+            ->setEntityLabelInSingular(new TranslatableMessage('user_activity.label_singular', [], 'admin'))
+            ->setEntityLabelInPlural(new TranslatableMessage('user_activity.label_plural', [], 'admin'))
             ->setDefaultSort(['createdAt' => 'DESC'])
-            ->setPageTitle(Crud::PAGE_INDEX, 'User Activity Log')
+            ->setPageTitle(Crud::PAGE_INDEX, new TranslatableMessage('user_activity.page_title.index', [], 'admin'))
             ->setSearchFields(['query']);
     }
 
@@ -45,15 +46,15 @@ class UserActivityCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->hideOnForm();
-        yield AssociationField::new('user')->setLabel('User');
-        yield AssociationField::new('shop')->setLabel('Shop');
-        yield TextField::new('query')->setLabel('Search Query');
-        yield BooleanField::new('hasRoute', 'Route Built')->renderAsSwitch(false);
-        yield TextField::new('routeCategoriesDisplay', 'Route');
-        yield IntegerField::new('routeDistanceMeters')->setLabel('Distance (m)');
-        yield IntegerField::new('routeTimeMinutes')->setLabel('Time (min)');
-        yield DateTimeField::new('createdAt')->setLabel('Date');
+        yield IdField::new('id', new TranslatableMessage('common.id', [], 'admin'))->hideOnForm();
+        yield AssociationField::new('user')->setLabel(new TranslatableMessage('user_activity.fields.user', [], 'admin'));
+        yield AssociationField::new('shop')->setLabel(new TranslatableMessage('user_activity.fields.shop', [], 'admin'));
+        yield TextField::new('query')->setLabel(new TranslatableMessage('user_activity.fields.query', [], 'admin'));
+        yield BooleanField::new('hasRoute', new TranslatableMessage('user_activity.fields.has_route', [], 'admin'))->renderAsSwitch(false);
+        yield TextField::new('routeCategoriesDisplay', new TranslatableMessage('user_activity.fields.route', [], 'admin'));
+        yield IntegerField::new('routeDistanceMeters')->setLabel(new TranslatableMessage('user_activity.fields.distance', [], 'admin'));
+        yield IntegerField::new('routeTimeMinutes')->setLabel(new TranslatableMessage('user_activity.fields.time', [], 'admin'));
+        yield DateTimeField::new('createdAt')->setLabel(new TranslatableMessage('user_activity.fields.created_at', [], 'admin'));
     }
 
     public function configureFilters(Filters $filters): Filters

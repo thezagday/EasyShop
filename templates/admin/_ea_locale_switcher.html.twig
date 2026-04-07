@@ -1,0 +1,46 @@
+{# Server sets _locale cookie (see AdminSetLocaleController) — EasyAdmin often strips inline scripts from addHtmlContentToBody #}
+<div id="ea-locale-switcher" class="ea-locale-switcher" role="group" aria-label="{{ 'dashboard.locale_switcher'|trans({}, 'admin') }}">
+    {% set redirect_target = app.request ? app.request.requestUri : path('admin') %}
+    {% for loc in [{code: 'pl', label: 'PL'}, {code: 'en', label: 'EN'}] %}
+        <a href="{{ path('admin_set_locale', { locale: loc.code, redirect: redirect_target }) }}"
+           data-turbo="false"
+           class="ea-locale-switcher__btn{% if current_locale == loc.code %} ea-locale-switcher__btn--active{% endif %}">
+            {{ loc.label }}
+        </a>
+    {% endfor %}
+</div>
+<style>
+.ea-locale-switcher {
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    z-index: 10050;
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    background: var(--body-bg, #fff);
+    border: 1px solid var(--sidebar-border-color, #dee2e6);
+    border-radius: 6px;
+    padding: 4px 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.ea-locale-switcher__btn {
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: var(--text-color, #212529);
+    opacity: 0.65;
+}
+.ea-locale-switcher__btn:hover {
+    opacity: 1;
+    background: rgba(0,0,0,.05);
+    color: var(--text-color, #212529);
+}
+.ea-locale-switcher__btn--active {
+    opacity: 1;
+    background: var(--link-color, #0d6efd);
+    color: #fff;
+}
+</style>

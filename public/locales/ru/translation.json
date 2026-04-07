@@ -1,0 +1,246 @@
+{
+    "navbar": {
+        "greeting": "Привет, {{username}}",
+        "management": "Управление",
+        "login": "Вход",
+        "logout": "Выход",
+        "shops": "Магазины",
+        "account": "Аккаунт",
+        "profile": "Личный кабинет",
+        "registration": "Регистрация"
+    },
+    "home": {
+        "search_placeholder": "Поиск магазина...",
+        "not_found": "Магазины не найдены",
+        "search": "Поиск",
+        "empty_shops": "К сожалению, такой магазин мы еще не добавили.",
+        "open": "Открыть",
+        "edit_map": "Редактировать карту",
+        "categories": "Категории",
+        "products": "Товары"
+    },
+    "search": {
+        "product_placeholder": "Поиск товара...",
+        "category_placeholder": "Поиск категории...",
+        "no_category": "Без категории",
+        "no_name": "Без названия",
+        "general": "Общее",
+        "products_not_found": "Товары не найдены",
+        "nothing_found": "Ничего не найдено"
+    },
+    "collections": {
+        "loading": "Загрузка подборок...",
+        "empty": "Подборки пока не добавлены",
+        "build_route": "🗺️ Построить маршрут",
+        "no_coords": "В подборке нет товаров с координатами",
+        "personal_prefix": "Подборка: "
+    },
+    "nav": {
+        "ai": "AI",
+        "search": "Поиск",
+        "collections": "Подборки"
+    },
+    "markers": {
+        "take_items": "🛒 Нужно взять:",
+        "build_route": "Построить маршрут",
+        "passed": "✅ Пройдено",
+        "open_offer": "Открыть предложение"
+    },
+    "map": {
+        "reset_view": "Сбросить вид",
+        "point": "Точка",
+        "zoom_in": "Приблизить",
+        "zoom_out": "Отдалить",
+        "entire_map": "Вся карта",
+        "you_are_here": "Вы здесь"
+    },
+    "pwa": {
+        "title": "📱 Установить EasyShop",
+        "description": "Добавьте приложение на главный экран для быстрого доступа",
+        "install": "Установить"
+    },
+    "contact": {
+        "title": "Напишите нам",
+        "name": "Имя",
+        "email": "E-mail",
+        "subject": "Тема",
+        "message": "Сообщение",
+        "send": "Отправить",
+        "address": "Адрес",
+        "on_map": "На карте",
+        "ceo": "CEO",
+        "muse": "Муза, вдохновительница",
+        "cartographer": "Картограф",
+        "intern": "Стажер"
+    },
+    "admin": {
+        "obstacles": "Препятствия",
+        "obstacle_types": {
+            "shelf": "Полка (красный)",
+            "wall": "Стена (серый)",
+            "counter": "Прилавок (синий)",
+            "checkout": "Касса (зелёный)"
+        },
+        "draw": "✏️ Рисовать",
+        "done": "✓ Готово",
+        "clear": "🗑️ Очистить",
+        "entrance_exit": "Вход / Выход",
+        "entrance": "Вход",
+        "exit": "Выход",
+        "none": "нет",
+        "banners": "Рекламные баннеры",
+        "place_banner": "Поставить баннер",
+        "banner_disabled": "Баннер выключен в админке",
+        "no_categories": "Нет категорий",
+        "no_banners": "Нет баннеров — создайте их в админке",
+        "hints": {
+            "draw": "🖱️ Зажмите и тяните для рисования прямоугольника препятствия",
+            "place_category": "📍 Кликните на карту чтобы поставить: ",
+            "place_banner": "📢 Кликните на карту чтобы поставить: ",
+            "place_entrance": "🚪 Кликните на карту чтобы поставить Вход",
+            "place_exit": "🚶 Кликните на карту чтобы поставить Выход"
+        },
+        "zoom": {
+            "in": "Приблизить",
+            "out": "Отдалить",
+            "fit": "Вписать"
+        },
+        "confirm": {
+            "clear_obstacles": "Удалить все препятствия? Это нельзя отменить.",
+            "delete_obstacle": "Удалить препятствие ({{type}})?\nx={{x}}, y={{y}}, {{w}}x{{h}}"
+        }
+    },
+    "not_found": {
+        "title": "Ошибка 404",
+        "description": "Страница {{path}} не найдена.",
+        "back_to_home": "На главную"
+    },
+    "ai": {
+        "badge": "AI-помощник",
+        "chat_title": "Чат с AI",
+        "no_messages": "Нет сообщений",
+        "typing": "AI печатает...",
+        "message_placeholder": "Сообщение...",
+        "send": "Отправить",
+        "you": "Вы",
+        "empty_chat": "🤖 Привет! Напишите что вы хотите найти или приготовить, и я подберу нужные товары.",
+        "thinking": "AI думает...",
+        "input_placeholder": "Например: хочу сделать плов...",
+        "attach_title": "Загрузить список товаров из файла",
+        "found_categories": "📍 Найденные категории ({{count}}):",
+        "category": "Категория",
+        "build_route": "🗺️ Построить маршрут",
+        "file_uploaded": "📎 Загружен файл: {{name}}",
+        "errors": {
+            "invalid_shop": "Ошибка: некорректный идентификатор магазина.",
+            "server_error": "Ошибка при общении с сервером."
+        }
+    },
+    "shop": {
+        "entrance": "Вход",
+        "exit": "Выход",
+        "route_info": {
+            "distance": "~{{distance}}м",
+            "time": "~{{time}} мин"
+        },
+        "build_route": "Построить маршрут",
+        "building_route": "Построение маршрута...",
+        "no_categories": "В этом магазине пока нет категорий.",
+        "categories_label": "Категории:",
+        "destination": "Пункт назначения",
+        "target": "Цель",
+        "distance": "Расстояние",
+        "time": "Время",
+        "points": "Точек",
+        "placeholders": {
+            "search_categories": "Поиск по категориям",
+            "search_products": "Поиск по товарам",
+            "route": "Маршрут"
+        }
+    },
+    "common": {
+        "loading": "Загрузка...",
+        "error": "Произошла ошибка",
+        "save": "Сохранить",
+        "cancel": "Отмена",
+        "delete": "Удалить",
+        "edit": "Редактировать",
+        "create": "Создать",
+        "saving": "Сохранение...",
+        "creating": "Создание...",
+        "deleting": "Удаление...",
+        "success": "Успешно",
+        "not_found": "Ничего не найдено",
+        "search": "Поиск...",
+        "previous": "Назад",
+        "next": "Далее"
+    },
+    "profile": {
+        "title": "Личный кабинет",
+        "tabs": {
+            "context": "Мои предпочтения",
+            "history": "История",
+            "collections": "Мои подборки",
+            "stats": "Статистика"
+        },
+        "errors": {
+            "load_data": "Ошибка загрузки данных",
+            "save_context": "Ошибка сохранения контекста",
+            "create_collection": "Ошибка создания подборки",
+            "update_collection": "Ошибка обновления подборки",
+            "delete_collection": "Ошибка удаления подборки",
+            "fill_required": "Заполните название и выберите магазин"
+        },
+        "success": {
+            "context_saved": "Контекст сохранён",
+            "collection_created": "Подборка создана",
+            "collection_updated": "Подборка обновлена",
+            "collection_deleted": "Подборка удалена"
+        },
+        "context": {
+            "title": "Персональный AI-контекст",
+            "description": "Укажите ваши предпочтения, диету или ограничения. AI-помощник будет учитывать это при подборе товаров.",
+            "placeholder": "Например: Избегай молочки, так как у меня непереносимость лактозы. Предпочитаю органические продукты."
+        },
+        "history": {
+            "title": "История покупок и маршрутов",
+            "empty": "История пуста",
+            "route": "Маршрут",
+            "products": "Товары",
+            "view_on_map": "Посмотреть на карте",
+            "old_route_unavailable": "Для старых записей маршрут недоступен"
+        },
+        "collections": {
+            "title": "Мои подборки товаров",
+            "create": "Создать подборку",
+            "new_title": "Новая подборка",
+            "shop": "Магазин",
+            "select_shop": "-- Выберите магазин --",
+            "name": "Название",
+            "name_placeholder": "Например: Завтрак на неделю",
+            "description": "Описание",
+            "description_placeholder": "Краткое описание",
+            "emoji": "Emoji",
+            "items": "Товары",
+            "items_selected": "{{count}} выбрано",
+            "search_placeholder": "Поиск товаров...",
+            "items_loading": "Загрузка товаров...",
+            "items_not_found": "Ничего не найдено",
+            "no_items_shop": "Товары не найдены для магазина",
+            "empty_state": "У вас пока нет подборок. Создайте первую!",
+            "delete_confirm": "Удалить эту подборку?",
+            "shop_id": "ID магазина",
+            "count_items": "{{count}} товаров"
+        },
+        "stats": {
+            "title": "Статистика расходов",
+            "no_data": "Нет данных для отображения",
+            "total_routes": "Всего маршрутов",
+            "total_spent": "Всего потрачено",
+            "average_check": "Средний чек",
+            "total_distance": "Всего пройдено",
+            "total_time": "Всего времени",
+            "average_time": "Среднее время"
+        }
+    }
+}

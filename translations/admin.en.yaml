@@ -1,0 +1,155 @@
+dashboard:
+    title: "EasyShop Management"
+    locale_switcher: "Interface language"
+    menu:
+        dashboard: "Dashboard"
+        shop_management: "Shop Management"
+        retailers: "Retailers"
+        shops: "Shops"
+        categories: "Categories"
+        shop_categories: "Shop Categories"
+        shop_banners: "Shop Banners"
+        commodities: "Commodities"
+        collections: "Collections"
+        user_management: "User Management"
+        users: "Users"
+        analytics: "Analytics"
+        user_activity: "User Activity"
+        links: "Links"
+        back_to_website: "Back to Website"
+
+common:
+    id: "ID"
+
+user_activity:
+    label_singular: "User Activity"
+    label_plural: "User Activity"
+    page_title:
+        index: "User Activity Log"
+    fields:
+        user: "User"
+        shop: "Shop"
+        query: "Search Query"
+        has_route: "Route Built"
+        route: "Route"
+        distance: "Distance (m)"
+        time: "Time (min)"
+        created_at: "Date"
+
+user:
+    label_singular: "User"
+    label_plural: "Users"
+    fields:
+        email: "Email"
+        roles: "Roles"
+        user_context: "Prompt / AI Context"
+        user_context_help: "Context used by AI to personalize responses."
+        collections_count: "Collections"
+        stats_total_routes: "Routes"
+        stats_total_distance: "Distance (m)"
+        stats_total_time: "Time (min)"
+        stats_total_cost: "Total (₽)"
+        password: "Password (hash)"
+
+shop:
+    label_singular: "Shop"
+    label_plural: "Shops"
+    flash:
+        save_before_pdf: "Save the shop first, then upload the PDF."
+        pdf_uploaded: "PDF accepted. The map image will be generated in the background."
+        no_map: "This shop has no map image yet. Upload a map and save changes."
+    actions:
+        edit_map: "Edit map"
+    fields:
+        title: "Title"
+        retailer: "Retailer"
+        address: "Address"
+        entrance_x: "Entrance X"
+        entrance_y: "Entrance Y"
+        exit_x: "Exit X"
+        exit_y: "Exit Y"
+        map_image: "Map Image"
+        map_image_filename: "Map image filename"
+        map_image_help: "PNG or JPG in the public/img directory."
+        avatar_help: "Avatar filename in public/img (optional)."
+        pdf_filename: "PDF filename"
+        pdf_file: "Floor plan PDF for conversion"
+        pdf_help: "Upload a PDF — after save, a map image will be generated."
+        ai_context: "AI Assistant Context"
+        ai_context_help: "Short description of the shop for AI: format, assortment focus, etc."
+
+banner:
+    label_singular: "Shop Banner"
+    label_plural: "Shop Banners"
+    fields:
+        shop: "Shop"
+        title: "Title"
+        image_file: "Image File"
+        preview: "Preview"
+        no_image: "No image"
+        upload_image: "Upload Image"
+        upload_help: "File will be uploaded to public/img. If uploaded, it will be used instead of the external link."
+        resolved_image_url: "Image in Use"
+        resolved_image_help: "This is the final URL the user will see on the map (prefers uploaded file, else external link)."
+        image_url: "External Image URL"
+        image_url_help: "Optional: full URL to external image if not uploading a file."
+        target_url: "Target URL"
+        x_coordinate: "X Coordinate"
+        y_coordinate: "Y Coordinate"
+        active: "Active"
+        sort_order: "Order"
+
+retailer:
+    label_singular: "Retailer"
+    label_plural: "Retailers"
+    fields:
+        title: "Title"
+
+category:
+    label_singular: "Category"
+    label_plural: "Categories"
+    fields:
+        title: "Title"
+        retailer: "Retailer"
+
+shop_category:
+    label_singular: "Category Marker"
+    label_plural: "Category Markers"
+    fields:
+        shop: "Shop"
+        category: "Category"
+        x_coordinate: "X Coordinate"
+        y_coordinate: "Y Coordinate"
+        commodities: "Products"
+
+commodity:
+    label_singular: "Product"
+    label_plural: "Products"
+    fields:
+        title: "Title"
+        price: "Price (₽)"
+        shop_categories: "Categories in Shops"
+
+collection:
+    label_singular: "Collection"
+    label_plural: "Collections"
+    item_label_singular: "Collection Item"
+    item_label_plural: "Collection Items"
+    fields:
+        title: "Title"
+        description: "Description"
+        emoji: "Emoji"
+        user: "User"
+        user_owner: "User (Owner)"
+        shop: "Shop"
+        active: "Active"
+        sort_order: "Order"
+        commodity: "Product"
+        commodities: "Products"
+        commodity_help_edit: "Only products from the collection's shop are shown"
+        commodity_help_new: "Save first, then only products from the selected shop will be shown during editing. Choose the product with the correct shop suffix."
+
+map_editor:
+    loading: "Loading map editor..."
+    no_map: "No map uploaded for this shop. Please upload a map image in the 'Map Image' field above and save changes."
+

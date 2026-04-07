@@ -1,0 +1,4 @@
+validators.password.not_blank: "Пожалуйста, введите пароль"
+validators.password.length: "Пароль должен содержать не менее {{ limit }} символов"
+user.email.unique: "Учётная запись с таким email уже существует"
+user.registration.agree_terms: "Необходимо согласиться с условиями использования"

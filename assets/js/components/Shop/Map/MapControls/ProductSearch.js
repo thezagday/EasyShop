@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function ProductSearch({ shopId, onSelect }) {
+    const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -46,7 +48,7 @@ export function ProductSearch({ shopId, onSelect }) {
                 return {
                     id: product.id,
                     name: product.title,
-                    category: firstCategory?.category?.title || 'Без категории',
+                    category: firstCategory?.category?.title || t('search.no_category'),
                     categoryId: firstCategory?.id,
                     x: firstCategory?.x_coordinate,
                     y: firstCategory?.y_coordinate,
@@ -76,7 +78,7 @@ export function ProductSearch({ shopId, onSelect }) {
                 <input
                     type="text"
                     className="map-search-input"
-                    placeholder="Поиск товара..."
+                    placeholder={t('search.product_placeholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -85,7 +87,7 @@ export function ProductSearch({ shopId, onSelect }) {
             {loading && (
                 <div className="search-results">
                     <div className="search-result-item" style={{ cursor: 'default', color: '#a0aec0' }}>
-                        Поиск...
+                        {t('common.search')}
                     </div>
                 </div>
             )}
@@ -115,7 +117,7 @@ export function ProductSearch({ shopId, onSelect }) {
             {isSearching && !loading && searchResults.length === 0 && searchQuery.length >= 2 && (
                 <div className="search-results">
                     <div className="search-result-item" style={{ cursor: 'default', color: '#a0aec0' }}>
-                        Товары не найдены
+                        {t('search.products_not_found')}
                     </div>
                 </div>
             )}

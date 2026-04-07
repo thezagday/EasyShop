@@ -1,0 +1,4 @@
+validators.password.not_blank: "Proszę wpisać hasło"
+validators.password.length: "Hasło musi mieć co najmniej {{ limit }} znaków"
+user.email.unique: "Konto z tym adresem e-mail już istnieje"
+user.registration.agree_terms: "Musisz zaakceptować nasze warunki"

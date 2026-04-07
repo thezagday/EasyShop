@@ -4,6 +4,7 @@ twig:
         admin_host: '%admin_host%'
         main_host: '%main_host%'
         app_scheme: '%app_scheme%'
+        locale_cookie_domain: '%locale_cookie_domain%'
 
 when@test:
     twig:

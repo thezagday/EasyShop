@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar() {
+    const { t } = useTranslation();
     const [menuOpen, setMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const userMenuRef = useRef(null);
@@ -36,9 +39,10 @@ export default function Navbar() {
                     </a>
                     {username && (
                         <span className="navbar-text ml-3 d-none d-sm-inline-block" style={{ color: '#666' }}>
-                            Привет, {username}
+                            {t('navbar.greeting', { username })}
                         </span>
                     )}
+                    <LanguageSwitcher />
                     <button
                         className="navbar-toggler"
                         type="button"
@@ -52,31 +56,31 @@ export default function Navbar() {
                     <div className={`navbar-collapse collapse ${menuOpen ? 'show' : ''}`} id="navbarSupportedContent">
                         <ul className="navbar-nav ml-auto mb-2 mb-lg-0">
                             {isAdminHost ? (
-                                // На admin хосте показываем только "Управление" и вход без регистрации
+                                // On admin host, show only "Management" and login without registration
                                 <>
                                     {isAdmin ? (
                                         <li className="nav-item">
-                                            <a className="nav-link nav-link-1" href="/admin" onClick={() => setMenuOpen(false)}>Управление</a>
+                                            <a className="nav-link nav-link-1" href="/admin" onClick={() => setMenuOpen(false)}>{t('navbar.management')}</a>
                                         </li>
                                     ) : (
                                         <li className="nav-item">
-                                            <a className="nav-link nav-link-1" href="/login" onClick={() => setMenuOpen(false)}>Вход</a>
+                                            <a className="nav-link nav-link-1" href="/login" onClick={() => setMenuOpen(false)}>{t('navbar.login')}</a>
                                         </li>
                                     )}
                                     {isLoggedIn && (
                                         <li className="nav-item">
-                                            <a className="nav-link nav-link-1" href="/logout" onClick={() => setMenuOpen(false)}>Выход</a>
+                                            <a className="nav-link nav-link-1" href="/logout" onClick={() => setMenuOpen(false)}>{t('navbar.logout')}</a>
                                         </li>
                                     )}
                                 </>
                             ) : (
-                                // На основном хосте показываем полное меню БЕЗ "Управление"
+                                // On main host, show full menu WITHOUT "Management"
                                 <>
-                                    <li className="nav-item">
+                                            <li className="nav-item">
                                         <NavLink
                                             className={({ isActive }) => (isActive ? "nav-link nav-link-1 active" : 'nav-link nav-link-1')}
                                             end to={"/"} aria-current="page"
-                                            onClick={closeAllMenus}>Магазины</NavLink>
+                                            onClick={closeAllMenus}>{t('navbar.shops')}</NavLink>
                                     </li>
                                     {username ? (
                                         <>
@@ -89,7 +93,7 @@ export default function Navbar() {
                                                     aria-expanded={userMenuOpen}
                                                 >
                                                     <i className="fas fa-user-circle"></i>
-                                                    <span>Аккаунт</span>
+                                                    <span>{t('navbar.account')}</span>
                                                 </button>
                                                 <div className={`nav-user-menu-dropdown ${userMenuOpen ? 'show' : ''}`}>
                                                     <NavLink
@@ -97,19 +101,19 @@ export default function Navbar() {
                                                         to={"/profile"}
                                                         onClick={closeAllMenus}
                                                     >
-                                                        Личный кабинет
+                                                        {t('navbar.profile')}
                                                     </NavLink>
-                                                    <a className="nav-user-menu-item" href="/logout" onClick={closeAllMenus}>Выход</a>
+                                                    <a className="nav-user-menu-item" href="/logout" onClick={closeAllMenus}>{t('navbar.logout')}</a>
                                                 </div>
                                             </li>
                                         </>
                                     ) : (
                                         <>
                                             <li className="nav-item">
-                                                <a className="nav-link nav-link-1" href="/login" onClick={closeAllMenus}>Вход</a>
+                                                <a className="nav-link nav-link-1" href="/login" onClick={closeAllMenus}>{t('navbar.login')}</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a className="nav-link nav-link-1" href="/register" onClick={closeAllMenus}>Регистрация</a>
+                                                <a className="nav-link nav-link-1" href="/register" onClick={closeAllMenus}>{t('navbar.registration')}</a>
                                             </li>
                                         </>
                                     )}

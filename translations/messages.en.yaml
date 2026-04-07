@@ -1,0 +1,192 @@
+language:
+    switcher: "Language"
+
+navbar:
+    greeting: "Hello, %username%"
+    management: "Management"
+    login: "Login"
+    logout: "Logout"
+    shops: "Shops"
+    account: "Account"
+    profile: "Profile"
+    registration: "Registration"
+
+home:
+    search_placeholder: "Search shop..."
+    not_found: "No shops found"
+
+common:
+    loading: "Loading..."
+    error: "An error occurred"
+    save: "Save"
+    cancel: "Cancel"
+    delete: "Delete"
+    edit: "Edit"
+    create: "Create"
+    launch_service: "Launch service"
+    start_free: "Start for free"
+    connect_shop_free: "Connect shop for free"
+    go_shopping: "Go shopping"
+    email: "E-mail"
+    password: "Password"
+    remember_me: "Remember me"
+
+auth:
+    login: "Login"
+    registration: "Registration"
+    submit_login: "Login"
+    submit_register: "Register"
+
+api:
+    errors:
+        user_not_found: "User not found"
+        shop_id_required: "shopId is required"
+        shop_not_found: "Shop not found"
+        collection_not_found: "Collection not found"
+        commodity_id_required: "commodityId is required"
+        commodity_not_found: "Product not found"
+        too_many_requests: "Too many AI requests. Please retry later."
+        request_blocked: "Request blocked by anti-bot protection."
+    defaults:
+        new_collection: "New collection"
+    ai:
+        no_free_yet: "AI response will be here when AI is free"
+    docs:
+        title: "All API Endpoints"
+        total: "Total"
+        generated: "Generated"
+        api_platform: "API Platform docs"
+        json_view: "JSON view"
+        filter_placeholder: "Search: path / route / controller"
+        any_source: "Any source"
+        any_method: "Any method"
+        any_security: "Any security"
+        no_is_granted: "Without IsGranted"
+        any_protection: "Any protection status"
+        protected: "Protected"
+        public_expected: "Public expected (guest/product)"
+        review_required: "Unprotected review required"
+        visible_count: "Showing {{count}} of {{total}}"
+        table:
+            path: "Path"
+            methods: "Methods"
+            source: "Source"
+            protection: "Protection"
+            is_granted: "IsGranted"
+            controller: "Controller"
+            route_name: "Route name"
+
+validators:
+    password:
+        not_blank: "Please enter a password"
+        length: "Your password should be at least {{ limit }} characters"
+
+
+landing:
+    title: "EasyShop — Optimal routes for shops and warehouses"
+    description: "EasyShop builds optimal routes for a shop or warehouse. For customers, couriers, order pickers and merchandisers."
+    nav:
+        features: "Features"
+        ai: "AI Assistant"
+        maps: "Maps"
+        warehouse: "Warehouse"
+        business: "For business"
+    hero:
+        offer: "Reduce shop time by 30-40% — from the very first trip"
+        h1: "Optimal route — fewer steps, more results"
+        p: "EasyShop uses a route optimization algorithm so you can walk through a shop or warehouse via the shortest path. No extra circles — only the right products in the right order."
+    features:
+        h2: "How it works?"
+        p: "Three steps to an optimal route"
+        step1_title: "Make a list"
+        step1_p: "Import a product list from your phone or just write a request to the AI assistant — it will select the necessary items itself."
+        step2_title: "Optimal route"
+        step2_p: "The algorithm calculates the shortest path through all necessary departments taking obstacles into account — like GPS, but for the sales floor."
+        step3_title: "Save time"
+        step3_p: "Forget about chaotic movements. Walk through the shop via the optimal path — save <strong>5-15 minutes</strong> on each visit, up to <strong>40% fewer steps</strong>."
+    ai:
+        badge: "AI Assistant"
+        h2: "Just write — AI will make the list itself"
+        p: "No need to manually search for each product. Write to the AI assistant what you want to buy or cook — it will select the necessary items from the shop catalog. The product list can also be imported from your phone."
+        example1_user: "I want to cook pilaf for 4 people"
+        example1_bot: "Picked: rice 1 kg, lamb 800 g, carrots, onions, spices for pilaf. Build a route through the shop?"
+        example2_user: "Need groceries for breakfast for a week"
+        example2_bot: "Made a list: eggs, oatmeal, milk, bread, butter, cottage cheese, fruits. Show route?"
+    maps:
+        h2: "Interactive shop maps"
+        p: "Navigate any hypermarket like your own home"
+        card1_title: "Shop map"
+        card1_p: "An interactive scheme of the sales floor will help you instantly find the right product or an entire category — without wandering through the aisles."
+        card2_title: "Search on map"
+        card2_p: "Enter the name of a product or category — and the map will immediately show exactly where it is located in the shop."
+        card3_title: "Thematic collections"
+        card3_p: "Ready-made sets for holidays and special occasions: New Year, birthday, picnic. Choose a collection — and the route through the shop is already ready!"
+    benefits:
+        h2: "Benefits of registration"
+        p: "Personalization, purchase history and expense control — all in one account"
+        card1_title: "Personal AI context"
+        card1_p: "The AI assistant takes your preferences into account: lactose intolerance, vegetarianism, love for organics. Specify once — and receive recommendations exactly for yourself every time."
+        card2_title: "Purchase and route history"
+        card2_p: "All your requests, routes and purchases are saved. It's easy to return to past lists or repeat a successful order — no need to remember what you bought a month ago."
+        card3_title: "Your own product collections"
+        card3_p: "Create personal collections: \"Breakfast for a week\", \"Products for a picnic\", \"Baby food\". They are saved in your profile and available in any shop of the chain."
+        card4_title: "Spending statistics"
+        card4_p: "See how much you spent per route and in total. Average check, purchase frequency, time savings — full analytics of your shop trips."
+        cta: "Register for free"
+    advantages:
+        h2: "Smart shopping in your pocket"
+        p: "We support the city's largest hypermarkets. Interactive maps, AI assistant and holiday collections — everything to make a shop trip fast and pleasant."
+    warehouse:
+        h2: "For warehouses and internal logistics"
+        p: "Optimal routes work not only in shops — but also in any warehouse"
+        intro: "If you have a warehouse with products on shelves — EasyShop will help your employees move along the shortest path. Upload a warehouse plan, arrange products by zones and get a ready-made tool for movement optimization."
+        card1_title: "Couriers and order pickers"
+        card1_p: "The algorithm builds an optimal route for collecting an order through a warehouse or sales floor. The picker walks the minimum distance — <strong>+25-35% orders per hour</strong>, queues do not accumulate."
+        card2_title: "Merchandisers"
+        card2_p: "Need to quickly find where what lies? The merchandiser enters a list of items — and receives a walk-through route across the floor. No wandering, only the right shelves in the right order."
+        card3_title: "Any warehouse or shop"
+        card3_p: "Upload a floor plan, indicate the location of products — and the system is ready to go. Suitable for retail shops, online shop warehouses and distribution centers."
+    business:
+        h2: "For retailers and managers"
+        p: "Attract customers with a unique service. Registered users choose shops in EasyShop — because it's more convenient, faster and has personalization."
+        highlight_title: "Why will customers choose your shop?"
+        highlight_p: "EasyShop users save their preferences, purchase history and collections. But all this works only in registered shops. <strong>Your registration = competitive advantage</strong>. A customer will come where they are known and where a personal AI assistant is already configured."
+        card1_title: "Personalization attracts customers"
+        card1_p: "Customers value AI that remembers their diet and preferences. If your shop is in the system — the customer receives personal recommendations. Competitors without EasyShop cannot offer this."
+        card2_title: "Purchase history retains"
+        card2_p: "Customers return to where their lists and routes are saved. Switching to a competitor = losing the entire history. This works like a loyalty program without cards and discounts."
+        card3_title: "Product management"
+        card3_p: "Add products through the administrative panel: name, price and location on the map. Configure the AI context of the shop: organic, wholesale warehouse, sports nutrition — anything."
+        card4_title: "Shop map upload"
+        card4_p: "Upload interactive sales floor plans. Customers immediately see the current scheme and can navigate your shop. Routes are built via A* — like in GPS."
+        card5_title: "Route analytics"
+        card5_p: "Track popular customer routes, spending statistics, visit frequency. Find out which zones are visited more often — and optimize the layout based on real data."
+        card6_title: "Collections work for you"
+        card6_p: "Users create personal product collections in your shop. This means they plan to return. Collections = ready-made shopping lists stored only with you."
+    footer:
+        copy: "&copy; %year% EasyShop Project. Made professionally."
+
+footer:
+    rights: "All rights reserved"
+
+dashboard:
+    title: "EasyShop Management"
+    menu:
+        dashboard: "Dashboard"
+        shop_management: "Shop Management"
+        retailers: "Retailers"
+        shops: "Shops"
+        categories: "Categories"
+        shop_categories: "Shop Categories"
+        shop_banners: "Shop Banners"
+        commodities: "Commodities"
+        collections: "Collections"
+        user_management: "User Management"
+        users: "Users"
+        analytics: "Analytics"
+        user_activity: "User Activity"
+        links: "Links"
+        back_to_website: "Back to Website"
+
+collection:
+    label_plural: "Collections"

@@ -49,13 +49,13 @@ export function SetupMap(map, mapImageUrl = "/img/map.svg", shop = null) {
         applyInitialView();
     }, 0);
     
-    // Добавляем плавную анимацию при перемещении
+    // Add smooth animation when moving
     map.options.zoomAnimation = true;
     map.options.fadeAnimation = true;
     map.options.markerZoomAnimation = true;
     
     
-    // Создаем интерактивный слой для будущего использования
+    // Create interactive layer for future use
     const interactiveLayer = new InteractiveLayer(map);
     
     return {

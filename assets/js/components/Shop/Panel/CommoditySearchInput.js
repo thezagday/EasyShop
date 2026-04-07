@@ -1,7 +1,9 @@
 import React from 'react';
 import Select from "react-select";
+import { useTranslation } from 'react-i18next';
 
 export default function CommoditySearchInput({categories, onChange}) {
+    const { t } = useTranslation();
     const commodities = categories.flatMap(category => category.commodities);
 
     function handleSelectChange (event) {
@@ -29,7 +31,7 @@ export default function CommoditySearchInput({categories, onChange}) {
                 options={options}
                 onChange={handleSelectChange}
                 isClearable={true}
-                placeholder={'Поиск по товарам'}
+                placeholder={t('shop.placeholders.search_products')}
             />
         </div>
     );

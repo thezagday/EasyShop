@@ -6,6 +6,7 @@ import './styles/map.css';
 const $ = require('jquery');
 
 import './js/plugins';
+import './js/i18n';
 
 $(window).on("load", function () {
     $('body').addClass('loaded');

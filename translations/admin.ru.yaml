@@ -1,0 +1,155 @@
+dashboard:
+    title: "EasyShop Управление"
+    locale_switcher: "Язык интерфейса"
+    menu:
+        dashboard: "Панель управления"
+        shop_management: "Управление магазинами"
+        retailers: "Ритейлеры"
+        shops: "Магазины"
+        categories: "Категории"
+        shop_categories: "Метки категорий"
+        shop_banners: "Баннеры"
+        commodities: "Товары"
+        collections: "Подборки"
+        user_management: "Управление пользователями"
+        users: "Пользователи"
+        analytics: "Аналитика"
+        user_activity: "Активность пользователей"
+        links: "Ссылки"
+        back_to_website: "Вернуться на сайт"
+
+common:
+    id: "ID"
+
+user_activity:
+    label_singular: "Активность пользователя"
+    label_plural: "Активность пользователей"
+    page_title:
+        index: "Журнал активности пользователей"
+    fields:
+        user: "Пользователь"
+        shop: "Магазин"
+        query: "Поисковый запрос"
+        has_route: "Маршрут построен"
+        route: "Маршрут"
+        distance: "Дистанция (м)"
+        time: "Время (мин)"
+        created_at: "Дата"
+
+user:
+    label_singular: "Пользователь"
+    label_plural: "Пользователи"
+    fields:
+        email: "Email"
+        roles: "Роли"
+        user_context: "Промпт / AI-контекст"
+        user_context_help: "Контекст, который AI использует для персонализации ответов."
+        collections_count: "Подборок"
+        stats_total_routes: "Маршрутов"
+        stats_total_distance: "Дистанция (м)"
+        stats_total_time: "Время (мин)"
+        stats_total_cost: "Сумма (₽)"
+        password: "Пароль (хэш)"
+
+shop:
+    label_singular: "Магазин"
+    label_plural: "Магазины"
+    flash:
+        save_before_pdf: "Сначала сохраните магазин, затем загрузите PDF."
+        pdf_uploaded: "PDF принят. Изображение карты будет создано в фоновом режиме."
+        no_map: "Для этого магазина нет изображения карты. Загрузите карту и сохраните изменения."
+    actions:
+        edit_map: "Редактировать карту"
+    fields:
+        title: "Название"
+        retailer: "Ритейлер"
+        address: "Адрес"
+        entrance_x: "Вход X"
+        entrance_y: "Вход Y"
+        exit_x: "Выход X"
+        exit_y: "Выход Y"
+        map_image: "Изображение карты"
+        map_image_filename: "Имя файла карты"
+        map_image_help: "PNG или JPG в каталоге public/img."
+        avatar_help: "Имя файла аватара в public/img (опционально)."
+        pdf_filename: "Имя файла PDF"
+        pdf_file: "PDF плана для конвертации"
+        pdf_help: "Загрузите PDF — после сохранения будет сформировано изображение карты."
+        ai_context: "Контекст для AI-помощника"
+        ai_context_help: "Кратко опишите магазин для AI: формат, акценты ассортимента и т.п."
+
+banner:
+    label_singular: "Рекламный баннер"
+    label_plural: "Рекламные баннеры"
+    fields:
+        shop: "Магазин"
+        title: "Название"
+        image_file: "Файл изображения"
+        preview: "Превью"
+        no_image: "Нет изображения"
+        upload_image: "Загрузить изображение"
+        upload_help: "Файл загрузится в public/img. Если загружен файл, он будет использоваться вместо внешней ссылки."
+        resolved_image_url: "Используемое изображение"
+        resolved_image_help: "Это итоговый URL, который увидит пользователь на карте (сначала берется загруженный файл, иначе внешняя ссылка)."
+        image_url: "Внешняя ссылка на изображение"
+        image_url_help: "Опционально: полный URL до внешнего изображения, если не загружаете файл."
+        target_url: "Ссылка перехода"
+        x_coordinate: "X координата"
+        y_coordinate: "Y координата"
+        active: "Активный"
+        sort_order: "Порядок"
+
+retailer:
+    label_singular: "Ритейлер"
+    label_plural: "Ритейлеры"
+    fields:
+        title: "Название"
+
+category:
+    label_singular: "Категория"
+    label_plural: "Категории"
+    fields:
+        title: "Название"
+        retailer: "Ритейлер"
+
+shop_category:
+    label_singular: "Метка категории"
+    label_plural: "Метки категорий"
+    fields:
+        shop: "Магазин"
+        category: "Категория"
+        x_coordinate: "X Координата"
+        y_coordinate: "Y Координата"
+        commodities: "Товары"
+
+commodity:
+    label_singular: "Товар"
+    label_plural: "Товары"
+    fields:
+        title: "Название"
+        price: "Цена (₽)"
+        shop_categories: "Категории в магазинах"
+
+collection:
+    label_singular: "Подборка"
+    label_plural: "Подборки"
+    item_label_singular: "Товар в подборке"
+    item_label_plural: "Товары в подборках"
+    fields:
+        title: "Название"
+        description: "Описание"
+        emoji: "Emoji"
+        user: "Пользователь"
+        user_owner: "Пользователь (владелец)"
+        shop: "Магазин"
+        active: "Активна"
+        sort_order: "Порядок"
+        commodity: "Товар"
+        commodities: "Товары"
+        commodity_help_edit: "Показаны только товары магазина подборки"
+        commodity_help_new: "Сначала сохраните, затем при редактировании будут показаны только товары нужного магазина. Выбирайте товар с правильным суффиксом магазина."
+
+map_editor:
+    loading: "Загрузка редактора карты..."
+    no_map: "Для этого магазина не загружена карта. Пожалуйста, загрузите карту в поле 'Имя файла карты магазина' выше и сохраните изменения."
+

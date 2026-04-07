@@ -21,6 +21,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[IsGranted('ROLE_ADMIN')]
 class ShopCrudController extends AbstractCrudController
@@ -31,7 +33,8 @@ class ShopCrudController extends AbstractCrudController
     public function __construct(
         private AdminUrlGenerator $adminUrlGenerator,
         private MessageBusInterface $messageBus,
-        #[Autowire('%kernel.project_dir%')] private string $projectDir
+        #[Autowire('%kernel.project_dir%')] private string $projectDir,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -66,7 +69,7 @@ class ShopCrudController extends AbstractCrudController
 
         $shopId = $shop->getId();
         if (!$shopId) {
-            $this->addFlash('warning', 'Магазин должен быть сохранён перед обработкой PDF');
+            $this->addFlash('warning', $this->translator->trans('shop.flash.save_before_pdf', [], 'admin'));
             return;
         }
 
@@ -74,7 +77,7 @@ class ShopCrudController extends AbstractCrudController
         $message = new ProcessShopPdfToMapImageMessage($shopId, $pdfFile);
         $this->messageBus->dispatch($message);
 
-        $this->addFlash('success', 'PDF файл загружен. Карта будет сгенерирована в фоновом режиме.');
+        $this->addFlash('success', $this->translator->trans('shop.flash.pdf_uploaded', [], 'admin'));
     }
 
     public static function getEntityFqcn(): string
@@ -82,9 +85,16 @@ class ShopCrudController extends AbstractCrudController
         return Shop::class;
     }
 
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular(new TranslatableMessage('shop.label_singular', [], 'admin'))
+            ->setEntityLabelInPlural(new TranslatableMessage('shop.label_plural', [], 'admin'));
+    }
+
     public function configureActions(Actions $actions): Actions
     {
-        $editMap = Action::new('editMap', 'Edit Map', 'fa fa-map')
+        $editMap = Action::new('editMap', new TranslatableMessage('shop.actions.edit_map', [], 'admin'), 'fa fa-map')
             ->linkToCrudAction('editMap')
             ->setCssClass('btn btn-info');
 
@@ -104,7 +114,7 @@ class ShopCrudController extends AbstractCrudController
         $mapImage = $shop->getMapImage();
 
         if (!$mapImage) {
-            $this->addFlash('warning', 'Для этого магазина не загружена карта. Пожалуйста, загрузите карту в поле "Имя файла карты магазина".');
+            $this->addFlash('warning', $this->translator->trans('shop.flash.no_map', [], 'admin'));
 
             return $this->redirect(
                 $this->adminUrlGenerator
@@ -127,19 +137,19 @@ class ShopCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
-            TextField::new('title', 'Название'),
-            TextField::new('avatar', 'Имя файла аватара магазина (в public/img/)'),
-            TextField::new('mapImage', 'Карта (имя файла)')
+            IdField::new('id', new TranslatableMessage('common.id', [], 'admin'))->hideOnForm(),
+            TextField::new('title', new TranslatableMessage('shop.fields.title', [], 'admin')),
+            TextField::new('avatar', new TranslatableMessage('shop.fields.avatar_help', [], 'admin')),
+            TextField::new('mapImage', new TranslatableMessage('shop.fields.map_image_filename', [], 'admin'))
                 ->onlyOnIndex(),
-            ImageField::new('mapImage', 'Карта магазина')
-                ->setHelp('Карта используется для навигации покупателей и редактора препятствий')
+            ImageField::new('mapImage', new TranslatableMessage('shop.fields.map_image', [], 'admin'))
+                ->setHelp(new TranslatableMessage('shop.fields.map_image_help', [], 'admin'))
                 ->setBasePath('/img')
                 ->setUploadDir('public/img')
                 ->setUploadedFileNamePattern('[name].[extension]')
                 ->setRequired(false)
                 ->onlyOnForms(),
-            TextField::new('pdfFile', 'PDF (имя файла)')
+            TextField::new('pdfFile', new TranslatableMessage('shop.fields.pdf_filename', [], 'admin'))
                 ->formatValue(static function ($value) {
                     if (!$value) {
                         return '';
@@ -150,19 +160,19 @@ class ShopCrudController extends AbstractCrudController
                 })
                 ->renderAsHtml()
                 ->onlyOnIndex(),
-            TextField::new('pdfFile', 'PDF файл')
-                ->setHelp('PDF будет сохранён в public/img')
+            TextField::new('pdfFile', new TranslatableMessage('shop.fields.pdf_file', [], 'admin'))
+                ->setHelp(new TranslatableMessage('shop.fields.pdf_help', [], 'admin'))
                 ->setFormType(FileUploadType::class)
                 ->setFormTypeOption('upload_dir', 'public/img')
                 ->setFormTypeOption('upload_filename', '[name].[extension]')
                 ->setFormTypeOption('attr', ['accept' => 'application/pdf'])
                 ->setRequired(false)
                 ->onlyOnForms(),
-            TextareaField::new('aiContext', 'Контекст для AI-помощника')
-                ->setHelp('Системный контекст для AI: опишите тип заведения (магазин/склад), особенности ассортимента, специфику работы. Этот текст будет передаваться AI при генерации списка покупок.')
+            TextareaField::new('aiContext', new TranslatableMessage('shop.fields.ai_context', [], 'admin'))
+                ->setHelp(new TranslatableMessage('shop.fields.ai_context_help', [], 'admin'))
                 ->setRequired(false)
                 ->hideOnIndex(),
-            AssociationField::new('retailer', 'Ритейлер'),
+            AssociationField::new('retailer', new TranslatableMessage('shop.fields.retailer', [], 'admin')),
         ];
     }
 }

@@ -18,7 +18,7 @@ function normalizeWaypoint(waypoint, index) {
 
     if (!waypoint || typeof waypoint !== 'object') return null;
 
-    const nameSource = waypoint.title || waypoint.name || `Точка ${index + 1}`;
+    const nameSource = waypoint.title || waypoint.name || `${i18n.t('map.point')} ${index + 1}`;
     const normalized = { name: String(nameSource) };
 
     const x = Number(waypoint.x);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const DISMISS_COOKIE_NAME = 'pwa_install_prompt_dismissed';
 const DISMISS_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
@@ -15,19 +16,20 @@ function setDismissCookie() {
 }
 
 export default function PWAInstallPrompt() {
+    const { t } = useTranslation();
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showPrompt, setShowPrompt] = useState(false);
 
     useEffect(() => {
-        // Слушаем событие beforeinstallprompt
+        // Listen for beforeinstallprompt event
         const handler = (e) => {
             if (hasDismissCookie()) {
                 return;
             }
 
-            // Предотвращаем стандартное отображение
+            // Prevent standard display
             e.preventDefault();
-            // Сохраняем событие для последующего использования
+            // Save event for later use
             setDeferredPrompt(e);
             setShowPrompt(true);
         };
@@ -40,14 +42,14 @@ export default function PWAInstallPrompt() {
     const handleInstallClick = async () => {
         if (!deferredPrompt) return;
 
-        // Показываем стандартный диалог установки
+        // Show standard install dialog
         deferredPrompt.prompt();
 
-        // Ждем ответа пользователя
+        // Wait for user choice
         const { outcome } = await deferredPrompt.userChoice;
         console.log(`User response: ${outcome}`);
 
-        // Скрываем наш промпт
+        // Hide our prompt
         setShowPrompt(false);
         setDeferredPrompt(null);
     };
@@ -87,10 +89,10 @@ export default function PWAInstallPrompt() {
         }}>
             <div style={{ flex: 1 }}>
                 <strong style={{ display: 'block', marginBottom: '4px' }}>
-                    📱 Установить EasyShop
+                    {t('pwa.title')}
                 </strong>
                 <small style={{ opacity: 0.9 }}>
-                    Добавьте приложение на главный экран для быстрого доступа
+                    {t('pwa.description')}
                 </small>
             </div>
             <button
@@ -106,7 +108,7 @@ export default function PWAInstallPrompt() {
                     whiteSpace: 'nowrap'
                 }}
             >
-                Установить
+                {t('pwa.install')}
             </button>
             <button
                 onClick={handleDismiss}

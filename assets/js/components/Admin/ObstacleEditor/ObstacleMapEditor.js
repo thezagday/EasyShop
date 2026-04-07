@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import './ObstacleEditor.css';
 
 const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
+    const { t } = useTranslation();
     const overlayRef = useRef(null);
     const [obstacles, setObstacles] = useState([]);
     const [drawingMode, setDrawingMode] = useState(false);
@@ -56,7 +58,7 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
 
     const handleObstacleClick = (obstacle) => {
         if (drawingMode) return;
-        if (window.confirm(`Delete obstacle (${obstacle.type})?\nCoordinates: x=${obstacle.x}, y=${obstacle.y}`)) {
+        if (window.confirm(t('admin.confirm.delete_obstacle', { type: obstacle.type, x: obstacle.x, y: obstacle.y, w: obstacle.width, h: obstacle.height }))) {
             deleteObstacle(obstacle.id);
         }
     };
@@ -72,7 +74,7 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
             }
         } catch (error) {
             console.error('Failed to delete obstacle:', error);
-            alert('Failed to delete obstacle');
+            alert(t('common.error'));
         }
     };
 
@@ -184,16 +186,16 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
                 const newObstacle = await response.json();
                 setObstacles(prev => [...prev, newObstacle]);
             } else {
-                alert(`Failed to create obstacle: ${response.status} ${response.statusText}`);
+                alert(`${t('common.error')}: ${response.status} ${response.statusText}`);
             }
         } catch (error) {
             console.error('Failed to create obstacle:', error);
-            alert('Failed to create obstacle');
+            alert(t('common.error'));
         }
     };
 
     const clearAllObstacles = async () => {
-        if (!window.confirm('Delete all obstacles? This cannot be undone.')) return;
+        if (!window.confirm(t('admin.confirm.clear_obstacles'))) return;
 
         setSaving(true);
         try {
@@ -205,7 +207,7 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
             setObstacles([]);
         } catch (error) {
             console.error('Failed to clear obstacles:', error);
-            alert('Failed to clear obstacles');
+            alert(t('common.error'));
         }
         setSaving(false);
     };
@@ -213,19 +215,19 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
     return (
         <div className="obstacle-editor">
             <div className="editor-toolbar">
-                <h3>Obstacle Map Editor</h3>
+                <h3>{t('admin.obstacle_map_editor')}</h3>
 
                 <div className="toolbar-section">
-                    <label>Obstacle Type:</label>
+                    <label>{t('admin.obstacle_type')}:</label>
                     <select 
                         value={selectedType} 
                         onChange={(e) => setSelectedType(e.target.value)}
                         disabled={!drawingMode}
                     >
-                        <option value="shelf">Shelf (Red)</option>
-                        <option value="wall">Wall (Gray)</option>
-                        <option value="counter">Counter (Blue)</option>
-                        <option value="checkout">Checkout (Green)</option>
+                        <option value="shelf">{t('admin.obstacle_types.shelf')}</option>
+                        <option value="wall">{t('admin.obstacle_types.wall')}</option>
+                        <option value="counter">{t('admin.obstacle_types.counter')}</option>
+                        <option value="checkout">{t('admin.obstacle_types.checkout')}</option>
                     </select>
                 </div>
 
@@ -234,7 +236,7 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
                         className={`btn ${drawingMode ? 'btn-danger' : 'btn-primary'}`}
                         onClick={toggleDrawingMode}
                     >
-                        {drawingMode ? '✓ Done Drawing' : '✏️ Draw Obstacle'}
+                        {drawingMode ? t('admin.done') : t('admin.draw')}
                     </button>
 
                     <button 
@@ -242,20 +244,20 @@ const ObstacleMapEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
                         onClick={clearAllObstacles}
                         disabled={obstacles.length === 0 || saving}
                     >
-                        🗑️ Clear All
+                        {t('admin.clear')}
                     </button>
                 </div>
 
                 <div className="toolbar-info">
-                    <p>Total obstacles: <strong>{obstacles.length}</strong></p>
+                    <p>{t('admin.total_obstacles')}: <strong>{obstacles.length}</strong></p>
                     {drawingMode && (
                         <p className="drawing-hint">
-                            🖱️ Click and drag to draw a rectangle
+                            {t('admin.hints.draw')}
                         </p>
                     )}
                     {!drawingMode && obstacles.length > 0 && (
                         <p className="edit-hint">
-                            🖱️ Click on obstacle to delete
+                            {t('admin.hints.click_to_delete')}
                         </p>
                     )}
                 </div>

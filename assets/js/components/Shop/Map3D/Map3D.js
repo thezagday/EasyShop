@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
 import { Floor } from './Floor';
 import { Obstacles3D } from './Obstacles3D';
@@ -23,6 +24,7 @@ export default function Map3D({
     searchedCategoryByCommodity,
     multiSearch,
 }) {
+    const { t } = useTranslation();
     const controlsRef = useRef(null);
     const routeBuilderRef = useRef(null);
     const wrapperRef = useRef(null);
@@ -71,7 +73,7 @@ export default function Map3D({
                         if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
 
                         return {
-                            name: waypoint.name || waypoint.title || 'Точка',
+                            name: waypoint.name || waypoint.title || t('map.point'),
                             x,
                             y,
                             categoryId: waypoint.categoryId,
@@ -241,15 +243,15 @@ export default function Map3D({
         const exitY = entranceExit?.exitY ?? 0;
 
         const waypoints = [
-            { name: 'Вход', x: entranceX, y: entranceY },
+            { name: t('shop.entrance'), x: entranceX, y: entranceY },
             ...cats.map(cat => ({
-                name: cat.title || cat.category?.title || 'Категория',
+                name: cat.title || cat.category?.title || t('ai.category'),
                 x: cat.x_coordinate,
                 y: cat.y_coordinate,
                 categoryId: cat.id,
                 commodities: cat.commodities || []
             })),
-            { name: 'Выход', x: exitX, y: exitY }
+            { name: t('shop.exit'), x: exitX, y: exitY }
         ];
         setRouteSource(waypoints);
         setRouteDestination(null);
@@ -304,7 +306,7 @@ export default function Map3D({
 
         const isDirectMapSelection = !selectedCategory && !selectedProduct && aiCategories.length === 0;
         if (isDirectMapSelection) {
-            const categoryQuery = targetCategory.title || targetCategory.category?.title || 'Категория';
+            const categoryQuery = targetCategory.title || targetCategory.category?.title || t('ai.category');
             await TrackingService.trackSearch(shopId, categoryQuery);
         }
 
@@ -312,12 +314,12 @@ export default function Map3D({
         setSelectedProduct(null);
 
         setRouteSource({
-            name: 'Вход',
+            name: t('shop.entrance'),
             x: shop?.entranceX ?? 0,
             y: shop?.entranceY ?? 50
         });
         setRouteDestination({
-            name: targetCategory.category?.title || 'Категория',
+            name: targetCategory.category?.title || t('ai.category'),
             x: targetCategory.x_coordinate,
             y: targetCategory.y_coordinate,
             categoryId: categoryId,
@@ -377,8 +379,8 @@ export default function Map3D({
             {routeInfo && (
                 <div className="route-info-bar">
                     <span className="route-chip">🗺️ {routeInfo.from} → {routeInfo.to}</span>
-                    <span className="route-chip">📏 ~{routeInfo.distance}м</span>
-                    <span className="route-chip">⏱ ~{routeInfo.time} мин</span>
+                    <span className="route-chip">📏 {t('shop.route_info.distance', { distance: routeInfo.distance })}</span>
+                    <span className="route-chip">⏱ {t('shop.route_info.time', { time: routeInfo.time })}</span>
                     <button className="route-reset-btn" onClick={handleRouteReset}>✕</button>
                 </div>
             )}
@@ -470,7 +472,7 @@ export default function Map3D({
             {/* Compass reset button */}
             <button
                 className="map3d-compass-btn"
-                title="Сбросить вид"
+                title={t('map.reset_view')}
                 onClick={() => setResetCameraKey(k => k + 1)}
             >
                 🧭

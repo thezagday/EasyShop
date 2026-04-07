@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function CollectionPicker({ shopId, onSelect }) {
+    const { t } = useTranslation();
     const [collections, setCollections] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -41,11 +43,11 @@ export function CollectionPicker({ shopId, onSelect }) {
     };
 
     if (loading) {
-        return <div className="collection-loading">Загрузка подборок...</div>;
+        return <div className="collection-loading">{t('collections.loading')}</div>;
     }
 
     if (collections.length === 0) {
-        return <div className="collection-empty">Подборки пока не добавлены</div>;
+        return <div className="collection-empty">{t('collections.empty')}</div>;
     }
 
     return (
@@ -76,10 +78,10 @@ export function CollectionPicker({ shopId, onSelect }) {
                     <button
                         className="collection-build-route-btn"
                         disabled={!hasItems}
-                        title={hasItems ? 'Построить маршрут' : 'В подборке нет товаров с координатами'}
+                        title={hasItems ? t('collections.build_route') : t('collections.no_coords')}
                         onClick={() => handleSelect(col)}
                     >
-                        🗺️ Построить маршрут
+                        {t('collections.build_route')}
                     </button>
                 </div>
             )})}

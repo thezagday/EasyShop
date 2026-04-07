@@ -15,12 +15,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[IsGranted('ROLE_ADMIN')]
 class UserCrudController extends AbstractCrudController
 {
     public function __construct(
-        private readonly AdminUrlGenerator $adminUrlGenerator
+        private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
 
@@ -32,14 +33,14 @@ class UserCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Пользователь')
-            ->setEntityLabelInPlural('Пользователи')
+            ->setEntityLabelInSingular(new TranslatableMessage('user.label_singular', [], 'admin'))
+            ->setEntityLabelInPlural(new TranslatableMessage('user.label_plural', [], 'admin'))
             ->setSearchFields(['email', 'userContext']);
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        $userCollections = Action::new('userCollections', 'Подборки', 'fas fa-gift')
+        $userCollections = Action::new('userCollections', new TranslatableMessage('collection.label_plural', [], 'admin'), 'fas fa-gift')
             ->linkToUrl(function (User $user): string {
                 return $this->adminUrlGenerator
                     ->unsetAll()
@@ -57,24 +58,24 @@ class UserCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->hideOnForm();
-        yield EmailField::new('email', 'Email');
-        yield ArrayField::new('roles', 'Роли');
-        yield TextareaField::new('userContext', 'Промпт / AI-контекст')
-            ->setHelp('Контекст, который AI использует для персонализации ответов.')
+        yield IdField::new('id', new TranslatableMessage('common.id', [], 'admin'))->hideOnForm();
+        yield EmailField::new('email', new TranslatableMessage('user.fields.email', [], 'admin'));
+        yield ArrayField::new('roles', new TranslatableMessage('user.fields.roles', [], 'admin'));
+        yield TextareaField::new('userContext', new TranslatableMessage('user.fields.user_context', [], 'admin'))
+            ->setHelp(new TranslatableMessage('user.fields.user_context_help', [], 'admin'))
             ->setNumOfRows(4)
             ->hideOnIndex();
-        yield IntegerField::new('collectionsCount', 'Подборок')
+        yield IntegerField::new('collectionsCount', new TranslatableMessage('user.fields.collections_count', [], 'admin'))
             ->onlyOnDetail();
-        yield IntegerField::new('statsTotalRoutes', 'Маршрутов')
+        yield IntegerField::new('statsTotalRoutes', new TranslatableMessage('user.fields.stats_total_routes', [], 'admin'))
             ->onlyOnDetail();
-        yield IntegerField::new('statsTotalDistanceMeters', 'Дистанция (м)')
+        yield IntegerField::new('statsTotalDistanceMeters', new TranslatableMessage('user.fields.stats_total_distance', [], 'admin'))
             ->onlyOnDetail();
-        yield IntegerField::new('statsTotalTimeMinutes', 'Время (мин)')
+        yield IntegerField::new('statsTotalTimeMinutes', new TranslatableMessage('user.fields.stats_total_time', [], 'admin'))
             ->onlyOnDetail();
-        yield TextField::new('statsTotalCostDisplay', 'Сумма (₽)')
+        yield TextField::new('statsTotalCostDisplay', new TranslatableMessage('user.fields.stats_total_cost', [], 'admin'))
             ->formatValue(static fn ($value) => $value !== null ? $value . ' ₽' : '0.00 ₽')
             ->onlyOnDetail();
-        yield TextField::new('password', 'Пароль (хэш)')->hideOnIndex();
+        yield TextField::new('password', new TranslatableMessage('user.fields.password', [], 'admin'))->hideOnIndex();
     }
 }

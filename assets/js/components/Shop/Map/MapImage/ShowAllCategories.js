@@ -1,24 +1,25 @@
 import L from "leaflet";
+import i18n from "../../../../i18n";
 import {adminToLeaflet} from "../../../Utils/coordinateUtils";
 import { CustomMarker } from "./CustomMarker";
 
-// Хранилище маркеров для каждой карты
+// Marker storage for each map
 const markersStorage = new WeakMap();
 
 export function ShowAllCategories(map, categories, shop, aiCategories = [], routeCategoryIds = new Set(), selectedCategory = null, selectedProduct = null) {
-    // Получаем или создаем массив маркеров для этой карты
+    // Get or create markers array for this map
     if (!markersStorage.has(map)) {
         markersStorage.set(map, []);
     }
     const markers = markersStorage.get(map);
     
-    // Удаляем старые маркеры
+    // Remove old markers
     markers.forEach(marker => {
         map.removeLayer(marker);
     });
     markers.length = 0;
 
-    // Построим карту categoryId → commodities из AI-результата
+    // Build categoryId -> commodities map from AI result
     const aiCommoditiesMap = {};
     const aiCategoryIds = new Set();
     if (Array.isArray(aiCategories)) {
@@ -40,7 +41,7 @@ export function ShowAllCategories(map, categories, shop, aiCategories = [], rout
             if (categoryData.x_coordinate !== undefined && categoryData.y_coordinate !== undefined) {
                 const categoryPoint = adminToLeaflet(categoryData.x_coordinate, categoryData.y_coordinate);
                 
-                const title = categoryData.title || categoryData.category?.title || 'Категория';
+                const title = categoryData.title || categoryData.category?.title || i18n.t('ai.category');
 
                 const commodities = aiCommoditiesMap[categoryData.id] || [];
                 // Only AI-found categories are targets
@@ -60,17 +61,27 @@ export function ShowAllCategories(map, categories, shop, aiCategories = [], rout
         });
     }
     
-    // Добавляем маркеры входа и выхода (координаты из Shop entity или fallback)
+    // Add entrance and exit markers (coordinates from Shop entity or fallback)
     const entranceX = shop?.entranceX ?? 0;
     const entranceY = shop?.entranceY ?? 50;
     const exitX = shop?.exitX ?? 0;
     const exitY = shop?.exitY ?? 200;
 
     const entranceMarker = CustomMarker.createEntranceMarker(adminToLeaflet(entranceX, entranceY));
+    entranceMarker.bindTooltip(i18n.t('shop.entrance'), { 
+        permanent: false,
+        direction: 'top',
+        className: 'room-tooltip'
+    });
     entranceMarker.addTo(map);
     markers.push(entranceMarker);
     
     const exitMarker = CustomMarker.createExitMarker(adminToLeaflet(exitX, exitY));
+    exitMarker.bindTooltip(i18n.t('shop.exit'), {
+        permanent: false,
+        direction: 'top',
+        className: 'room-tooltip'
+    });
     exitMarker.addTo(map);
     markers.push(exitMarker);
 }

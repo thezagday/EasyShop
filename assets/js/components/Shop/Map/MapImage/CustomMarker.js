@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import i18n from '../../../../i18n';
 
 export class CustomMarker {
     /**
@@ -41,7 +42,7 @@ export class CustomMarker {
             if (commodities && commodities.length > 0) {
                 // Also bind popup with commodities list
                 const commoditiesHtml = `<div class="shop-popup-commodities">
-                        <div class="shop-popup-commodities-title">🛒 Нужно взять:</div>
+                        <div class="shop-popup-commodities-title">${i18n.t('markers.take_items')}</div>
                         <ul class="shop-popup-commodities-list">
                             ${commodities.map(c => `<li>${c}</li>`).join('')}
                         </ul>
@@ -64,7 +65,7 @@ export class CustomMarker {
                 <div class="shop-popup">
                     <h3>${shopName}</h3>
                     <button class="shop-popup-button" data-category-id="${categoryId || ''}" data-action="build-route">
-                        Построить маршрут
+                        ${i18n.t('markers.build_route')}
                     </button>
                 </div>
             `);
@@ -86,7 +87,7 @@ export class CustomMarker {
         });
 
         return L.marker(position, { icon })
-            .bindTooltip('Вход', { 
+            .bindTooltip(i18n.t('shop.entrance'), { 
                 permanent: false,
                 direction: 'top',
                 className: 'room-tooltip'
@@ -106,7 +107,7 @@ export class CustomMarker {
         });
 
         return L.marker(position, { icon })
-            .bindTooltip('Выход', {
+            .bindTooltip(i18n.t('shop.exit'), {
                 permanent: false,
                 direction: 'top',
                 className: 'room-tooltip'
@@ -122,7 +123,7 @@ export class CustomMarker {
         });
 
         return L.marker(position, { icon })
-            .bindTooltip('Вы здесь', {
+            .bindTooltip(i18n.t('map.you_are_here'), {
                 permanent: false,
                 direction: 'top',
                 className: 'room-tooltip'

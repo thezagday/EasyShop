@@ -1,0 +1,191 @@
+language:
+    switcher: "Język"
+
+navbar:
+    greeting: "Cześć, %username%"
+    management: "Zarządzanie"
+    login: "Zaloguj się"
+    logout: "Wyloguj się"
+    shops: "Sklepy"
+    account: "Konto"
+    profile: "Profil"
+    registration: "Rejestracja"
+
+home:
+    search_placeholder: "Szukaj sklepu..."
+    not_found: "Nie znaleziono sklepów"
+
+common:
+    loading: "Ładowanie..."
+    error: "Wystąpił błąd"
+    save: "Zapisz"
+    cancel: "Anuluj"
+    delete: "Usuń"
+    edit: "Edytuj"
+    create: "Utwórz"
+    launch_service: "Uruchom usługę"
+    start_free: "Zacznij korzystać za darmo"
+    connect_shop_free: "Podłącz sklep za darmo"
+    go_shopping: "Przejdź do zakupów"
+    email: "E-mail"
+    password: "Hasło"
+    remember_me: "Zapamiętaj mnie"
+
+auth:
+    login: "Zaloguj się"
+    registration: "Rejestracja"
+    submit_login: "Zaloguj się"
+    submit_register: "Zarejestruj się"
+
+api:
+    errors:
+        user_not_found: "Użytkownik nie znaleziony"
+        shop_id_required: "shopId jest wymagany"
+        shop_not_found: "Sklep nie znaleziony"
+        collection_not_found: "Kolekcja nie znaleziona"
+        commodity_id_required: "commodityId jest wymagany"
+        commodity_not_found: "Towar nie znaleziony"
+        too_many_requests: "Zbyt wiele żądań AI. Spróbuj ponownie później."
+        request_blocked: "Żądanie zablokowane przez ochronę przed botami."
+    defaults:
+        new_collection: "Nowa kolekcja"
+    ai:
+        no_free_yet: "Odpowiedź AI pojawi się tutaj, gdy AI będzie darmowe"
+    docs:
+        title: "Wszystkie punkty końcowe API"
+        total: "Suma"
+        generated: "Wygenerowano"
+        api_platform: "Dokumentacja API Platform"
+        json_view: "Widok JSON"
+        filter_placeholder: "Szukaj: ścieżka / trasa / kontroler"
+        any_source: "Dowolne źródło"
+        any_method: "Dowolna metoda"
+        any_security: "Dowolne zabezpieczenie"
+        no_is_granted: "Bez IsGranted"
+        any_protection: "Dowolny status ochrony"
+        protected: "Chroniony"
+        public_expected: "Oczekiwano publicznego (gość/produkt)"
+        review_required: "Wymagany przegląd braku ochrony"
+        visible_count: "Pokazano {{count}} z {{total}}"
+        table:
+            path: "Ścieżka"
+            methods: "Metody"
+            source: "Źródło"
+            protection: "Ochrona"
+            is_granted: "IsGranted"
+            controller: "Kontroler"
+            route_name: "Nazwa trasy"
+
+validators:
+    password:
+        not_blank: "Proszę wpisać hasło"
+        length: "Twoje hasło powinno mieć co najmniej {{ limit }} znaków"
+
+landing:
+    title: "EasyShop — Optymalne trasy po sklepach i magazynach"
+    description: "EasyShop buduje optymalne trasy po sklepie lub magazynie. Dla klientów, kurierów, kompletujących zamówienia i merchandiserów."
+    nav:
+        features: "Funkcje"
+        ai: "Asystent AI"
+        maps: "Mapy"
+        warehouse: "Magazyn"
+        business: "Dla biznesu"
+    hero:
+        offer: "Skróć czas w sklepie o 30–40% — już od pierwszej wizyty"
+        h1: "Optymalna trasa — mniej kroków, więcej efektu"
+        p: "EasyShop wykorzystuje algorytm optymalizacji tras, aby przejść sklep lub magazyn po najkrótszej ścieżce. Bez zbędnych kół — tylko potrzebne produkty we właściwej kolejności."
+    features:
+        h2: "Jak to działa?"
+        p: "Trzy kroki do optymalnej trasy"
+        step1_title: "Zrób listę"
+        step1_p: "Importuj listę produktów z telefonu lub napisz prośbę do asystenta AI — sam dobierze potrzebne pozycje."
+        step2_title: "Optymalna trasa"
+        step2_p: "Algorytm liczy najkrótszą ścieżkę przez wszystkie potrzebne działy z uwzględnieniem przeszkód — jak GPS, ale dla sali sprzedaży."
+        step3_title: "Oszczędzaj czas"
+        step3_p: "Zapomnij o chaotycznych ruchach. Przejdź sklep po optymalnej ścieżce — zaoszczędź <strong>5–15 minut</strong> na każdej wizycie, do <strong>40% mniej kroków</strong>."
+    ai:
+        badge: "Asystent AI"
+        h2: "Napisz — AI sam zrobi listę"
+        p: "Nie musisz ręcznie szukać każdego produktu. Napisz asystentowi AI, co chcesz kupić lub ugotować — dobierze pozycje z katalogu sklepu. Listę możesz też zaimportować z telefonu."
+        example1_user: "Chcę ugotować pilaw dla 4 osób"
+        example1_bot: "Wybrano: ryż 1 kg, jagnięcina 800 g, marchew, cebula, przyprawy do pilawu. Zbudować trasę po sklepie?"
+        example2_user: "Potrzebuję zakupów na śniadanie na tydzień"
+        example2_bot: "Lista: jajka, płatki, mleko, chleb, masło, twaróg, owoce. Pokazać trasę?"
+    maps:
+        h2: "Interaktywne mapy sklepów"
+        p: "Poruszaj się po hipermarkecie jak po własnym domu"
+        card1_title: "Mapa sklepu"
+        card1_p: "Interaktywny schemat sali pomoże od razu znaleźć produkt lub całą kategorię — bez błądzenia między regałami."
+        card2_title: "Szukanie na mapie"
+        card2_p: "Wpisz nazwę produktu lub kategorii — mapa od razu pokaże, gdzie to leży w sklepie."
+        card3_title: "Kolekcje tematyczne"
+        card3_p: "Gotowe zestawy na święta i okazje: Sylwester, urodziny, piknik. Wybierz kolekcję — a trasa po sklepie jest już gotowa!"
+    benefits:
+        h2: "Korzyści z rejestracji"
+        p: "Personalizacja, historia zakupów i kontrola wydatków — w jednym koncie"
+        card1_title: "Własny kontekst dla AI"
+        card1_p: "Asystent AI uwzględnia preferencje: nietolerancja laktozy, wegetarianizm, miłość do bio. Ustaw raz — dostawaj rekomendacje dla siebie."
+        card2_title: "Historia zakupów i tras"
+        card2_p: "Wszystkie zapytania, trasy i zakupy są zapisane. Łatwo wrócić do starych list lub powtórzyć udane zamówienie."
+        card3_title: "Własne kolekcje produktów"
+        card3_p: "Twórz kolekcje: „Śniadanie na tydzień”, „Piknik”, „Żywność dla dziecka”. Są w profilu i dostępne w każdym sklepie sieci."
+        card4_title: "Statystyki wydatków"
+        card4_p: "Zobacz, ile wydałeś na trasę i łącznie. Średni koszyk, częstotliwość zakupów, oszczędność czasu — pełna analityka wizyt."
+        cta: "Zarejestruj się za darmo"
+    advantages:
+        h2: "Inteligentne zakupy w kieszeni"
+        p: "Wspieramy największe hipermarkety w mieście. Interaktywne mapy, asystent AI i świąteczne kolekcje — aby wizyta w sklepie była szybka i przyjemna."
+    warehouse:
+        h2: "Dla magazynów i logistyki wewnętrznej"
+        p: "Optymalne trasy działają nie tylko w sklepach — także w każdym magazynie"
+        intro: "Jeśli masz magazyn z towarem na półkach — EasyShop pomoże pracownikom iść najkrótszą drogą. Wgraj plan magazynu, rozmieść produkty w strefach i otrzymaj narzędzie do optymalizacji ruchu."
+        card1_title: "Kurierzy i kompletujący"
+        card1_p: "Algorytm buduje optymalną trasę kompletacji przez magazyn lub salę. Kompletujący przechodzi minimalny dystans — <strong>+25–35% zamówienia na godzinę</strong>, kolejki się nie tworzą."
+        card2_title: "Merchandiserzy"
+        card2_p: "Szybko znaleźć, gdzie co leży? Merchandiser wpisuje listę pozycji — dostaje trasę po sali. Bez błądzenia, tylko właściwe regały we właściwej kolejności."
+        card3_title: "Dowolny magazyn lub sklep"
+        card3_p: "Wgraj plan, wskaż lokalizację produktów — system gotowy. Dla detalu, magazynów e-commerce i centrów dystrybucji."
+    business:
+        h2: "Dla detalistów i managerów"
+        p: "Przyciągaj klientów unikalną usługą. Zarejestrowani użytkownicy wybierają sklepy w EasyShop — bo jest wygodniej, szybciej i z personalizacją."
+        highlight_title: "Dlaczego klienci wybiorą Twój sklep?"
+        highlight_p: "Użytkownicy EasyShop zapisują preferencje, historię i kolekcje. Ale to działa tylko w zarejestrowanych sklepach. <strong>Twoja rejestracja = przewaga konkurencyjna</strong>. Klient przyjdzie tam, gdzie jest znany i gdzie działa osobisty asystent AI."
+        card1_title: "Personalizacja przyciąga"
+        card1_p: "Klienci cenią AI, które pamięta dietę i gust. Jeśli Twój sklep jest w systemie — klient dostaje rekomendacje dla siebie. Konkurencja bez EasyShop tego nie da."
+        card2_title: "Historia zakupów utrzymuje"
+        card2_p: "Klienci wracają tam, gdzie zapisane są listy i trasy. Przejście do konkurencji = utrata całej historii. Jak program lojalnościowy bez kart."
+        card3_title: "Zarządzanie asortymentem"
+        card3_p: "Dodawaj produkty w panelu: nazwa, cena, miejsce na mapie. Skonfiguruj kontekst AI sklepu: bio, hurtownia, odżywki — cokolwiek."
+        card4_title: "Wgrywanie map sklepu"
+        card4_p: "Wgrywaj interaktywne plany sal. Klienci widzą aktualny schemat i orientują się w sklepie. Trasy przez A* — jak w GPS."
+        card5_title: "Analityka tras"
+        card5_p: "Śledź popularne trasy, statystyki wydatków, częstotliwość wizyt. Zobacz, które strefy są częściej odwiedzane — optymalizuj układ na danych."
+        card6_title: "Kolekcje pracują na Ciebie"
+        card6_p: "Użytkownicy tworzą osobiste kolekcje w Twoim sklepie — to znaczy, że planują wracać. Kolekcje = gotowe listy zakupów tylko u Ciebie."
+    footer:
+        copy: "&copy; %year% EasyShop Project. Wykonane profesjonalnie."
+
+footer:
+    rights: "Wszelkie prawa zastrzeżone"
+
+dashboard:
+    title: "EasyShop Zarządzanie"
+    menu:
+        dashboard: "Panel sterowania"
+        shop_management: "Zarządzanie sklepami"
+        retailers: "Detaliści"
+        shops: "Sklepy"
+        categories: "Kategorie"
+        shop_categories: "Tagi kategorii"
+        shop_banners: "Banery"
+        commodities: "Towary"
+        collections: "Kolekcje"
+        user_management: "Zarządzanie użytkownikami"
+        users: "Użytkownicy"
+        analytics: "Analityka"
+        user_activity: "Aktywność użytkowników"
+        links: "Linki"
+        back_to_website: "Powrót do strony"
+
+collection:
+    label_plural: "Kolekcje"

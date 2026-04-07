@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ProductSearch } from './ProductSearch';
 import { CategorySearch } from './CategorySearch';
 import { AIAssistant } from './AIAssistant';
@@ -16,6 +17,7 @@ export function UnifiedSearchControl({
     onAIResult,
     onCollectionSelect
 }) {
+    const { t } = useTranslation();
     // Which sheet is open: 'ai' | 'search' | 'collection' | null
     const [activeSheet, setActiveSheet] = useState(null);
     // Sheet state: 'hidden' | 'expanded' | 'collapsed'
@@ -56,13 +58,13 @@ export function UnifiedSearchControl({
 
     // Search: hide sheet completely on category/product select
     const handleCategorySelect = (category) => {
-        TrackingService.trackSearch(shopId, category?.name || 'Категория');
+        TrackingService.trackSearch(shopId, category?.name || t('search.no_name'));
         handleHide();
         onCategorySelect(category);
     };
 
     const handleProductSelect = (product) => {
-        TrackingService.trackSearch(shopId, product?.name || 'Товар');
+        TrackingService.trackSearch(shopId, product?.name || t('search.no_name'));
         handleHide();
         onProductSelect(product);
     };
@@ -78,15 +80,15 @@ export function UnifiedSearchControl({
 
     // Collection: hide (route is built immediately)
     const handleCollectionSelect = async (collection) => {
-        await TrackingService.trackSearch(shopId, `Подборка: ${collection?.title || 'Без названия'}`);
+        await TrackingService.trackSearch(shopId, `${t('collections.personal_prefix')}${collection?.title || t('search.no_name')}`);
         handleHide();
         onCollectionSelect(collection);
     };
 
     const sheetTitles = {
-        ai: 'AI помощник',
-        search: 'Поиск',
-        collection: 'Подборки',
+        ai: t('nav.ai'),
+        search: t('nav.search'),
+        collection: t('nav.collections'),
     };
 
     return (
@@ -117,13 +119,13 @@ export function UnifiedSearchControl({
                         className={`search-switcher-btn ${searchMode === 'category' ? 'search-switcher-btn--active' : ''}`}
                         onClick={() => setSearchMode('category')}
                     >
-                        Категории
+                        {t('home.categories')}
                     </button>
                     <button
                         className={`search-switcher-btn ${searchMode === 'product' ? 'search-switcher-btn--active' : ''}`}
                         onClick={() => setSearchMode('product')}
                     >
-                        Товары
+                        {t('home.products')}
                     </button>
                 </div>
                 {searchMode === 'category' ? (

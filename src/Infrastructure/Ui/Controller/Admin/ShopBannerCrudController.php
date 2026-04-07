@@ -13,10 +13,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[IsGranted('ROLE_ADMIN')]
 class ShopBannerCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return ShopBanner::class;
@@ -25,22 +32,24 @@ class ShopBannerCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Рекламный баннер')
-            ->setEntityLabelInPlural('Рекламные баннеры')
+            ->setEntityLabelInSingular(new TranslatableMessage('banner.label_singular', [], 'admin'))
+            ->setEntityLabelInPlural(new TranslatableMessage('banner.label_plural', [], 'admin'))
             ->setSearchFields(['title', 'shop.title'])
             ->setDefaultSort(['sortOrder' => 'ASC', 'id' => 'ASC']);
     }
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->hideOnForm();
-        yield AssociationField::new('shop', 'Магазин');
-        yield TextField::new('title', 'Название');
-        yield TextField::new('imageFile', 'Файл изображения')->onlyOnIndex();
-        yield TextField::new('resolvedImageUrl', 'Превью')
-            ->formatValue(static function ($value, ?ShopBanner $entity): string {
+        $translator = $this->translator;
+
+        yield IdField::new('id', new TranslatableMessage('common.id', [], 'admin'))->hideOnForm();
+        yield AssociationField::new('shop', new TranslatableMessage('banner.fields.shop', [], 'admin'));
+        yield TextField::new('title', new TranslatableMessage('banner.fields.title', [], 'admin'));
+        yield TextField::new('imageFile', new TranslatableMessage('banner.fields.image_file', [], 'admin'))->onlyOnIndex();
+        yield TextField::new('resolvedImageUrl', new TranslatableMessage('banner.fields.preview', [], 'admin'))
+            ->formatValue(static function ($value, ?ShopBanner $entity) use ($translator): string {
                 if (!$value) {
-                    return '<span class="text-muted">Нет изображения</span>';
+                    return '<span class="text-muted">' . $translator->trans('banner.fields.no_image', [], 'admin') . '</span>';
                 }
 
                 $source = $entity?->getImageFile() ? 'uploaded' : 'external';
@@ -53,26 +62,26 @@ class ShopBannerCrudController extends AbstractCrudController
             })
             ->renderAsHtml()
             ->onlyOnIndex();
-        yield ImageField::new('imageFile', 'Загрузить изображение')
-            ->setHelp('Файл загрузится в public/img. Если загружен файл, он будет использоваться вместо внешней ссылки.')
+        yield ImageField::new('imageFile', new TranslatableMessage('banner.fields.upload_image', [], 'admin'))
+            ->setHelp(new TranslatableMessage('banner.fields.upload_help', [], 'admin'))
             ->setBasePath('/img')
             ->setUploadDir('public/img')
             ->setUploadedFileNamePattern('[name]-[timestamp].[extension]')
             ->setFormTypeOption('attr', ['accept' => 'image/*'])
             ->setRequired(false)
             ->onlyOnForms();
-        yield TextField::new('resolvedImageUrl', 'Используемое изображение')
-            ->setHelp('Это итоговый URL, который увидит пользователь на карте (сначала берется загруженный файл, иначе внешняя ссылка).')
+        yield TextField::new('resolvedImageUrl', new TranslatableMessage('banner.fields.resolved_image_url', [], 'admin'))
+            ->setHelp(new TranslatableMessage('banner.fields.resolved_image_help', [], 'admin'))
             ->setFormTypeOption('disabled', true)
             ->setRequired(false)
             ->onlyOnForms();
-        yield TextField::new('imageUrl', 'Внешняя ссылка на изображение')
-            ->setHelp('Опционально: полный URL до внешнего изображения, если не загружаете файл.')
+        yield TextField::new('imageUrl', new TranslatableMessage('banner.fields.image_url', [], 'admin'))
+            ->setHelp(new TranslatableMessage('banner.fields.image_url_help', [], 'admin'))
             ->setRequired(false);
-        yield TextField::new('targetUrl', 'Ссылка перехода')->setRequired(false);
-        yield NumberField::new('x_coordinate', 'X координата')->setRequired(false);
-        yield NumberField::new('y_coordinate', 'Y координата')->setRequired(false);
-        yield BooleanField::new('active', 'Активный');
-        yield IntegerField::new('sortOrder', 'Порядок');
+        yield TextField::new('targetUrl', new TranslatableMessage('banner.fields.target_url', [], 'admin'))->setRequired(false);
+        yield NumberField::new('x_coordinate', new TranslatableMessage('banner.fields.x_coordinate', [], 'admin'))->setRequired(false);
+        yield NumberField::new('y_coordinate', new TranslatableMessage('banner.fields.y_coordinate', [], 'admin'))->setRequired(false);
+        yield BooleanField::new('active', new TranslatableMessage('banner.fields.active', [], 'admin'));
+        yield IntegerField::new('sortOrder', new TranslatableMessage('banner.fields.sort_order', [], 'admin'));
     }
 }

@@ -16,7 +16,7 @@ final class RegisterUserCommand implements CommandInterface
         #[Assert\Length(min: 6)]
         private readonly string $plainPassword,
 
-        #[Assert\IsTrue(message: 'You should agree to our terms.')]
+        #[Assert\IsTrue(message: 'user.registration.agree_terms')]
         private readonly bool $agreeTerms = false,
     ) {
     }

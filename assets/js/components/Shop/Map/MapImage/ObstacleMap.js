@@ -1,25 +1,25 @@
-// Определение препятствий (стеллажи, стены) и проходимых зон для магазина
-// Координаты в пикселях относительно карты
+// Obstacle definitions (shelves, walls) and walkable areas for the shop
+// Coordinates in pixels relative to the map
 
 import L from "leaflet";
 
 export const OBSTACLE_MAP = {
-    // Режим отладки - показывает препятствия на карте красными прямоугольниками
+    // Debug mode - shows obstacles on the map as red rectangles
     debugMode: true,
-    // Размеры карты
+    // Map dimensions
     mapWidth: 1653,
     mapHeight: 993,
     
-    // Размер сетки для pathfinding (чем меньше - тем точнее, но медленнее)
-    // Увеличен для более плавных маршрутов
-    gridCellSize: 10, // 20 пикселей = 1 клетка сетки
+    // Grid size for pathfinding (smaller = more accurate, but slower)
+    // Increased for smoother routes
+    gridCellSize: 10, // 10 pixels = 1 grid cell
     
-    // Препятствия (стеллажи, стены) - загружаются из API
+    // Obstacles (shelves, walls) - loaded from API
     obstacles: [],
     
-    // Проходимые зоны (коридоры между стеллажами)
-    // Если не указаны - вся карта проходима кроме obstacles
-    walkableAreas: null // null = вся карта проходима (кроме obstacles)
+    // Walkable areas (corridors between shelves)
+    // If not specified - entire map is walkable except obstacles
+    walkableAreas: null // null = entire map is walkable (except obstacles)
 };
 
 function getLeafletObstacleBounds(obs) {
@@ -36,7 +36,7 @@ function getLeafletObstacleBounds(obs) {
     };
 }
 
-// Загрузить препятствия из API для конкретного магазина
+// Load obstacles from API for a specific shop
 export async function loadObstaclesForShop(shopId) {
     try {
         const response = await fetch(`/api/shops/${shopId}/obstacles`);
@@ -48,7 +48,7 @@ export async function loadObstaclesForShop(shopId) {
         
         const obstacles = await response.json();
         
-        // Преобразуем данные из API в формат для pathfinding
+        // Convert API data to pathfinding format
         OBSTACLE_MAP.obstacles = obstacles.map(obs => ({
             x: obs.x,
             y: obs.y,
@@ -65,16 +65,16 @@ export async function loadObstaclesForShop(shopId) {
     }
 }
 
-// Функция для генерации сетки с учетом препятствий
+// Function to generate grid taking obstacles into account
 export function generateWalkableGrid() {
     const gridWidth = Math.ceil(OBSTACLE_MAP.mapWidth / OBSTACLE_MAP.gridCellSize);
     const gridHeight = Math.ceil(OBSTACLE_MAP.mapHeight / OBSTACLE_MAP.gridCellSize);
     
-    // Создаем полностью проходимую сетку
+    // Create fully walkable grid
     const walkableAreas = [];
     
     if (OBSTACLE_MAP.walkableAreas === null) {
-        // Вся карта проходима по умолчанию
+        // Entire map is walkable by default
         walkableAreas.push({
             x: 0,
             y: 0,
@@ -82,7 +82,7 @@ export function generateWalkableGrid() {
             height: gridHeight
         });
     } else {
-        // Используем заданные проходимые области
+        // Use specified walkable areas
         OBSTACLE_MAP.walkableAreas.forEach(area => {
             walkableAreas.push({
                 x: Math.floor(area.x / OBSTACLE_MAP.gridCellSize),
@@ -109,7 +109,7 @@ export function generateWalkableGrid() {
     };
 }
 
-// Функция для проверки есть ли препятствие в точке
+// Function to check if there is an obstacle at a point
 export function hasObstacle(x, y) {
     const yAdmin = OBSTACLE_MAP.mapHeight - y;
     return OBSTACLE_MAP.obstacles.some(obs => 
@@ -118,7 +118,7 @@ export function hasObstacle(x, y) {
     );
 }
 
-// Визуализация препятствий на карте (для отладки)
+// Visualize obstacles on the map (for debugging)
 export function visualizeObstacles(map) {
     if (OBSTACLE_MAP._visualLayerGroup) {
         map.removeLayer(OBSTACLE_MAP._visualLayerGroup);

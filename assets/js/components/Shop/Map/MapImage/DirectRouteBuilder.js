@@ -1,4 +1,5 @@
 import L from "leaflet";
+import i18n from "../../../../i18n";
 import { xy, adminToLeaflet } from "../../../Utils/coordinateUtils";
 import { PathfindingService } from "./PathfindingService";
 import { generateWalkableGrid, OBSTACLE_MAP } from "./ObstacleMap";
@@ -13,7 +14,7 @@ export class DirectRouteBuilder {
         this.initializePathfinding();
     }
 
-    // Метод для переинициализации pathfinding после загрузки препятствий
+    // Method to reinitialize pathfinding after obstacles are loaded
     reinitializePathfinding() {
         console.log('🔄 Reinitializing pathfinding with loaded obstacles');
         this.pathfinding = new PathfindingService();
@@ -23,10 +24,10 @@ export class DirectRouteBuilder {
         const gridData = generateWalkableGrid();
         this.pathfinding = new PathfindingService(gridData.gridWidth, gridData.gridHeight);
         
-        // Инициализируем сетку с проходимыми областями
+        // Initialize grid with walkable areas
         this.pathfinding.initializeGrid(gridData.walkableAreas);
         
-        // Отмечаем препятствия как непроходимые
+        // Mark obstacles as non-walkable
         gridData.obstacles.forEach(obs => {
             for (let y = obs.y; y < obs.y + obs.height; y++) {
                 for (let x = obs.x; x < obs.x + obs.width; x++) {
@@ -201,7 +202,7 @@ export class DirectRouteBuilder {
         return result;
     }
 
-    buildRoute(sourceCoords, destCoords, sourceName = 'Вход', destName = 'Категория') {
+    buildRoute(sourceCoords, destCoords, sourceName = i18n.t('shop.entrance'), destName = i18n.t('ai.category')) {
         this.clearRoute();
 
         let routePoints = [];
@@ -279,7 +280,7 @@ export class DirectRouteBuilder {
                 ? routePoints.find(p => Math.abs(p[0] - wpLeaflet.lat) < 1 && Math.abs(p[1] - wpLeaflet.lng) < 1) || [wpLeaflet.lat, wpLeaflet.lng]
                 : routePoints[routePoints.length - 1];
 
-            const wpName = waypointNames[index] || wp.name || 'Категория';
+            const wpName = waypointNames[index] || wp.name || i18n.t('ai.category');
 
             // Simple 2-point route: target icon 🎯
             // Multi-point route: numbered icon
@@ -304,7 +305,7 @@ export class DirectRouteBuilder {
             // Popup only if there are commodities (AI/product routes)
             if (wp.commodities && wp.commodities.length > 0) {
                 const commoditiesHtml = `<div class="shop-popup-commodities">
-                        <div class="shop-popup-commodities-title">🛒 Нужно взять:</div>
+                        <div class="shop-popup-commodities-title">${i18n.t('markers.take_items')}</div>
                         <ul class="shop-popup-commodities-list">
                             ${wp.commodities.map(c => `<li>${c}</li>`).join('')}
                         </ul>

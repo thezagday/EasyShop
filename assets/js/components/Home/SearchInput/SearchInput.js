@@ -1,6 +1,8 @@
 import React, { useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function SearchInput({ onChange }) {
+    const { t } = useTranslation();
     const timerRef = useRef(null);
     const abortRef = useRef(null);
 
@@ -44,7 +46,7 @@ export default function SearchInput({ onChange }) {
                 <input className="form-control tm-search-input"
                     type="text"
                     onChange={handleChange}
-                    placeholder="Поиск"
+                    placeholder={t('home.search')}
                     aria-label="Search"
                 />
             </form>

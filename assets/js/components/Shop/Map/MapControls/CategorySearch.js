@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function CategorySearch({ categories, onSelect }) {
+    const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -17,8 +19,8 @@ export function CategorySearch({ categories, onSelect }) {
         const query = searchQuery.toLowerCase();
         const filtered = categories.map(cat => ({
             id: cat.id,
-            name: cat.category?.title || 'Без названия',
-            category: cat.category?.parent?.title || 'Общее',
+            name: cat.category?.title || t('search.no_name'),
+            category: cat.category?.parent?.title || t('search.general'),
             x: cat.x_coordinate,
             y: cat.y_coordinate
         })).filter(cat => 
@@ -39,8 +41,8 @@ export function CategorySearch({ categories, onSelect }) {
     // Full category list for quick-tap when no search query
     const allCategories = categories.map(cat => ({
         id: cat.id,
-        name: cat.category?.title || 'Без названия',
-        category: cat.category?.parent?.title || 'Общее',
+        name: cat.category?.title || t('search.no_name'),
+        category: cat.category?.parent?.title || t('search.general'),
         x: cat.x_coordinate,
         y: cat.y_coordinate
     }));
@@ -52,7 +54,7 @@ export function CategorySearch({ categories, onSelect }) {
                 <input
                     type="text"
                     className="map-search-input"
-                    placeholder="Поиск категории..."
+                    placeholder={t('search.category_placeholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -76,7 +78,7 @@ export function CategorySearch({ categories, onSelect }) {
             {isSearching && searchResults.length === 0 && searchQuery.length >= 2 && (
                 <div className="search-results">
                     <div className="search-result-item" style={{ cursor: 'default', color: '#a0aec0' }}>
-                        Ничего не найдено
+                        {t('search.nothing_found')}
                     </div>
                 </div>
             )}

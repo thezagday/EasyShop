@@ -1,0 +1,155 @@
+dashboard:
+    title: "EasyShop Zarządzanie"
+    locale_switcher: "Język interfejsu"
+    menu:
+        dashboard: "Panel sterowania"
+        shop_management: "Zarządzanie sklepami"
+        retailers: "Detaliści"
+        shops: "Sklepy"
+        categories: "Kategorie"
+        shop_categories: "Tagi kategorii"
+        shop_banners: "Banery"
+        commodities: "Towary"
+        collections: "Kolekcje"
+        user_management: "Zarządzanie użytkownikami"
+        users: "Użytkownicy"
+        analytics: "Analityka"
+        user_activity: "Aktywność użytkowników"
+        links: "Linki"
+        back_to_website: "Powrót do strony"
+
+common:
+    id: "ID"
+
+user_activity:
+    label_singular: "Aktywność użytkownika"
+    label_plural: "Aktywność użytkowników"
+    page_title:
+        index: "Dziennik aktywności użytkowników"
+    fields:
+        user: "Użytkownik"
+        shop: "Sklep"
+        query: "Zapytanie wyszukiwania"
+        has_route: "Trasa zbudowana"
+        route: "Trasa"
+        distance: "Dystans (m)"
+        time: "Czas (min)"
+        created_at: "Data"
+
+user:
+    label_singular: "Użytkownik"
+    label_plural: "Użytkownicy"
+    fields:
+        email: "Email"
+        roles: "Role"
+        user_context: "Prompt / Kontekst AI"
+        user_context_help: "Kontekst używany przez AI do personalizacji odpowiedzi."
+        collections_count: "Kolekcje"
+        stats_total_routes: "Trasy"
+        stats_total_distance: "Dystans (m)"
+        stats_total_time: "Czas (min)"
+        stats_total_cost: "Suma (₽)"
+        password: "Hasło (hash)"
+
+shop:
+    label_singular: "Sklep"
+    label_plural: "Sklepy"
+    flash:
+        save_before_pdf: "Najpierw zapisz sklep, a następnie prześlij plik PDF."
+        pdf_uploaded: "PDF przyjęty. Obraz mapy zostanie wygenerowany w tle."
+        no_map: "Ten sklep nie ma jeszcze obrazu mapy. Wgraj mapę i zapisz zmiany."
+    actions:
+        edit_map: "Edytuj mapę"
+    fields:
+        title: "Nazwa"
+        retailer: "Detalista"
+        address: "Adres"
+        entrance_x: "Wejście X"
+        entrance_y: "Wejście Y"
+        exit_x: "Wyjście X"
+        exit_y: "Wyjście Y"
+        map_image: "Obraz mapy"
+        map_image_filename: "Nazwa pliku mapy"
+        map_image_help: "PNG lub JPG w katalogu public/img."
+        avatar_help: "Nazwa pliku awatara w public/img (opcjonalnie)."
+        pdf_filename: "Nazwa pliku PDF"
+        pdf_file: "PDF planu do konwersji"
+        pdf_help: "Prześlij PDF — po zapisaniu zostanie wygenerowany obraz mapy."
+        ai_context: "Kontekst asystenta AI"
+        ai_context_help: "Krótki opis sklepu dla AI: format, akcenty asortymentu itd."
+
+banner:
+    label_singular: "Baner reklamowy"
+    label_plural: "Banery reklamowe"
+    fields:
+        shop: "Sklep"
+        title: "Nazwa"
+        image_file: "Plik obrazu"
+        preview: "Podgląd"
+        no_image: "Brak obrazu"
+        upload_image: "Prześlij obraz"
+        upload_help: "Plik zostanie przesłany do public/img. Jeśli zostanie przesłany, zostanie użyty zamiast linku zewnętrznego."
+        resolved_image_url: "Używany obraz"
+        resolved_image_help: "To jest ostateczny adres URL, który użytkownik zobaczy na mapie (preferuje przesłany plik, w przeciwnym razie link zewnętrzny)."
+        image_url: "Zewnętrzny link do obrazu"
+        image_url_help: "Opcjonalnie: pełny adres URL do obrazu zewnętrznego, jeśli nie przesyłasz pliku."
+        target_url: "Link docelowy"
+        x_coordinate: "Współrzędna X"
+        y_coordinate: "Współrzędna Y"
+        active: "Aktywny"
+        sort_order: "Kolejność"
+
+retailer:
+    label_singular: "Detalista"
+    label_plural: "Detaliści"
+    fields:
+        title: "Nazwa"
+
+category:
+    label_singular: "Kategoria"
+    label_plural: "Kategorie"
+    fields:
+        title: "Nazwa"
+        retailer: "Detalista"
+
+shop_category:
+    label_singular: "Tag kategorii"
+    label_plural: "Tagi kategorii"
+    fields:
+        shop: "Sklep"
+        category: "Kategoria"
+        x_coordinate: "Współrzędna X"
+        y_coordinate: "Współrzędna Y"
+        commodities: "Towary"
+
+commodity:
+    label_singular: "Towar"
+    label_plural: "Towary"
+    fields:
+        title: "Nazwa"
+        price: "Cena (₽)"
+        shop_categories: "Kategorie w sklepach"
+
+collection:
+    label_singular: "Kolekcja"
+    label_plural: "Kolekcje"
+    item_label_singular: "Towar w kolekcji"
+    item_label_plural: "Towary w kolekcjach"
+    fields:
+        title: "Nazwa"
+        description: "Opis"
+        emoji: "Emoji"
+        user: "Użytkownik"
+        user_owner: "Użytkownik (właściciel)"
+        shop: "Sklep"
+        active: "Aktywna"
+        sort_order: "Kolejność"
+        commodity: "Towar"
+        commodities: "Towary"
+        commodity_help_edit: "Pokazane są tylko towary ze sklepu kolekcji"
+        commodity_help_new: "Najpierw zapisz, a następnie podczas edycji zostaną pokazane tylko towary z wybranego sklepu. Wybierz towar z prawidłowym sufiksem sklepu."
+
+map_editor:
+    loading: "Ładowanie edytora mapy..."
+    no_map: "Dla tego sklepu nie wgrano mapy. Proszę wgrać plik mapy w polu 'Obraz mapy' powyżej i zapisać zmiany."
+

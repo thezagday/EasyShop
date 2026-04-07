@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Ui\Controller\Api;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Domain\Entity\ProductCollection;
 use App\Infrastructure\Security\Voter\ProductCollectionVoter;
 use App\Domain\Repository\ShopRepositoryInterface;
@@ -18,7 +19,8 @@ class UserCollectionController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ShopRepositoryInterface $shopRepository
+        private readonly ShopRepositoryInterface $shopRepository,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -27,7 +29,7 @@ class UserCollectionController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.user_not_found')], 404);
         }
 
         $shopId = $request->query->get('shopId');
@@ -72,25 +74,25 @@ class UserCollectionController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.user_not_found')], 404);
         }
 
         $data = json_decode($request->getContent(), true);
         
         $shopId = $data['shopId'] ?? null;
         if (!$shopId) {
-            return $this->json(['error' => 'shopId is required'], 400);
+            return $this->json(['error' => $this->translator->trans('api.errors.shop_id_required')], 400);
         }
 
         $shop = $this->shopRepository->findById((int) $shopId);
         if (!$shop) {
-            return $this->json(['error' => 'Shop not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.shop_not_found')], 404);
         }
 
         $collection = new ProductCollection();
         $collection->setUser($user);
         $collection->setShop($shop);
-        $collection->setTitle($data['title'] ?? 'Новая подборка');
+        $collection->setTitle($data['title'] ?? $this->translator->trans('api.defaults.new_collection'));
         $collection->setDescription($data['description'] ?? null);
         $collection->setEmoji($data['emoji'] ?? null);
         $collection->setActive($data['active'] ?? true);
@@ -117,12 +119,12 @@ class UserCollectionController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.user_not_found')], 404);
         }
 
         $collection = $this->entityManager->getRepository(ProductCollection::class)->find($id);
         if (!$collection) {
-            return $this->json(['error' => 'Collection not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.collection_not_found')], 404);
         }
 
         $this->denyAccessUnlessGranted(ProductCollectionVoter::MANAGE, $collection);
@@ -164,12 +166,12 @@ class UserCollectionController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.user_not_found')], 404);
         }
 
         $collection = $this->entityManager->getRepository(ProductCollection::class)->find($id);
         if (!$collection) {
-            return $this->json(['error' => 'Collection not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.collection_not_found')], 404);
         }
 
         $this->denyAccessUnlessGranted(ProductCollectionVoter::MANAGE, $collection);
@@ -185,12 +187,12 @@ class UserCollectionController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.user_not_found')], 404);
         }
 
         $collection = $this->entityManager->getRepository(ProductCollection::class)->find($id);
         if (!$collection) {
-            return $this->json(['error' => 'Collection not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.collection_not_found')], 404);
         }
 
         $this->denyAccessUnlessGranted(ProductCollectionVoter::MANAGE, $collection);
@@ -199,12 +201,12 @@ class UserCollectionController extends AbstractController
         $commodityId = $data['commodityId'] ?? null;
 
         if (!$commodityId) {
-            return $this->json(['error' => 'commodityId is required'], 400);
+            return $this->json(['error' => $this->translator->trans('api.errors.commodity_id_required')], 400);
         }
 
         $commodity = $this->entityManager->getRepository(\App\Domain\Entity\Commodity::class)->find($commodityId);
         if (!$commodity) {
-            return $this->json(['error' => 'Commodity not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.commodity_not_found')], 404);
         }
 
         $collection->addCommodity($commodity);
@@ -218,19 +220,19 @@ class UserCollectionController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.user_not_found')], 404);
         }
 
         $collection = $this->entityManager->getRepository(ProductCollection::class)->find($id);
         if (!$collection) {
-            return $this->json(['error' => 'Collection not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.collection_not_found')], 404);
         }
 
         $this->denyAccessUnlessGranted(ProductCollectionVoter::MANAGE, $collection);
 
         $commodity = $this->entityManager->getRepository(\App\Domain\Entity\Commodity::class)->find($commodityId);
         if (!$commodity) {
-            return $this->json(['error' => 'Commodity not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.commodity_not_found')], 404);
         }
 
         $collection->removeCommodity($commodity);

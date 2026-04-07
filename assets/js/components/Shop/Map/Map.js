@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "leaflet";
 import { CRS } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, useMap } from 'react-leaflet';
 import MapImage from "./MapImage/MapImage";
 import { UnifiedSearchControl } from "./MapControls/UnifiedSearchControl";
@@ -24,6 +25,7 @@ export default function Map({
     searchedCategoryByCommodity,
     multiSearch,
 }) {
+    const { t } = useTranslation();
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [aiCategories, setAICategories] = useState([]);
@@ -82,15 +84,15 @@ export default function Map({
         const exitY = entranceExit?.exitY ?? 0;
 
         const waypoints = [
-            { name: 'Вход', x: entranceX, y: entranceY },
+            { name: t('shop.entrance'), x: entranceX, y: entranceY },
             ...categories.map(cat => ({
-                name: cat.title || cat.category?.title || 'Категория',
+                name: cat.title || cat.category?.title || t('ai.category'),
                 x: cat.x_coordinate,
                 y: cat.y_coordinate,
                 categoryId: cat.id,
                 commodities: cat.commodities || []
             })),
-            { name: 'Выход', x: exitX, y: exitY }
+            { name: t('shop.exit'), x: exitX, y: exitY }
         ];
 
         setRouteSource(waypoints);
@@ -157,12 +159,12 @@ export default function Map({
 
             // Pass actual coordinates for direct route drawing
             setRouteSource({
-                name: 'Вход',
+                name: t('shop.entrance'),
                 x: shop?.entranceX ?? 0,
                 y: shop?.entranceY ?? 50
             });
             setRouteDestination({
-                name: targetCategory.category?.title || 'Категория',
+                name: targetCategory.category?.title || t('ai.category'),
                 x: targetCategory.x_coordinate,
                 y: targetCategory.y_coordinate,
                 categoryId: categoryId,
@@ -192,8 +194,8 @@ export default function Map({
             {routeInfo && (
                 <div className="route-info-bar">
                     <span className="route-chip">🗺️ {routeInfo.from} → {routeInfo.to}</span>
-                    <span className="route-chip">📏 ~{routeInfo.distance}м</span>
-                    <span className="route-chip">⏱ ~{routeInfo.time} мин</span>
+                    <span className="route-chip">📏 {t('shop.route_info.distance', { distance: routeInfo.distance })}</span>
+                    <span className="route-chip">⏱ {t('shop.route_info.time', { time: routeInfo.time })}</span>
                     <button className="route-reset-btn" onClick={handleRouteReset}>✕</button>
                 </div>
             )}

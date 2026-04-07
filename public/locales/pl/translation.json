@@ -1,0 +1,240 @@
+{
+    "navbar": {
+        "greeting": "Cześć, {{username}}",
+        "management": "Zarządzanie",
+        "login": "Zaloguj się",
+        "logout": "Wyloguj się",
+        "shops": "Sklepy",
+        "account": "Konto",
+        "profile": "Profil",
+        "registration": "Rejestracja"
+    },
+    "home": {
+        "search_placeholder": "Szukaj sklepu...",
+        "not_found": "Nie znaleziono sklepów",
+        "search": "Szukaj",
+        "empty_shops": "Niestety nie dodaliśmy jeszcze takiego sklepu.",
+        "open": "Otwórz",
+        "edit_map": "Edytuj mapę",
+        "categories": "Kategorie",
+        "products": "Produkty"
+    },
+    "search": {
+        "product_placeholder": "Szukaj produktu...",
+        "category_placeholder": "Szukaj kategorii...",
+        "no_category": "Bez kategorii",
+        "no_name": "Bez nazwy",
+        "general": "Ogólne",
+        "products_not_found": "Nie znaleziono produktów",
+        "nothing_found": "Nic nie znaleziono"
+    },
+    "collections": {
+        "loading": "Ładowanie kolekcji...",
+        "empty": "Nie dodano jeszcze żadnych kolekcji",
+        "build_route": "🗺️ Wyznacz trasę",
+        "no_coords": "Kolekcja nie zawiera produktów z koordynatami",
+        "personal_prefix": "Kolekcja: "
+    },
+    "nav": {
+        "ai": "AI",
+        "search": "Szukaj",
+        "collections": "Kolekcje"
+    },
+    "markers": {
+        "take_items": "🛒 Produkty do zabrania:",
+        "build_route": "Wyznacz trasę",
+        "passed": "✅ Odwiedzone",
+        "open_offer": "Otwórz ofertę"
+    },
+    "map": {
+        "reset_view": "Resetuj widok",
+        "point": "Punkt",
+        "zoom_in": "Powiększ",
+        "zoom_out": "Pomniejsz",
+        "entire_map": "Cała mapa",
+        "you_are_here": "Jesteś tutaj"
+    },
+    "pwa": {
+        "title": "📱 Zainstaluj EasyShop",
+        "description": "Dodaj aplikację do ekranu głównego, aby mieć do niej szybki dostęp",
+        "install": "Zainstaluj"
+    },
+    "contact": {
+        "title": "Napisz do nas",
+        "name": "Imię",
+        "email": "E-mail",
+        "subject": "Temat",
+        "message": "Wiadomość",
+        "send": "Wyślij",
+        "address": "Adres",
+        "on_map": "Na mapie",
+        "ceo": "CEO",
+        "muse": "Muza, inspiratorka",
+        "cartographer": "Kartograf",
+        "intern": "Stażysta"
+    },
+    "admin": {
+        "obstacles": "Przeszkody",
+        "obstacle_types": {
+            "shelf": "Półka (czerwony)",
+            "wall": "Ściana (szary)",
+            "counter": "Lada (niebieski)",
+            "checkout": "Kasa (zielony)"
+        },
+        "draw": "✏️ Rysuj",
+        "done": "✓ Gotowe",
+        "clear": "🗑️ Wyczyść",
+        "entrance_exit": "Wejście / Wyjście",
+        "entrance": "Wejście",
+        "exit": "Wyjście",
+        "none": "brak",
+        "banners": "Banery reklamowe",
+        "place_banner": "Umieść baner",
+        "banner_disabled": "Baner wyłączony w panelu admina",
+        "no_categories": "Brak kategorii",
+        "no_banners": "Brak banerów - utwórz je w panelu admina",
+        "hints": {
+            "draw": "鼠标️ Przytrzymaj i przeciągnij, aby narysować prostokąt przeszkody",
+            "place_category": "📍 Kliknij na mapę, aby umieścić: ",
+            "place_banner": "📢 Kliknij na mapę, aby umieścić: ",
+            "place_entrance": "🚪 Kliknij na mapę, aby umieścić Wejście",
+            "place_exit": "🚶 Kliknij na mapę, aby umieścić Wyjście"
+        },
+        "zoom": {
+            "in": "Powiększ",
+            "out": "Pomniejsz",
+            "fit": "Dopasuj"
+        },
+        "confirm": {
+            "clear_obstacles": "Usunąć wszystkie przeszkody? Tego nie można cofnąć.",
+            "delete_obstacle": "Usunąć przeszkodę ({{type}})?\nx={{x}}, y={{y}}, {{w}}x{{h}}"
+        }
+    },
+    "not_found": {
+        "title": "Błąd 404",
+        "description": "Strona {{path}} nie została znaleziona.",
+        "back_to_home": "Wróć do strony głównej"
+    },
+    "ai": {
+        "badge": "Asystent AI",
+        "empty_chat": "🤖 Cześć! Napisz co chcesz znaleźć lub ugotować, a ja dobiorę odpowiednie produkty.",
+        "thinking": "AI myśli...",
+        "input_placeholder": "Przykład: chcę zrobić pilaw...",
+        "attach_title": "Wczytaj listę produktów z pliku",
+        "found_categories": "📍 Znalezione kategorie ({{count}}):",
+        "category": "Kategoria",
+        "build_route": "🗺️ Wyznacz trasę",
+        "file_uploaded": "📎 Wczytano plik: {{name}}",
+        "errors": {
+            "invalid_shop": "Błąd: nieprawidłowy identyfikator sklepu.",
+            "server_error": "Błąd podczas komunikacji z serwerem."
+        }
+    },
+    "shop": {
+        "entrance": "Wejście",
+        "exit": "Wyjście",
+        "route_info": {
+            "distance": "~{{distance}}m",
+            "time": "~{{time}} min"
+        },
+        "build_route": "Wyznacz trasę",
+        "building_route": "Wyznaczanie trasy...",
+        "no_categories": "W tym sklepie nie ma jeszcze kategorii.",
+        "categories_label": "Kategorie:",
+        "destination": "Miejsce docelowe",
+        "target": "Cel",
+        "distance": "Dystans",
+        "time": "Czas",
+        "points": "Punkty",
+        "placeholders": {
+            "search_categories": "Szukaj kategorii",
+            "search_products": "Szukaj produktów",
+            "route": "Trasa"
+        }
+    },
+    "common": {
+        "loading": "Ładowanie...",
+        "error": "Wystąpił błąd",
+        "save": "Zapisz",
+        "cancel": "Anuluj",
+        "delete": "Usuń",
+        "edit": "Edytuj",
+        "create": "Utwórz",
+        "saving": "Zapisywanie...",
+        "creating": "Tworzenie...",
+        "deleting": "Usuwanie...",
+        "success": "Sukces",
+        "not_found": "Nic nie znaleziono",
+        "search": "Szukaj...",
+        "previous": "Poprzedni",
+        "next": "Następny"
+    },
+    "profile": {
+        "title": "Profil użytkownika",
+        "tabs": {
+            "context": "Moje preferencje",
+            "history": "Historia",
+            "collections": "Moje kolekcje",
+            "stats": "Statystyki"
+        },
+        "errors": {
+            "load_data": "Błąd podczas ładowania danych",
+            "save_context": "Błąd podczas zapisywania kontekstu",
+            "create_collection": "Błąd podczas tworzenia kolekcji",
+            "update_collection": "Błąd podczas aktualizacji kolekcji",
+            "delete_collection": "Błąd podczas usuwania kolekcji",
+            "fill_required": "Proszę podać nazwę i wybrać sklep"
+        },
+        "success": {
+            "context_saved": "Kontekst zapisany",
+            "collection_created": "Kolekcja utworzona",
+            "collection_updated": "Kolekcja zaktualizowana",
+            "collection_deleted": "Kolekcja usunięta"
+        },
+        "context": {
+            "title": "Osobisty kontekst AI",
+            "description": "Określ swoje preferencje, dietę lub ograniczenia. Asystent AI weźmie to pod uwagę przy wyborze produktów.",
+            "placeholder": "Przykład: Unikaj nabiału, ponieważ mam nietolerancję laktozy. Preferuję produkty organiczne."
+        },
+        "history": {
+            "title": "Historia zakupów i tras",
+            "empty": "Historia jest pusta",
+            "route": "Trasa",
+            "products": "Produkty",
+            "view_on_map": "Zobacz na mapie",
+            "old_route_unavailable": "Trasa niedostępna dla starych rekordów"
+        },
+        "collections": {
+            "title": "Moje kolekcje produktów",
+            "create": "Utwórz kolekcję",
+            "new_title": "Nowa kolekcja",
+            "shop": "Sklep",
+            "select_shop": "-- Wybierz sklep --",
+            "name": "Nazwa",
+            "name_placeholder": "Przykład: Śniadanie na tydzień",
+            "description": "Opis",
+            "description_placeholder": "Krótki opis",
+            "emoji": "Emoji",
+            "items": "Produkty",
+            "items_selected": "{{count}} wybrano",
+            "search_placeholder": "Szukaj produktów...",
+            "items_loading": "Ładowanie produktów...",
+            "items_not_found": "Nic nie znaleziono",
+            "no_items_shop": "Nie znaleziono produktów dla tego sklepu",
+            "empty_state": "Nie masz jeszcze żadnych kolekcji. Utwórz swoją pierwszą!",
+            "delete_confirm": "Usunąć tę kolekcję?",
+            "shop_id": "ID sklepu",
+            "count_items": "{{count}} produktów"
+        },
+        "stats": {
+            "title": "Statystyki wydatków",
+            "no_data": "Brak danych do wyświetlenia",
+            "total_routes": "Wszystkie trasy",
+            "total_spent": "Całkowite wydatki",
+            "average_check": "Średni paragon",
+            "total_distance": "Całkowity dystans",
+            "total_time": "Całkowity czas",
+            "average_time": "Średni czas"
+        }
+    }
+}

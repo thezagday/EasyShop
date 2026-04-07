@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function ZoomControl({ map }) {
+    const { t } = useTranslation();
     const handleZoomIn = () => {
         if (map) {
             map.zoomIn();
@@ -25,21 +27,21 @@ export function ZoomControl({ map }) {
             <button 
                 className="zoom-button" 
                 onClick={handleZoomIn}
-                title="Приблизить"
+                title={t('map.zoom_in')}
             >
                 +
             </button>
             <button 
                 className="zoom-button" 
                 onClick={handleZoomOut}
-                title="Отдалить"
+                title={t('map.zoom_out')}
             >
                 −
             </button>
             <button 
                 className="zoom-button" 
                 onClick={handleResetView}
-                title="Вся карта"
+                title={t('map.entire_map')}
                 style={{ fontSize: '18px' }}
             >
                 ⊡

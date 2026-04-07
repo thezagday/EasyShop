@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import './CategoryPlacement.css';
 
 const CategoryPlacementEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) => {
+    const { t } = useTranslation();
     const overlayRef = useRef(null);
     const [categories, setCategories] = useState([]);
     const [entranceExit, setEntranceExit] = useState({ entranceX: null, entranceY: null, exitX: null, exitY: null });
@@ -91,7 +93,7 @@ const CategoryPlacementEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) =
             }
         } catch (error) {
             console.error('Failed to save coordinates:', error);
-            alert('Failed to save coordinates');
+            alert(t('common.error'));
         }
 
         setSaving(false);
@@ -129,7 +131,7 @@ const CategoryPlacementEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) =
     return (
         <div className="category-placement-editor">
             <div className="editor-toolbar">
-                <h3>Category & Entrance/Exit Placement</h3>
+                <h3>{t('admin.category_entrance_exit_placement')}</h3>
 
                 <div className="toolbar-section">
                     <button
@@ -137,7 +139,7 @@ const CategoryPlacementEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) =
                         onClick={placingMode === 'entrance' ? cancelPlacing : startPlacingEntrance}
                         disabled={saving}
                     >
-                        🚪 {placingMode === 'entrance' ? 'Cancel' : 'Place Entrance'}
+                        🚪 {placingMode === 'entrance' ? t('common.cancel') : t('admin.place_entrance')}
                     </button>
 
                     <button
@@ -145,28 +147,28 @@ const CategoryPlacementEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) =
                         onClick={placingMode === 'exit' ? cancelPlacing : startPlacingExit}
                         disabled={saving}
                     >
-                        🚶 {placingMode === 'exit' ? 'Cancel' : 'Place Exit'}
+                        🚶 {placingMode === 'exit' ? t('common.cancel') : t('admin.place_exit')}
                     </button>
                 </div>
 
                 {placingMode && (
                     <div className="placement-hint">
                         {placingMode === 'category' && (
-                            <p>Click on the map to place category: <strong>{categories.find(c => c.id === selectedCategoryId)?.category_title}</strong></p>
+                            <p>{t('admin.hints.place_category')} <strong>{categories.find(c => c.id === selectedCategoryId)?.category_title}</strong></p>
                         )}
                         {placingMode === 'entrance' && (
-                            <p>Click on the map to place the <strong>Entrance</strong></p>
+                            <p>{t('admin.hints.place_entrance')}</p>
                         )}
                         {placingMode === 'exit' && (
-                            <p>Click on the map to place the <strong>Exit</strong></p>
+                            <p>{t('admin.hints.place_exit')}</p>
                         )}
-                        <button className="btn btn-secondary btn-sm" onClick={cancelPlacing}>Cancel</button>
+                        <button className="btn btn-secondary btn-sm" onClick={cancelPlacing}>{t('common.cancel')}</button>
                     </div>
                 )}
 
                 <div className="categories-list">
-                    <h4>Categories ({categories.length})</h4>
-                    {categories.length === 0 && <p className="text-muted">No categories assigned to this shop</p>}
+                    <h4>{t('home.categories')} ({categories.length})</h4>
+                    {categories.length === 0 && <p className="text-muted">{t('admin.no_categories_assigned')}</p>}
                     <div className="categories-grid">
                         {categories.map(cat => (
                             <div
@@ -177,7 +179,7 @@ const CategoryPlacementEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) =
                                 <span className="category-coords">
                                     {cat.x_coordinate != null
                                         ? `(${Math.round(cat.x_coordinate)}, ${Math.round(cat.y_coordinate)})`
-                                        : 'Not placed'}
+                                        : t('admin.not_placed')}
                                 </span>
                                 <button
                                     className={`btn btn-sm ${selectedCategoryId === cat.id && placingMode === 'category' ? 'btn-danger' : 'btn-outline-primary'}`}
@@ -190,7 +192,7 @@ const CategoryPlacementEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) =
                                     }}
                                     disabled={saving}
                                 >
-                                    {selectedCategoryId === cat.id && placingMode === 'category' ? 'Cancel' : 'Place'}
+                                    {selectedCategoryId === cat.id && placingMode === 'category' ? t('common.cancel') : t('admin.place')}
                                 </button>
                             </div>
                         ))}
@@ -198,8 +200,8 @@ const CategoryPlacementEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) =
                 </div>
 
                 <div className="toolbar-info">
-                    <p>Entrance: <strong>{entranceExit.entranceX != null ? `(${Math.round(entranceExit.entranceX)}, ${Math.round(entranceExit.entranceY)})` : 'Not set'}</strong></p>
-                    <p>Exit: <strong>{entranceExit.exitX != null ? `(${Math.round(entranceExit.exitX)}, ${Math.round(entranceExit.exitY)})` : 'Not set'}</strong></p>
+                    <p>{t('admin.entrance')}: <strong>{entranceExit.entranceX != null ? `(${Math.round(entranceExit.entranceX)}, ${Math.round(entranceExit.entranceY)})` : t('admin.not_set')}</strong></p>
+                    <p>{t('admin.exit')}: <strong>{entranceExit.exitX != null ? `(${Math.round(entranceExit.exitX)}, ${Math.round(entranceExit.exitY)})` : t('admin.not_set')}</strong></p>
                 </div>
             </div>
 
@@ -242,10 +244,10 @@ const CategoryPlacementEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) =
                         <div
                             className="placement-marker entrance-marker"
                             style={pctPos(entranceExit.entranceX, entranceExit.entranceY)}
-                            title={`Entrance (${Math.round(entranceExit.entranceX)}, ${Math.round(entranceExit.entranceY)})`}
+                            title={`${t('admin.entrance')} (${Math.round(entranceExit.entranceX)}, ${Math.round(entranceExit.entranceY)})`}
                         >
                             <div className="pin-marker pin-entrance"><div className="pin-head">🚪</div></div>
-                            <span className="marker-label">Вход</span>
+                            <span className="marker-label">{t('admin.entrance')}</span>
                         </div>
                     )}
 
@@ -254,10 +256,10 @@ const CategoryPlacementEditor = ({ shopId, mapImageUrl, mapWidth, mapHeight }) =
                         <div
                             className="placement-marker exit-marker-pin"
                             style={pctPos(entranceExit.exitX, entranceExit.exitY)}
-                            title={`Exit (${Math.round(entranceExit.exitX)}, ${Math.round(entranceExit.exitY)})`}
+                            title={`${t('admin.exit')} (${Math.round(entranceExit.exitX)}, ${Math.round(entranceExit.exitY)})`}
                         >
                             <div className="pin-marker pin-exit"><div className="pin-head">🚶</div></div>
-                            <span className="marker-label">Выход</span>
+                            <span className="marker-label">{t('admin.exit')}</span>
                         </div>
                     )}
                 </div>

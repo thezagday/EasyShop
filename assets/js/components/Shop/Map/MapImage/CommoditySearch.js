@@ -1,5 +1,6 @@
 import L from "leaflet";
 import {useRef} from "react";
+import i18n from "../../../../i18n";
 import {xy} from "../../../Utils/coordinateUtils"
 
 export function CommoditySearch(map, searchedCategoryByCommodity) {
@@ -34,7 +35,7 @@ export function CommoditySearch(map, searchedCategoryByCommodity) {
         searchedCategoryByCommodity.forEach(categoryData => {
             const categoryPoint = xy(categoryData.x_coordinate, categoryData.y_coordinate);
             
-            // Добавляем зеленый пульсирующий круг для выделения найденной категории
+            // Add green pulsating circle to highlight found category
             const circle = L.circle(categoryPoint, {
                 color: '#00ff00',
                 fillColor: '#00ff00',
@@ -68,7 +69,7 @@ export function CommoditySearch(map, searchedCategoryByCommodity) {
             searchedCategoryByCommodity.y_coordinate
         );
         
-        // Добавляем зеленый пульсирующий круг для выделения найденной категории
+        // Add green pulsating circle to highlight found category
         const circle = L.circle(categoryPoint, {
             color: '#00ff00',
             fillColor: '#00ff00',
@@ -89,7 +90,7 @@ export function CommoditySearch(map, searchedCategoryByCommodity) {
             })
         }).addTo(map);
         marker.bindPopup(
-            searchedCategoryByCommodity.title ?? searchedCategoryByCommodity.category.title,
+            searchedCategoryByCommodity.title ?? searchedCategoryByCommodity.category?.title ?? i18n.t('search.no_name'),
             { autoClose: false, closeOnClick: false }
         ).openPopup();
         markers.current.push({

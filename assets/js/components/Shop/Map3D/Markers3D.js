@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Html } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
+import { useTranslation } from 'react-i18next';
 import { SCALE, HALF_W, HALF_H } from './constants';
 
 const BASE_LABEL_Z = [10, 10];
@@ -15,6 +16,7 @@ function toThreePos(x, y, elevation = 0.2) {
 }
 
 function BannerPin({ x, y, title, imageUrl, targetUrl, bannerId, isPopupOpen, onTogglePopup, pinScale }) {
+    const { t } = useTranslation();
     const pos = toThreePos(x, y, 0.15);
 
     const handleLabelClick = (e) => {
@@ -64,7 +66,7 @@ function BannerPin({ x, y, title, imageUrl, targetUrl, bannerId, isPopupOpen, on
                         )}
                         {targetUrl && (
                             <button className="marker3d-popup-btn marker3d-banner-btn" onClick={handleOpenTarget}>
-                                Открыть предложение
+                                {t('markers.open_offer')}
                             </button>
                         )}
                     </div>
@@ -75,6 +77,7 @@ function BannerPin({ x, y, title, imageUrl, targetUrl, bannerId, isPopupOpen, on
 }
 
 function CategoryPin({ x, y, title, isTarget, onBuildRoute, categoryId, commodities, isPopupOpen, onTogglePopup, pinScale }) {
+    const { t } = useTranslation();
     const pos = toThreePos(x, y, 0.15);
     const emoji = isTarget ? '🎯' : '🏪';
 
@@ -117,12 +120,12 @@ function CategoryPin({ x, y, title, isTarget, onBuildRoute, categoryId, commodit
                         <div className="marker3d-popup-title">{title}</div>
                         {commodities && commodities.length > 0 && (
                             <div className="marker3d-popup-commodities">
-                                <div className="marker3d-popup-commodities-title">🛒 Нужно взять:</div>
+                                <div className="marker3d-popup-commodities-title">{t('markers.take_items')}</div>
                                 <ul>{commodities.map((c, i) => <li key={i}>{c}</li>)}</ul>
                             </div>
                         )}
                         <button className="marker3d-popup-btn" onClick={handleBuildRoute}>
-                            Построить маршрут
+                            {t('markers.build_route')}
                         </button>
                     </div>
                 )}
@@ -178,6 +181,7 @@ function TargetPin({ x, y, title, pinScale }) {
 }
 
 function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopup, popupKey, onPassed, showPassedBtn, pinScale }) {
+    const { t } = useTranslation();
     const pos = toThreePos(x, y, 0.15);
 
     const handleClick = (e) => {
@@ -210,7 +214,7 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
                         <div className="marker3d-popup-title">{name}</div>
                         {commodities && commodities.length > 0 && (
                             <div className="marker3d-popup-commodities">
-                                <div className="marker3d-popup-commodities-title">🛒 Нужно взять:</div>
+                                <div className="marker3d-popup-commodities-title">{t('markers.take_items')}</div>
                                 <ul>{commodities.map((c, i) => <li key={i}>{c}</li>)}</ul>
                             </div>
                         )}
@@ -219,7 +223,7 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
                                 className="marker3d-popup-btn marker3d-passed-btn"
                                 onClick={(e) => { e.stopPropagation(); onPassed && onPassed(index); onTogglePopup && onTogglePopup(null); }}
                             >
-                                ✅ Пройдено
+                                {t('markers.passed')}
                             </button>
                         )}
                     </div>
@@ -230,6 +234,7 @@ function WaypointPin({ x, y, index, name, commodities, isPopupOpen, onTogglePopu
 }
 
 export function Markers3D({ categories, banners = [], entranceExit, shop, aiCategories, routeWaypoints, onBuildRoute, passedWaypointCount = 0, onWaypointPassed }) {
+    const { t } = useTranslation();
     const [openPopupId, setOpenPopupId] = useState(null);
     const [pinScale, setPinScale] = useState(1);
     const pinScaleRef = useRef(1);
@@ -337,7 +342,7 @@ export function Markers3D({ categories, banners = [], entranceExit, shop, aiCate
                 if (cat.x_coordinate == null || cat.y_coordinate == null) return null;
                 if (routeCategoryIds.has(cat.id)) return null;
 
-                const title = cat.title || cat.category?.title || 'Категория';
+                const title = cat.title || cat.category?.title || t('ai.category');
                 const isTarget = aiCategoryIds.has(cat.id);
 
                 // Find commodities from AI results for this category
@@ -386,7 +391,7 @@ export function Markers3D({ categories, banners = [], entranceExit, shop, aiCate
                 <SpecialPin
                     x={entranceExit.entranceX}
                     y={entranceExit.entranceY}
-                    label="Вход"
+                    label={t('shop.entrance')}
                     emoji="🚪"
                     color="#22c55e"
                     pinScale={pinScale}
@@ -398,7 +403,7 @@ export function Markers3D({ categories, banners = [], entranceExit, shop, aiCate
                 <SpecialPin
                     x={entranceExit.exitX}
                     y={entranceExit.exitY}
-                    label="Выход"
+                    label={t('shop.exit')}
                     emoji="🚶"
                     color="#ef4444"
                     pinScale={pinScale}
@@ -446,7 +451,7 @@ export function Markers3D({ categories, banners = [], entranceExit, shop, aiCate
                     key={`cat-active-${activeCategory.id}`}
                     x={activeCategory.x_coordinate}
                     y={activeCategory.y_coordinate}
-                    title={activeCategory.title || activeCategory.category?.title || 'Категория'}
+                    title={activeCategory.title || activeCategory.category?.title || t('ai.category')}
                     isTarget={aiCategoryIds.has(activeCategory.id)}
                     categoryId={activeCategory.id}
                     commodities={(Array.isArray(aiCategories) ? aiCategories.find(ac => ac.id === activeCategory.id) : null)?.commodities || []}

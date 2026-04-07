@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ app.request.locale }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyShop — Оптимальные маршруты для магазинов и складов</title>
-    <meta name="description" content="EasyShop строит оптимальные маршруты по магазину или складу. Для покупателей, курьеров, сборщиков заказов и мерчендайзеров.">
+    <title>{{ 'landing.title'|trans }}</title>
+    <meta name="description" content="{{ 'landing.description'|trans }}">
     <link rel="icon" href="{{ asset('img/icon.svg') }}" type="image/svg+xml">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
@@ -19,12 +19,13 @@
             <div class="container">
                 <a href="#" class="logo"><img src="{{ asset('img/logo-white.svg') }}" alt="EasyShop" style="height:36px;"></a>
                 <div class="nav-links" id="nav-links">
-                    <a href="#features" class="nav-link-item">Возможности</a>
-                    <a href="#ai" class="nav-link-item">AI-помощник</a>
-                    <a href="#maps" class="nav-link-item">Карты</a>
-                    <a href="#warehouse" class="nav-link-item">Склад</a>
-                    <a href="#business" class="nav-link-item">Для бизнеса</a>
-                    <a href="{{ main_url }}" class="btn-primary">Запустить сервис</a>
+                    <a href="#features" class="nav-link-item">{{ 'landing.nav.features'|trans }}</a>
+                    <a href="#ai" class="nav-link-item">{{ 'landing.nav.ai'|trans }}</a>
+                    <a href="#maps" class="nav-link-item">{{ 'landing.nav.maps'|trans }}</a>
+                    <a href="#warehouse" class="nav-link-item">{{ 'landing.nav.warehouse'|trans }}</a>
+                    <a href="#business" class="nav-link-item">{{ 'landing.nav.business'|trans }}</a>
+                    <a href="{{ main_url }}" class="btn-primary">{{ 'common.launch_service'|trans }}</a>
+                    {% include '_language_switcher.html.twig' %}
                 </div>
                 <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
                     <span></span>
@@ -37,11 +38,11 @@
         <div class="container">
             <div class="hero">
                 <div class="hero-content">
-                    <div class="hero-offer">Сократите время в магазине на 30-40% — с первого же похода</div>
-                    <h1>Оптимальный маршрут — меньше шагов, больше результата</h1>
-                    <p>EasyShop использует алгоритм оптимизации маршрутов, чтобы вы проходили магазин или склад по кратчайшему пути. Никаких лишних кругов — только нужные товары в правильном порядке.</p>
+                    <div class="hero-offer">{{ 'landing.hero.offer'|trans }}</div>
+                    <h1>{{ 'landing.hero.h1'|trans }}</h1>
+                    <p>{{ 'landing.hero.p'|trans }}</p>
                     <div class="hero-btns">
-                        <a href="{{ main_url }}" class="btn-primary">Начать пользоваться бесплатно</a>
+                        <a href="{{ main_url }}" class="btn-primary">{{ 'common.start_free'|trans }}</a>
                     </div>
                 </div>
                 <div class="hero-image">
@@ -54,30 +55,30 @@
     <section id="features" class="features">
         <div class="container">
             <div class="section-title">
-                <h2>Как это работает?</h2>
-                <p>Три шага до оптимального маршрута</p>
+                <h2>{{ 'landing.features.h2'|trans }}</h2>
+                <p>{{ 'landing.features.p'|trans }}</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-list-check"></i>
                     </div>
-                    <h3>Составьте список</h3>
-                    <p>Импортируйте список товаров с телефона или просто напишите запрос AI-ассистенту — он сам подберёт нужные позиции.</p>
+                    <h3>{{ 'landing.features.step1_title'|trans }}</h3>
+                    <p>{{ 'landing.features.step1_p'|trans }}</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-route"></i>
                     </div>
-                    <h3>Оптимальный маршрут</h3>
-                    <p>Алгоритм рассчитывает кратчайший путь через все нужные отделы с учётом препятствий — как GPS, только для торгового зала.</p>
+                    <h3>{{ 'landing.features.step2_title'|trans }}</h3>
+                    <p>{{ 'landing.features.step2_p'|trans }}</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-clock"></i>
                     </div>
-                    <h3>Экономьте время</h3>
-                    <p>Забудьте о хаотичных перемещениях. Проходите магазин по оптимальному пути — экономия <strong>5-15 минут</strong> на каждый визит, до <strong>40% меньше шагов</strong>.</p>
+                    <h3>{{ 'landing.features.step3_title'|trans }}</h3>
+                    <p>{{ 'landing.features.step3_p'|trans|raw }}</p>
                 </div>
             </div>
         </div>
@@ -86,17 +87,17 @@
     <section id="ai" class="ai-section">
         <div class="container">
             <div class="ai-inner">
-                <div class="ai-badge"><i class="fas fa-robot"></i> AI-помощник</div>
-                <h2>Просто напишите — AI сам составит список</h2>
-                <p>Не нужно вручную искать каждый товар. Напишите AI-ассистенту что хотите купить или приготовить — он подберёт нужные позиции из каталога магазина. Список товаров также можно импортировать с телефона.</p>
+                <div class="ai-badge"><i class="fas fa-robot"></i> {{ 'landing.ai.badge'|trans }}</div>
+                <h2>{{ 'landing.ai.h2'|trans }}</h2>
+                <p>{{ 'landing.ai.p'|trans }}</p>
                 <div class="ai-examples">
                     <div class="ai-example">
-                        <div class="ai-chat-bubble user">Хочу приготовить плов на 4 человека</div>
-                        <div class="ai-chat-bubble bot"><i class="fas fa-robot"></i> Подобрал: рис 1 кг, баранина 800 г, морковь, лук, специи для плова. Построить маршрут по магазину?</div>
+                        <div class="ai-chat-bubble user">{{ 'landing.ai.example1_user'|trans }}</div>
+                        <div class="ai-chat-bubble bot"><i class="fas fa-robot"></i> {{ 'landing.ai.example1_bot'|trans }}</div>
                     </div>
                     <div class="ai-example">
-                        <div class="ai-chat-bubble user">Нужны продукты для завтрака на неделю</div>
-                        <div class="ai-chat-bubble bot"><i class="fas fa-robot"></i> Составил список: яйца, овсянка, молоко, хлеб, масло, творог, фрукты. Показать маршрут?</div>
+                        <div class="ai-chat-bubble user">{{ 'landing.ai.example2_user'|trans }}</div>
+                        <div class="ai-chat-bubble bot"><i class="fas fa-robot"></i> {{ 'landing.ai.example2_bot'|trans }}</div>
                     </div>
                 </div>
             </div>
@@ -106,30 +107,30 @@
     <section id="maps" class="maps-section">
         <div class="container">
             <div class="section-title">
-                <h2>Интерактивные карты магазинов</h2>
-                <p>Ориентируйтесь в любом гипермаркете как у себя дома</p>
+                <h2>{{ 'landing.maps.h2'|trans }}</h2>
+                <p>{{ 'landing.maps.p'|trans }}</p>
             </div>
             <div class="maps-grid">
                 <div class="map-card">
                     <div class="feature-icon">
                         <i class="fas fa-map-marked-alt"></i>
                     </div>
-                    <h3>Карта магазина</h3>
-                    <p>Интерактивная схема торгового зала поможет мгновенно найти нужный товар или целую категорию — без блужданий по рядам.</p>
+                    <h3>{{ 'landing.maps.card1_title'|trans }}</h3>
+                    <p>{{ 'landing.maps.card1_p'|trans }}</p>
                 </div>
                 <div class="map-card">
                     <div class="feature-icon">
                         <i class="fas fa-search-location"></i>
                     </div>
-                    <h3>Поиск по карте</h3>
-                    <p>Введите название товара или категории — и карта сразу покажет, где именно это находится в магазине.</p>
+                    <h3>{{ 'landing.maps.card2_title'|trans }}</h3>
+                    <p>{{ 'landing.maps.card2_p'|trans }}</p>
                 </div>
                 <div class="map-card">
                     <div class="feature-icon">
                         <i class="fas fa-gift"></i>
                     </div>
-                    <h3>Тематические подборки</h3>
-                    <p>Готовые наборы к праздникам и особым случаям: Новый год, день рождения, пикник. Выберите подборку — и маршрут по магазину уже готов!</p>
+                    <h3>{{ 'landing.maps.card3_title'|trans }}</h3>
+                    <p>{{ 'landing.maps.card3_p'|trans }}</p>
                 </div>
             </div>
         </div>
@@ -138,41 +139,41 @@
     <section id="user-benefits" class="user-benefits-section">
         <div class="container">
             <div class="section-title">
-                <h2>Преимущества регистрации</h2>
-                <p>Персонализация, история покупок и контроль расходов — всё в одном аккаунте</p>
+                <h2>{{ 'landing.benefits.h2'|trans }}</h2>
+                <p>{{ 'landing.benefits.p'|trans }}</p>
             </div>
             <div class="benefits-grid">
                 <div class="benefit-card">
                     <div class="feature-icon">
                         <i class="fas fa-user-cog"></i>
                     </div>
-                    <h3>Персональный AI-контекст</h3>
-                    <p>AI-помощник учитывает ваши предпочтения: непереносимость лактозы, вегетарианство, любовь к органике. Один раз укажите — и каждый раз получайте рекомендации именно для себя.</p>
+                    <h3>{{ 'landing.benefits.card1_title'|trans }}</h3>
+                    <p>{{ 'landing.benefits.card1_p'|trans }}</p>
                 </div>
                 <div class="benefit-card">
                     <div class="feature-icon">
                         <i class="fas fa-history"></i>
                     </div>
-                    <h3>История покупок и маршрутов</h3>
-                    <p>Все ваши запросы, маршруты и покупки сохраняются. Легко вернуться к прошлым спискам или повторить удачный заказ — не нужно помнить, что покупали месяц назад.</p>
+                    <h3>{{ 'landing.benefits.card2_title'|trans }}</h3>
+                    <p>{{ 'landing.benefits.card2_p'|trans }}</p>
                 </div>
                 <div class="benefit-card">
                     <div class="feature-icon">
                         <i class="fas fa-heart"></i>
                     </div>
-                    <h3>Свои подборки товаров</h3>
-                    <p>Создавайте личные подборки: "Завтрак на неделю", "Продукты для пикника", "Детское питание". Они сохраняются в вашем профиле и доступны в любом магазине сети.</p>
+                    <h3>{{ 'landing.benefits.card3_title'|trans }}</h3>
+                    <p>{{ 'landing.benefits.card3_p'|trans }}</p>
                 </div>
                 <div class="benefit-card">
                     <div class="feature-icon">
                         <i class="fas fa-chart-pie"></i>
                     </div>
-                    <h3>Статистика расходов</h3>
-                    <p>Видьте, сколько потратили за маршрут и в целом. Средний чек, частота покупок, экономия времени — полная аналитика ваших походов в магазин.</p>
+                    <h3>{{ 'landing.benefits.card4_title'|trans }}</h3>
+                    <p>{{ 'landing.benefits.card4_p'|trans }}</p>
                 </div>
             </div>
             <div class="benefits-cta">
-                <a href="{{ main_url }}" class="btn-primary">Зарегистрироваться бесплатно</a>
+                <a href="{{ main_url }}" class="btn-primary">{{ 'landing.benefits.cta'|trans }}</a>
             </div>
         </div>
     </section>
@@ -180,9 +181,9 @@
     <section id="advantages" class="cta">
         <div class="container">
             <div class="cta-box">
-                <h2>Умный шоппинг в вашем кармане</h2>
-                <p>Мы поддерживаем крупнейшие гипермаркеты города. Интерактивные карты, AI-ассистент и праздничные подборки — всё для того, чтобы поход в магазин был быстрым и приятным.</p>
-                <a href="{{ main_url }}" class="btn-primary">Перейти к покупкам</a>
+                <h2>{{ 'landing.advantages.h2'|trans }}</h2>
+                <p>{{ 'landing.advantages.p'|trans }}</p>
+                <a href="{{ main_url }}" class="btn-primary">{{ 'common.go_shopping'|trans }}</a>
             </div>
         </div>
     </section>
@@ -190,27 +191,27 @@
     <section id="warehouse" class="warehouse-section">
         <div class="container">
             <div class="section-title">
-                <h2>Для складов и внутренней логистики</h2>
-                <p>Оптимальные маршруты работают не только в магазинах — но и на любом складе</p>
+                <h2>{{ 'landing.warehouse.h2'|trans }}</h2>
+                <p>{{ 'landing.warehouse.p'|trans }}</p>
             </div>
             <div class="warehouse-intro">
-                <p>Если у вас есть склад с товарами на полках — EasyShop поможет вашим сотрудникам двигаться по кратчайшему пути. Загрузите план склада, расставьте товары по зонам и получите готовый инструмент для оптимизации перемещений.</p>
+                <p>{{ 'landing.warehouse.intro'|trans }}</p>
             </div>
             <div class="warehouse-grid">
                 <div class="warehouse-card">
                     <div class="feature-icon"><i class="fas fa-shipping-fast"></i></div>
-                    <h3>Курьеры и сборщики заказов</h3>
-                    <p>Алгоритм строит оптимальный маршрут сбора заказа по складу или торговому залу. Сборщик проходит минимальное расстояние — <strong>+25-35% заказов в час</strong>, очереди не накапливаются.</p>
+                    <h3>{{ 'landing.warehouse.card1_title'|trans }}</h3>
+                    <p>{{ 'landing.warehouse.card1_p'|trans|raw }}</p>
                 </div>
                 <div class="warehouse-card">
                     <div class="feature-icon"><i class="fas fa-tags"></i></div>
-                    <h3>Мерчендайзеры</h3>
-                    <p>Нужно быстро найти где что лежит? Мерчендайзер вводит список позиций — и получает маршрут обхода по залу. Никаких блужданий, только нужные полки в правильном порядке.</p>
+                    <h3>{{ 'landing.warehouse.card2_title'|trans }}</h3>
+                    <p>{{ 'landing.warehouse.card2_p'|trans }}</p>
                 </div>
                 <div class="warehouse-card">
                     <div class="feature-icon"><i class="fas fa-warehouse"></i></div>
-                    <h3>Любой склад или магазин</h3>
-                    <p>Загрузите план помещения, укажите расположение товаров — и система готова к работе. Подходит для розничных магазинов, складов интернет-магазинов и распределительных центров.</p>
+                    <h3>{{ 'landing.warehouse.card3_title'|trans }}</h3>
+                    <p>{{ 'landing.warehouse.card3_p'|trans }}</p>
                 </div>
             </div>
         </div>
@@ -219,14 +220,14 @@
     <section id="business" class="business-section">
         <div class="container">
             <div class="section-title">
-                <h2>Для ритейлеров и управляющих</h2>
-                <p>Привлекайте покупателей уникальным сервисом. Зарегистрированные пользователи выбирают магазины в EasyShop — потому что там удобнее, быстрее и есть персонализация.</p>
+                <h2>{{ 'landing.business.h2'|trans }}</h2>
+                <p>{{ 'landing.business.p'|trans }}</p>
             </div>
             
             <div class="business-highlight">
                 <div class="highlight-icon"><i class="fas fa-users"></i></div>
-                <h3>Почему покупатели выберут ваш магазин?</h3>
-                <p>Пользователи EasyShop сохраняют свои предпочтения, историю покупок и подборки. Но всё это работает только в зарегистрированных магазинах. <strong>Ваша регистрация = конкурентное преимущество</strong>. Покупатель придёт туда, где его знают и где уже настроен персональный AI-помощник.</p>
+                <h3>{{ 'landing.business.highlight_title'|trans }}</h3>
+                <p>{{ 'landing.business.highlight_p'|trans|raw }}</p>
             </div>
 
             <div class="business-grid">
@@ -234,67 +235,67 @@
                     <div class="feature-icon">
                         <i class="fas fa-user-check"></i>
                     </div>
-                    <h3>Персонализация привлекает клиентов</h3>
-                    <p>Покупатели ценят AI, который помнит их диету и предпочтения. Если ваш магазин есть в системе — клиент получает персональные рекомендации. Конкуренты без EasyShop такого предложить не могут.</p>
+                    <h3>{{ 'landing.business.card1_title'|trans }}</h3>
+                    <p>{{ 'landing.business.card1_p'|trans }}</p>
                 </div>
                 <div class="business-card">
                     <div class="feature-icon">
                         <i class="fas fa-history"></i>
                     </div>
-                    <h3>История покупок удерживает</h3>
-                    <p>Клиенты возвращаются туда, где сохранены их списки и маршруты. Переход к конкуренту = потеря всей истории. Это работает как программа лояльности без карт и скидок.</p>
+                    <h3>{{ 'landing.business.card2_title'|trans }}</h3>
+                    <p>{{ 'landing.business.card2_p'|trans }}</p>
                 </div>
                 <div class="business-card">
                     <div class="feature-icon">
                         <i class="fas fa-store"></i>
                     </div>
-                    <h3>Управление товарами</h3>
-                    <p>Добавляйте товары через административную панель: наименование, цена и расположение на карте. Настройте AI-контекст магазина: органика, оптовый склад, спортпит — что угодно.</p>
+                    <h3>{{ 'landing.business.card3_title'|trans }}</h3>
+                    <p>{{ 'landing.business.card3_p'|trans }}</p>
                 </div>
                 <div class="business-card">
                     <div class="feature-icon">
                         <i class="fas fa-map"></i>
                     </div>
-                    <h3>Загрузка карт магазина</h3>
-                    <p>Загружайте интерактивные планы торговых залов. Покупатели сразу видят актуальную схему и могут ориентироваться в вашем магазине. Маршруты строятся через A* — как в GPS.</p>
+                    <h3>{{ 'landing.business.card4_title'|trans }}</h3>
+                    <p>{{ 'landing.business.card4_p'|trans|raw }}</p>
                 </div>
                 <div class="business-card">
                     <div class="feature-icon">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <h3>Аналитика маршрутов</h3>
-                    <p>Отслеживайте популярные маршруты покупателей, статистику расходов, частоту визитов. Узнайте, какие зоны посещают чаще — и оптимизируйте выкладку на основе реальных данных.</p>
+                    <h3>{{ 'landing.business.card5_title'|trans }}</h3>
+                    <p>{{ 'landing.business.card5_p'|trans }}</p>
                 </div>
                 <div class="business-card">
                     <div class="feature-icon">
                         <i class="fas fa-heart"></i>
                     </div>
-                    <h3>Подборки работают на вас</h3>
-                    <p>Пользователи создают личные подборки товаров в вашем магазине. Это значит, что они планируют возвращаться. Подборки = готовые списки покупок, которые хранятся только у вас.</p>
+                    <h3>{{ 'landing.business.card6_title'|trans }}</h3>
+                    <p>{{ 'landing.business.card6_p'|trans }}</p>
                 </div>
             </div>
             <div class="business-cta">
-                <a href="{{ main_url }}" class="btn-primary">Подключить магазин бесплатно</a>
+                <a href="{{ main_url }}" class="btn-primary">{{ 'common.connect_shop_free'|trans }}</a>
             </div>
         </div>
     </section>
 
     <footer>
         <div class="container">
-            <p>&copy; {{ "now"|date("Y") }} EasyShop Project. Сделано профессионально.</p>
+            <p>{{ 'landing.footer.copy'|trans({'%year%': "now"|date("Y")})|raw }}</p>
         </div>
     </footer>
 
     <div class="nav-mobile-overlay" id="nav-mobile-overlay">
-        <button class="nav-overlay-close" id="nav-overlay-close" aria-label="Закрыть меню">
+        <button class="nav-overlay-close" id="nav-overlay-close" aria-label="{{ 'common.cancel'|trans }}">
             <i class="fas fa-times"></i>
         </button>
-        <a href="#features" class="nav-link-item">Возможности</a>
-        <a href="#ai" class="nav-link-item">AI-помощник</a>
-        <a href="#maps" class="nav-link-item">Карты</a>
-        <a href="#warehouse" class="nav-link-item">Склад</a>
-        <a href="#business" class="nav-link-item">Для бизнеса</a>
-        <a href="{{ main_url }}" class="btn-primary">Запустить сервис</a>
+        <a href="#features" class="nav-link-item">{{ 'landing.nav.features'|trans }}</a>
+        <a href="#ai" class="nav-link-item">{{ 'landing.nav.ai'|trans }}</a>
+        <a href="#maps" class="nav-link-item">{{ 'landing.nav.maps'|trans }}</a>
+        <a href="#warehouse" class="nav-link-item">{{ 'landing.nav.warehouse'|trans }}</a>
+        <a href="#business" class="nav-link-item">{{ 'landing.nav.business'|trans }}</a>
+        <a href="{{ main_url }}" class="btn-primary">{{ 'common.launch_service'|trans }}</a>
     </div>
 
     <button id="scroll-top" class="scroll-top-btn" aria-label="Наверх" title="Наверх">

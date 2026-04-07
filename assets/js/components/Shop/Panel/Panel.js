@@ -1,6 +1,7 @@
 import React from "react";
 import "leaflet";
 import 'leaflet/dist/leaflet.css';
+import { useTranslation } from 'react-i18next';
 import CategorySearchInput from "./CategorySearchInput";
 import CommoditySearchInput from "./CommoditySearchInput";
 import CommodityMultiSearchInput from "./CommodityMultiSearchInput";
@@ -13,7 +14,8 @@ export default function Panel({
     onSearchCategoryByCommodity,
     onMultiSearch,
 }) {
-    const emptyMessage = 'В этом магазине пока нет категорий.';
+    const { t } = useTranslation();
+    const emptyMessage = t('shop.no_categories');
     const categoryList = categories.map((shopCategory) =>
         <a key={shopCategory.category.id} href="#" className="tm-text-primary mr-4 mb-2 d-inline-block">{shopCategory.category.title}</a>
     );
@@ -49,7 +51,7 @@ export default function Panel({
                 <br/>
                 <CommodityMultiSearchInput categories={categories} onChange={handleMultiSearch}/>
                 <br/>
-                <h3 className="tm-text-gray-dark mb-3">Категории:</h3>
+                <h3 className="tm-text-gray-dark mb-3">{t('shop.categories_label')}</h3>
                 <select onChange={handleSourceChange} className="form-control" id="contact-select" name="inquiry">
                     {categories.map(shopCategory => (
                         <option key={shopCategory.category.id}

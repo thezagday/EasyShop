@@ -16,5 +16,7 @@ final class ChatWithAIQuery implements QueryInterface
 
     #[Assert\Positive]
     public ?int $userId = null;
+
+    public string $locale = 'pl';
 }
 

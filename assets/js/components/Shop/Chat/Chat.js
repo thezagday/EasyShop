@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function Chat({ containerHeight = "620px", shopId, onCategoriesFound }) {
+    const { t } = useTranslation();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -16,7 +18,7 @@ export default function Chat({ containerHeight = "620px", shopId, onCategoriesFo
         const trimmed = input.trim();
         if (trimmed === '') return;
 
-        setMessages(msgs => [...msgs, { user: 'Вы', text: trimmed }]);
+        setMessages(msgs => [...msgs, { user: t('ai.you'), text: trimmed }]);
         setInput('');
         setLoading(true);
 
@@ -37,7 +39,7 @@ export default function Chat({ containerHeight = "620px", shopId, onCategoriesFo
             }
         } catch (e) {
             setMessages(msgs =>
-                [...msgs, { user: 'AI', text: 'Ошибка при общении с сервером.' }]
+                [...msgs, { user: 'AI', text: t('ai.errors.server_error') }]
             );
         }
         setLoading(false);
@@ -56,7 +58,7 @@ export default function Chat({ containerHeight = "620px", shopId, onCategoriesFo
                 justifyContent: 'flex-start'
             }}
         >
-            <h5 className="tm-text-primary mb-3">Чат с AI</h5>
+            <h5 className="tm-text-primary mb-3">{t('ai.chat_title')}</h5>
             <div
                 className="chat-messages mb-3"
                 style={{
@@ -70,7 +72,7 @@ export default function Chat({ containerHeight = "620px", shopId, onCategoriesFo
                 }}
             >
                 {messages.length === 0 &&
-                    <div className="text-muted text-center">Нет сообщений</div>
+                    <div className="text-muted text-center">{t('ai.no_messages')}</div>
                 }
                 {messages.map((msg, idx) => (
                     <div key={idx} className={`mb-2 ${msg.user === 'AI' ? 'text-primary' : 'font-weight-bold'}`}>
@@ -79,13 +81,13 @@ export default function Chat({ containerHeight = "620px", shopId, onCategoriesFo
                 ))}
                 <div ref={messagesEndRef}></div>
                 {loading &&
-                    <div className="text-secondary">AI печатает...</div>
+                    <div className="text-secondary">{t('ai.typing')}</div>
                 }
             </div>
             <div className="input-group" style={{ alignItems: 'center', flex: '0 0 auto' }}>
                 <input
                     className="form-control"
-                    placeholder="Сообщение..."
+                    placeholder={t('ai.message_placeholder')}
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
@@ -111,7 +113,7 @@ export default function Chat({ containerHeight = "620px", shopId, onCategoriesFo
                         borderRadius: '0 4px 4px 0'
                     }}
                 >
-                    Отправить
+                    {t('ai.send')}
                 </button>
             </div>
         </div>

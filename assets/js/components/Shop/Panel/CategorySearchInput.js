@@ -1,7 +1,9 @@
 import React from 'react';
 import Select from 'react-select'
+import { useTranslation } from 'react-i18next';
 
 export default function CategorySearchInput({categories, onChange}) {
+    const { t } = useTranslation();
     function handleSelectChange (event) {
         if (!event) {
             return;
@@ -25,7 +27,7 @@ export default function CategorySearchInput({categories, onChange}) {
                 options={options}
                 onChange={handleSelectChange}
                 isClearable={true}
-                placeholder={'Поиск по категориям'}
+                placeholder={t('shop.placeholders.search_categories')}
             />
         </div>
     );

@@ -1,0 +1,4 @@
+validators.password.not_blank: "Please enter a password"
+validators.password.length: "Your password should be at least {{ limit }} characters long"
+user.email.unique: "There is already an account with this email"
+user.registration.agree_terms: "You should agree to our terms."

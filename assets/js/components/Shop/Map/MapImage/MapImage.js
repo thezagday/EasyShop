@@ -56,7 +56,7 @@ export default function MapImage({
         }
     }, [map, onRouteReset, onRouteInfo]);
 
-    // Определяем список активных категорий для фильтрации
+    // Define list of active categories for filtering
     const activeCategoryIds = new Set();
     if (selectedCategory?.id) activeCategoryIds.add(selectedCategory.id);
     if (selectedProduct?.categoryId) activeCategoryIds.add(selectedProduct.categoryId);
@@ -78,7 +78,7 @@ export default function MapImage({
         activeCategoryIds.add(source.categoryId);
     }
 
-    // Показываем либо отфильтрованные категории, либо все, если ничего не выбрано
+    // Show either filtered categories or all if nothing is selected
     const visibleCategories = activeCategoryIds.size > 0
         ? categories.filter(cat => activeCategoryIds.has(cat.id))
         : categories;
@@ -92,14 +92,14 @@ export default function MapImage({
         });
     }
 
-    // Показываем категории с кастомными маркерами
+    // Show categories with custom markers
     ShowAllCategories(map, visibleCategories, shop, aiCategories, routeCategoryIds, selectedCategory, selectedProduct);
 
     // CategorySearch(map, searchedCategory);
     CommoditySearch(map, searchedCategoryByCommodity);
     // MultiCommoditySearch(map, multiSearch);
 
-    // Построение маршрута когда установлены координаты source/destination
+    // Build route when source/destination coordinates are set
     useEffect(() => {
         if (routeBuilderRef.current) {
             // Multi-point route (array of waypoints)
@@ -135,7 +135,7 @@ export default function MapImage({
         }
     }, [obstaclesLoaded, map]);
 
-    // Обработка кликов по кнопкам "Построить маршрут" в popup
+    // Handle clicks on "Build route" buttons in popup
     useEffect(() => {
         const handlePopupClick = (e) => {
             const button = e.target.closest('[data-action="build-route"]');
@@ -154,24 +154,24 @@ export default function MapImage({
         };
     }, [map, onBuildRoute]);
 
-    // Обработка выбора категории из поиска - центрируем и подсвечиваем
+    // Handle category selection from search - center and highlight
     useEffect(() => {
         if (selectedCategory) {
-            // Конвертируем административные координаты в координаты Leaflet
+            // Convert admin coordinates to Leaflet coordinates
             const leafletPos = adminToLeaflet(selectedCategory.x, selectedCategory.y);
 
-            // Центрируем карту на выбранной категории
+            // Center map on selected category
             map.setView(leafletPos, 1, {
                 animate: true,
                 duration: 0.5
             });
 
-            // Находим маркер выбранной категории и открываем его popup
+            // Find selected category marker and open its popup
             map.eachLayer((layer) => {
                 if (layer instanceof L.Marker && layer.getLatLng) {
                     const pos = layer.getLatLng();
                     if (Math.abs(pos.lat - leafletPos.lat) < 1 && Math.abs(pos.lng - leafletPos.lng) < 1) {
-                        // Анимированное открытие popup с задержкой
+                        // Animated popup opening with delay
                         setTimeout(() => {
                             layer.openPopup();
                         }, 500);
@@ -181,24 +181,24 @@ export default function MapImage({
         }
     }, [selectedCategory, map]);
 
-    // Обработка выбора товара из поиска - центрируем на категории товара
+    // Handle product selection from search - center on product category
     useEffect(() => {
         if (selectedProduct && selectedProduct.x && selectedProduct.y) {
-            // Конвертируем административные координаты в координаты Leaflet
+            // Convert admin coordinates to Leaflet coordinates
             const leafletPos = adminToLeaflet(selectedProduct.x, selectedProduct.y);
 
-            // Центрируем карту на категории товара
+            // Center map on product category
             map.setView(leafletPos, 1, {
                 animate: true,
                 duration: 0.5
             });
 
-            // Находим маркер категории и открываем его popup
+            // Find category marker and open its popup
             map.eachLayer((layer) => {
                 if (layer instanceof L.Marker && layer.getLatLng) {
                     const pos = layer.getLatLng();
                     if (Math.abs(pos.lat - leafletPos.lat) < 1 && Math.abs(pos.lng - leafletPos.lng) < 1) {
-                        // Анимированное открытие popup с задержкой
+                        // Animated popup opening with delay
                         setTimeout(() => {
                             layer.openPopup();
                         }, 500);
@@ -208,10 +208,10 @@ export default function MapImage({
         }
     }, [selectedProduct, map]);
 
-    // Обработка результатов AI - подсветка множественных категорий
+    // Handle AI results - highlight multiple categories
     useEffect(() => {
         if (aiCategories && aiCategories.length > 0) {
-            // Массив координат всех найденных категорий
+            // Array of coordinates for all found categories
             const categoryCoords = [];
 
             aiCategories.forEach((cat) => {
@@ -222,7 +222,7 @@ export default function MapImage({
             });
 
             if (categoryCoords.length > 0) {
-                // Центрируем карту на все найденные категории
+                // Center map on all found categories
                 const bounds = L.latLngBounds(categoryCoords);
                 map.fitBounds(bounds, {
                     padding: [50, 50],
@@ -231,19 +231,19 @@ export default function MapImage({
                     duration: 0.5
                 });
 
-                // Подсвечиваем маркеры найденных категорий
+                // Highlight markers of found categories
                 setTimeout(() => {
                     map.eachLayer((layer) => {
                         if (layer instanceof L.Marker && layer.getLatLng) {
                             const pos = layer.getLatLng();
 
-                            // Проверяем, является ли этот маркер одной из найденных категорий
+                            // Check if this marker is one of the found categories
                             const isAICategory = categoryCoords.some(coord =>
                                 Math.abs(pos.lat - coord.lat) < 1 && Math.abs(pos.lng - coord.lng) < 1
                             );
 
                             if (isAICategory) {
-                                // Добавляем пульсирующий эффект
+                                // Add pulsing effect
                                 const element = layer.getElement();
                                 if (element) {
                                     element.classList.add('ai-highlighted');

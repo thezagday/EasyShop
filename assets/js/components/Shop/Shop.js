@@ -1,8 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useParams} from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import Map3D from "./Map3D/Map3D";
 
 export default function Shop() {
+    const { t } = useTranslation();
     // To avoid repetitive "prop drilling", see https://react.dev/learn/scaling-up-with-reducer-and-context
     const [shop, setShop] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -108,7 +110,7 @@ export default function Shop() {
 
     let buildRouteButton = '';
     if (categories.length) {
-        buildRouteButton = <a className="btn btn-primary tm-btn-big" onClick={handleOnClick}>Построить маршрут</a>
+        buildRouteButton = <a className="btn btn-primary tm-btn-big" onClick={handleOnClick}>{t('shop.build_route')}</a>
     }
 
     return (

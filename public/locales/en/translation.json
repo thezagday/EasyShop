@@ -1,0 +1,240 @@
+{
+    "navbar": {
+        "greeting": "Hello, {{username}}",
+        "management": "Management",
+        "login": "Login",
+        "logout": "Logout",
+        "shops": "Shops",
+        "account": "Account",
+        "profile": "Profile",
+        "registration": "Registration"
+    },
+    "home": {
+        "search_placeholder": "Search shop...",
+        "not_found": "No shops found",
+        "search": "Search",
+        "empty_shops": "Unfortunately, we haven't added such a shop yet.",
+        "open": "Open",
+        "edit_map": "Edit map",
+        "categories": "Categories",
+        "products": "Products"
+    },
+    "search": {
+        "product_placeholder": "Search product...",
+        "category_placeholder": "Search category...",
+        "no_category": "No category",
+        "no_name": "No name",
+        "general": "General",
+        "products_not_found": "Products not found",
+        "nothing_found": "Nothing found"
+    },
+    "collections": {
+        "loading": "Loading collections...",
+        "empty": "No collections added yet",
+        "build_route": "🗺️ Build route",
+        "no_coords": "Collection has no items with coordinates",
+        "personal_prefix": "Collection: "
+    },
+    "nav": {
+        "ai": "AI",
+        "search": "Search",
+        "collections": "Collections"
+    },
+    "markers": {
+        "take_items": "🛒 Items to take:",
+        "build_route": "Build route",
+        "passed": "✅ Passed",
+        "open_offer": "Open offer"
+    },
+    "map": {
+        "reset_view": "Reset view",
+        "point": "Point",
+        "zoom_in": "Zoom in",
+        "zoom_out": "Zoom out",
+        "entire_map": "Entire map",
+        "you_are_here": "You are here"
+    },
+    "pwa": {
+        "title": "📱 Install EasyShop",
+        "description": "Add the app to your home screen for quick access",
+        "install": "Install"
+    },
+    "contact": {
+        "title": "Contact Us",
+        "name": "Name",
+        "email": "Email",
+        "subject": "Subject",
+        "message": "Message",
+        "send": "Send",
+        "address": "Address",
+        "on_map": "On Map",
+        "ceo": "CEO",
+        "muse": "Muse, inspirer",
+        "cartographer": "Cartographer",
+        "intern": "Intern"
+    },
+    "admin": {
+        "obstacles": "Obstacles",
+        "obstacle_types": {
+            "shelf": "Shelf (red)",
+            "wall": "Wall (grey)",
+            "counter": "Counter (blue)",
+            "checkout": "Checkout (green)"
+        },
+        "draw": "✏️ Draw",
+        "done": "✓ Done",
+        "clear": "🗑️ Clear",
+        "entrance_exit": "Entrance / Exit",
+        "entrance": "Entrance",
+        "exit": "Exit",
+        "none": "none",
+        "banners": "Banners",
+        "place_banner": "Place banner",
+        "banner_disabled": "Banner disabled in admin",
+        "no_categories": "No categories",
+        "no_banners": "No banners - create them in admin",
+        "hints": {
+            "draw": "鼠标️ Hold and drag to draw an obstacle rectangle",
+            "place_category": "📍 Click on the map to place: ",
+            "place_banner": "📢 Click on the map to place: ",
+            "place_entrance": "🚪 Click on the map to place Entrance",
+            "place_exit": "🚶 Click on the map to place Exit"
+        },
+        "zoom": {
+            "in": "Zoom In",
+            "out": "Zoom Out",
+            "fit": "Fit"
+        },
+        "confirm": {
+            "clear_obstacles": "Delete all obstacles? This cannot be undone.",
+            "delete_obstacle": "Delete obstacle ({{type}})?\nx={{x}}, y={{y}}, {{w}}x{{h}}"
+        }
+    },
+    "not_found": {
+        "title": "Error 404",
+        "description": "Page {{path}} not found.",
+        "back_to_home": "Back to Home"
+    },
+    "ai": {
+        "badge": "AI Assistant",
+        "empty_chat": "🤖 Hello! Write what you want to find or cook, and I will pick the right products.",
+        "thinking": "AI is thinking...",
+        "input_placeholder": "Example: I want to make pilaf...",
+        "attach_title": "Load product list from file",
+        "found_categories": "📍 Found categories ({{count}}):",
+        "category": "Category",
+        "build_route": "🗺️ Build route",
+        "file_uploaded": "📎 File uploaded: {{name}}",
+        "errors": {
+            "invalid_shop": "Error: incorrect shop ID.",
+            "server_error": "Error communicating with server."
+        }
+    },
+    "shop": {
+        "entrance": "Entrance",
+        "exit": "Exit",
+        "route_info": {
+            "distance": "~{{distance}}m",
+            "time": "~{{time}} min"
+        },
+        "build_route": "Build route",
+        "building_route": "Building route...",
+        "no_categories": "There are no categories in this shop yet.",
+        "categories_label": "Categories:",
+        "destination": "Destination",
+        "target": "Target",
+        "distance": "Distance",
+        "time": "Time",
+        "points": "Points",
+        "placeholders": {
+            "search_categories": "Search categories",
+            "search_products": "Search products",
+            "route": "Route"
+        }
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "create": "Create",
+        "saving": "Saving...",
+        "creating": "Creating...",
+        "deleting": "Deleting...",
+        "success": "Success",
+        "not_found": "Nothing found",
+        "search": "Search...",
+        "previous": "Previous",
+        "next": "Next"
+    },
+    "profile": {
+        "title": "User Profile",
+        "tabs": {
+            "context": "My Preferences",
+            "history": "History",
+            "collections": "My Collections",
+            "stats": "Statistics"
+        },
+        "errors": {
+            "load_data": "Error loading data",
+            "save_context": "Error saving context",
+            "create_collection": "Error creating collection",
+            "update_collection": "Error updating collection",
+            "delete_collection": "Error deleting collection",
+            "fill_required": "Please fill in the name and select a shop"
+        },
+        "success": {
+            "context_saved": "Context saved",
+            "collection_created": "Collection created",
+            "collection_updated": "Collection updated",
+            "collection_deleted": "Collection deleted"
+        },
+        "context": {
+            "title": "Personal AI Context",
+            "description": "Specify your preferences, diet, or restrictions. The AI assistant will take this into account when selecting products.",
+            "placeholder": "Example: Avoid dairy as I have lactose intolerance. Prefer organic products."
+        },
+        "history": {
+            "title": "Purchase and Route History",
+            "empty": "History is empty",
+            "route": "Route",
+            "products": "Products",
+            "view_on_map": "View on map",
+            "old_route_unavailable": "Route unavailable for old records"
+        },
+        "collections": {
+            "title": "My Product Collections",
+            "create": "Create Collection",
+            "new_title": "New Collection",
+            "shop": "Shop",
+            "select_shop": "-- Select Shop --",
+            "name": "Name",
+            "name_placeholder": "Example: Breakfast for a week",
+            "description": "Description",
+            "description_placeholder": "Short description",
+            "emoji": "Emoji",
+            "items": "Products",
+            "items_selected": "{{count}} selected",
+            "search_placeholder": "Search products...",
+            "items_loading": "Loading products...",
+            "items_not_found": "Nothing found",
+            "no_items_shop": "No products found for this shop",
+            "empty_state": "You don't have any collections yet. Create your first one!",
+            "delete_confirm": "Delete this collection?",
+            "shop_id": "Shop ID",
+            "count_items": "{{count}} products"
+        },
+        "stats": {
+            "title": "Spending Statistics",
+            "no_data": "No data to display",
+            "total_routes": "Total Routes",
+            "total_spent": "Total Spent",
+            "average_check": "Average Check",
+            "total_distance": "Total Distance",
+            "total_time": "Total Time",
+            "average_time": "Average Time"
+        }
+    }
+}

@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[IsGranted('ROLE_ADMIN')]
 class RetailerCrudController extends AbstractCrudController
@@ -19,8 +20,8 @@ class RetailerCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
-            TextField::new('title', 'Название'),
+            IdField::new('id', new TranslatableMessage('common.id', [], 'admin'))->hideOnForm(),
+            TextField::new('title', new TranslatableMessage('retailer.fields.title', [], 'admin')),
         ];
     }
 }

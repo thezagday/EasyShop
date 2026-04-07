@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function SearchControl({ shops, onShopSelect }) {
+    const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -37,7 +39,7 @@ export function SearchControl({ shops, onShopSelect }) {
                 <input
                     type="text"
                     className="map-search-input"
-                    placeholder="Поиск категории..."
+                    placeholder={t('search.category_placeholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -52,7 +54,7 @@ export function SearchControl({ shops, onShopSelect }) {
                             onClick={() => handleSelectShop(shop)}
                         >
                             <div className="search-result-name">{shop.name}</div>
-                            <div className="search-result-category">{shop.category || 'Общее'}</div>
+                            <div className="search-result-category">{shop.category || t('search.general')}</div>
                         </div>
                     ))}
                 </div>
@@ -61,7 +63,7 @@ export function SearchControl({ shops, onShopSelect }) {
             {isSearching && searchResults.length === 0 && searchQuery.length >= 2 && (
                 <div className="search-results">
                     <div className="search-result-item" style={{ cursor: 'default', color: '#a0aec0' }}>
-                        Ничего не найдено
+                        {t('search.nothing_found')}
                     </div>
                 </div>
             )}

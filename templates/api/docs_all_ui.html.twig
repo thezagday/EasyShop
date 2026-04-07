@@ -1,70 +1,70 @@
 {% extends 'base_simple.html.twig' %}
 
-{% block title %}EasyShop API Docs{% endblock %}
+{% block title %}{{ 'api.docs.title'|trans }}{% endblock %}
 
 {% block body %}
     <main class="api-docs-page" style="max-width: 1280px; margin: 24px auto; padding: 0 16px; font-family: 'Open Sans', sans-serif;">
         <header style="margin-bottom: 16px;">
-            <h1 style="margin: 0 0 8px; font-size: 28px;">All API Endpoints</h1>
+            <h1 style="margin: 0 0 8px; font-size: 28px;">{{ 'api.docs.title'|trans }}</h1>
             <p style="margin: 0; color: #4b5563;">
-                Всего: <strong>{{ total }}</strong> · Сгенерировано: <strong>{{ generatedAt }}</strong>
+                {{ 'api.docs.total'|trans }}: <strong>{{ total }}</strong> · {{ 'api.docs.generated'|trans }}: <strong>{{ generatedAt }}</strong>
             </p>
             <p style="margin: 8px 0 0;">
-                <a href="/api/docs" target="_blank" rel="noopener noreferrer">API Platform docs</a>
+                <a href="/api/docs" target="_blank" rel="noopener noreferrer">{{ 'api.docs.api_platform'|trans }}</a>
                 ·
-                <a href="/api/docs/all" target="_blank" rel="noopener noreferrer">JSON view</a>
+                <a href="/api/docs/all" target="_blank" rel="noopener noreferrer">{{ 'api.docs.json_view'|trans }}</a>
             </p>
         </header>
 
         <section style="display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: 8px; margin-bottom: 14px;">
-            <input id="apiFilterText" type="text" placeholder="Поиск: path / route / controller" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; grid-column: span 2;">
+            <input id="apiFilterText" type="text" placeholder="{{ 'api.docs.filter_placeholder'|trans }}" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; grid-column: span 2;">
 
             <select id="apiFilterSource" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                <option value="">Любой source</option>
+                <option value="">{{ 'api.docs.any_source'|trans }}</option>
                 <option value="api_platform">api_platform</option>
                 <option value="custom_controller">custom_controller</option>
             </select>
 
             <select id="apiFilterMethod" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                <option value="">Любой method</option>
+                <option value="">{{ 'api.docs.any_method'|trans }}</option>
                 {% for method in methodOptions %}
                     <option value="{{ method }}">{{ method }}</option>
                 {% endfor %}
             </select>
 
             <select id="apiFilterSecurity" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                <option value="">Любая защита</option>
-                <option value="__no_rule__">Без IsGranted</option>
+                <option value="">{{ 'api.docs.any_security'|trans }}</option>
+                <option value="__no_rule__">{{ 'api.docs.no_is_granted'|trans }}</option>
                 {% for rule in securityRules %}
                     <option value="{{ rule }}">{{ rule }}</option>
                 {% endfor %}
             </select>
 
             <select id="apiFilterProtection" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; grid-column: span 2;">
-                <option value="">Любой статус protection</option>
-                <option value="protected">Protected (green)</option>
-                <option value="public_expected">Public expected (amber)</option>
-                <option value="review">Unprotected review (red)</option>
+                <option value="">{{ 'api.docs.any_protection'|trans }}</option>
+                <option value="protected">{{ 'api.docs.protected'|trans }} (green)</option>
+                <option value="public_expected">{{ 'api.docs.public_expected'|trans }} (amber)</option>
+                <option value="review">{{ 'api.docs.review_required'|trans }} (red)</option>
             </select>
         </section>
 
         <section style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; font-size: 13px;">
-            <span style="padding: 4px 8px; border-radius: 999px; background: #dcfce7; color: #166534; border: 1px solid #86efac;">Protected</span>
-            <span style="padding: 4px 8px; border-radius: 999px; background: #ffedd5; color: #9a3412; border: 1px solid #fdba74;">Public expected (guest/product)</span>
-            <span style="padding: 4px 8px; border-radius: 999px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">Unprotected review required</span>
+            <span style="padding: 4px 8px; border-radius: 999px; background: #dcfce7; color: #166534; border: 1px solid #86efac;">{{ 'api.docs.protected'|trans }}</span>
+            <span style="padding: 4px 8px; border-radius: 999px; background: #ffedd5; color: #9a3412; border: 1px solid #fdba74;">{{ 'api.docs.public_expected'|trans }}</span>
+            <span style="padding: 4px 8px; border-radius: 999px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">{{ 'api.docs.review_required'|trans }}</span>
         </section>
 
         <div style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff;">
             <table id="apiDocsTable" style="width: 100%; border-collapse: collapse; font-size: 14px;">
                 <thead style="background: #f8fafc;">
                     <tr>
-                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Path</th>
-                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Methods</th>
-                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Source</th>
-                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Protection</th>
-                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">IsGranted</th>
-                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Controller</th>
-                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">Route name</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ 'api.docs.table.path'|trans }}</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ 'api.docs.table.methods'|trans }}</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ 'api.docs.table.source'|trans }}</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ 'api.docs.table.protection'|trans }}</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ 'api.docs.table.is_granted'|trans }}</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ 'api.docs.table.controller'|trans }}</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ 'api.docs.table.route_name'|trans }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -161,7 +161,7 @@
                     }
                 });
 
-                visibleCount.textContent = `Показано ${count} из ${rows.length}`;
+                visibleCount.textContent = `{{ 'api.docs.visible_count'|trans }}`.replace('{{count}}', count).replace('{{total}}', rows.length);
             }
 
             [textFilter, sourceFilter, methodFilter, securityFilter, protectionFilter].forEach((el) => {

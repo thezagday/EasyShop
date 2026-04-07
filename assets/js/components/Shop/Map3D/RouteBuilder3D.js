@@ -1,4 +1,5 @@
 import { PathfindingService } from '../Map/MapImage/PathfindingService';
+import i18n from '../../../i18n';
 import { SCALE, MAP_WIDTH, MAP_HEIGHT, HALF_W, HALF_H } from './constants';
 
 const ROUTE_Y = 0.08; // Route floats slightly above floor
@@ -479,8 +480,8 @@ export class RouteBuilder3D {
             waypoints: optimizedWaypoints,
             waypointT,
             info: {
-                from: optimizedWaypoints[0]?.name || 'Вход',
-                to: optimizedWaypoints[optimizedWaypoints.length - 1]?.name || 'Выход',
+                from: optimizedWaypoints[0]?.name || i18n.t('shop.entrance'),
+                to: optimizedWaypoints[optimizedWaypoints.length - 1]?.name || i18n.t('shop.exit'),
                 distance: distMeters,
                 time: timeMin
             }
@@ -508,8 +509,8 @@ export class RouteBuilder3D {
             points: path,
             waypoints: [source, dest],
             info: {
-                from: source.name || 'Вход',
-                to: dest.name || 'Категория',
+                from: source.name || i18n.t('shop.entrance'),
+                to: dest.name || i18n.t('ai.category'),
                 distance: distMeters,
                 time: timeMin
             }

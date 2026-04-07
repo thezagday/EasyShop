@@ -1,8 +1,10 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import ShopListItem from "./ShopListItem/ShopListItem";
 
 export default function ShopList({shops}) {
-    const emptyMessage = 'К сожалению, такой магазин мы еще не добавили.';
+    const { t } = useTranslation();
+    const emptyMessage = t('home.empty_shops');
     const shopItems = shops.map((shop) =>
         <ShopListItem key={shop.id} id={shop.id} title={shop.title} avatar={shop.avatar}/>
     );

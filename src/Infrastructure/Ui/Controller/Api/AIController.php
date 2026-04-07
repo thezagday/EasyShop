@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Ui\Controller\Api;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Application\AI\Query\ChatWithAI\ChatWithAIQuery;
 use App\Infrastructure\AI\AIService;
 use Fusonic\HttpKernelBundle\Attribute\FromRequest;
@@ -22,13 +23,14 @@ class AIController extends AbstractController
         protected AIService $AIService,
         #[Autowire(service: 'limiter.ai_public')]
         private readonly RateLimiterFactory $aiLimiter,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
     #[Route('/ai', name: 'app_ai_index', methods: ['GET'])]
     public function index(): Response
     {
-        dd('Тут будет ответ от AI, когда AI будет бесплатным');
+        dd($this->translator->trans('api.ai.no_free_yet'));
         dd($this->AIService->submit('Привет!'));
     }
 
@@ -46,13 +48,13 @@ class AIController extends AbstractController
             }
 
             return $this->json([
-                'error' => 'Too many AI requests. Please retry later.',
+                'error' => $this->translator->trans('api.errors.too_many_requests'),
             ], Response::HTTP_TOO_MANY_REQUESTS, $headers);
         }
 
         if (!$this->passesAntiBotChecks($request)) {
             return $this->json([
-                'error' => 'Request blocked by anti-bot protection.',
+                'error' => $this->translator->trans('api.errors.request_blocked'),
             ], Response::HTTP_FORBIDDEN);
         }
 
@@ -60,6 +62,8 @@ class AIController extends AbstractController
         if ($user) {
             $query->userId = $user->getId();
         }
+
+        $query->locale = $request->getLocale();
 
         $result = $this->query($query);
 

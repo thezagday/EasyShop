@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Ui\Controller\Api;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Domain\Repository\UserRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,7 +14,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserProfileController extends AbstractController
 {
     public function __construct(
-        private readonly UserRepositoryInterface $userRepository
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -23,7 +25,7 @@ class UserProfileController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.user_not_found')], 404);
         }
 
         return $this->json([
@@ -37,7 +39,7 @@ class UserProfileController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.user_not_found')], 404);
         }
 
         $data = json_decode($request->getContent(), true);
@@ -58,7 +60,7 @@ class UserProfileController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.user_not_found')], 404);
         }
 
         $shopId = $request->query->get('shopId');
@@ -107,7 +109,7 @@ class UserProfileController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            return $this->json(['error' => $this->translator->trans('api.errors.user_not_found')], 404);
         }
 
         $shopId = $request->query->get('shopId');

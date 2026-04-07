@@ -44,14 +44,15 @@
                  data-user-id="{{ app.user ? app.user.id : '' }}"
                  data-roles="{{ app.user ? app.user.roles|json_encode : '[]' }}"
                  data-admin-url="{{ app_scheme }}://{{ admin_host }}/admin"
-                 data-main-url="{{ app_scheme }}://{{ main_host }}/">
+                 data-main-url="{{ app_scheme }}://{{ main_host }}/"
+                 data-locale-cookie-domain="{{ locale_cookie_domain|e('html_attr') }}">
             </div>
         {% endblock %}
         {% block footer %}
         <footer class="app-footer tm-footer">
-            <img src="/img/logo.svg" alt="EasyShop" class="app-footer__logo-img">
-            <span class="app-footer__copy">&copy; {{ "now"|date("Y") }} EasyShop. Все права защищены.</span>
-        </footer>
+        <img src="/img/logo.svg" alt="EasyShop" class="app-footer__logo-img">
+        <span class="app-footer__copy">&copy; {{ "now"|date("Y") }} EasyShop. {{ 'footer.rights'|trans({}, 'messages', app.request ? app.request.locale : null) }}.</span>
+    </footer>
         {% endblock %}
     </body>
 </html>

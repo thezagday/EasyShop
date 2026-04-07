@@ -1,13 +1,15 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Bottom navigation bar with 3 icons: AI Chat, Search, Collections
  */
 export function BottomNavBar({ activeSheet, onToggle }) {
+    const { t } = useTranslation();
     const items = [
-        { id: 'ai', icon: '🤖', label: 'AI' },
-        { id: 'search', icon: '🔍', label: 'Поиск' },
-        { id: 'collection', icon: '🎁', label: 'Подборки' },
+        { id: 'ai', icon: '🤖', label: t('nav.ai') },
+        { id: 'search', icon: '🔍', label: t('nav.search') },
+        { id: 'collection', icon: '🎁', label: t('nav.collections') },
     ];
 
     return (
