@@ -1,5 +1,8 @@
 .PHONY: help build up up-prod down restart logs shell db-shell migrate fixtures assets install clean
 
+COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.dev.yml
+COMPOSE_PROD = docker compose -f docker-compose.yml -f docker-compose.prod.yml
+
 # Default target
 help:
 	@echo "EasyShop Docker Commands"
@@ -38,12 +41,12 @@ help:
 
 # Build Docker images
 build:
-	docker compose build
+	$(COMPOSE_DEV) build
 
 # Build production assets (on host via container)
 build-assets-prod:
-	docker compose run --rm node yarn install
-	docker compose run --rm node yarn build
+	$(COMPOSE_DEV) run --rm node yarn install
+	$(COMPOSE_DEV) run --rm node yarn build
 
 # Build production PHP image
 # Requires assets to be built first
@@ -53,27 +56,27 @@ build-prod: build-assets-prod
 
 # Deploy to production (using docker-compose.prod.yml)
 deploy-prod: build-prod
-	docker compose -f docker-compose.prod.yml up -d
+	$(COMPOSE_PROD) up -d
 
 # Stop production containers
 stop-prod:
-	docker compose -f docker-compose.prod.yml down
+	$(COMPOSE_PROD) down
 
 # Start containers (development — always docker-compose.yml, not prod file)
 up:
-	docker compose up -d
+	$(COMPOSE_DEV) up -d
 
 # Start production stack (requires easyshop-php:prod / easyshop-nginx:prod images — run build-prod first)
 up-prod:
-	docker compose -f docker-compose.prod.yml up -d
+	$(COMPOSE_PROD) up -d
 
 # Stop containers
 down:
-	docker compose down
+	$(COMPOSE_DEV) down
 
 # Stop containers and remove volumes (database)
 down-clean:
-	docker compose down -v
+	$(COMPOSE_DEV) down -v
 
 # Restart containers (with fresh database)
 restart: down-clean up
@@ -83,27 +86,27 @@ restart-quick: down up
 
 # View all logs
 logs:
-	docker compose logs -f
+	$(COMPOSE_DEV) logs -f
 
 # View PHP container logs
 logs-php:
-	docker compose logs -f php
+	$(COMPOSE_DEV) logs -f php
 
 # View Node container logs
 logs-node:
-	docker compose logs -f node
+	$(COMPOSE_DEV) logs -f node
 
 # Open shell in PHP container
 shell:
-	docker compose exec php sh
+	$(COMPOSE_DEV) exec php sh
 
 # Open MySQL shell
 db-shell:
-	docker compose exec database mysql -u easyshop -peasyshop easyshop
+	$(COMPOSE_DEV) exec database mysql -u easyshop -peasyshop easyshop
 
 # Run database migrations
 migrate:
-	docker compose exec php bin/console doctrine:migrations:migrate --no-interaction
+	$(COMPOSE_DEV) exec php bin/console doctrine:migrations:migrate --no-interaction
 
 # Load fixtures (DEV/TEST ONLY - use at your own risk in production!)
 fixtures:
@@ -112,35 +115,35 @@ fixtures:
 	@read -p "Continue? [y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		docker compose exec php bin/console doctrine:database:drop --force --if-exists && \
-		docker compose exec php bin/console doctrine:database:create && \
-		docker compose exec php bin/console doctrine:migrations:migrate --no-interaction && \
-		docker compose exec php bin/console doctrine:fixtures:load --no-interaction; \
+		$(COMPOSE_DEV) exec php bin/console doctrine:database:drop --force --if-exists && \
+		$(COMPOSE_DEV) exec php bin/console doctrine:database:create && \
+		$(COMPOSE_DEV) exec php bin/console doctrine:migrations:migrate --no-interaction && \
+		$(COMPOSE_DEV) exec php bin/console doctrine:fixtures:load --no-interaction; \
 	fi
 
 # Build production assets
 assets:
-	docker compose exec node yarn build
+	$(COMPOSE_DEV) exec node yarn build
 
 # Run composer install
 composer:
-	docker compose exec php composer install
+	$(COMPOSE_DEV) exec php composer install
 
 # Run yarn install
 yarn:
-	docker compose exec node yarn install
+	$(COMPOSE_DEV) exec node yarn install
 
 # Clear Symfony cache
 cache:
-	docker compose exec php bin/console cache:clear
+	$(COMPOSE_DEV) exec php bin/console cache:clear
 
 # Run tests
 test:
-	docker compose exec php bin/phpunit
+	$(COMPOSE_DEV) exec php bin/phpunit
 
 # First time installation
 install: env build
-	docker compose up -d
+	$(COMPOSE_DEV) up -d
 	@echo ""
 	@echo "============================================"
 	@echo "EasyShop is starting..."
@@ -155,5 +158,5 @@ env:
 
 # Clean up everything
 clean:
-	docker compose down -v --rmi all
+	$(COMPOSE_DEV) down -v --rmi all
 	@echo "Cleaned up all containers, volumes, and images"

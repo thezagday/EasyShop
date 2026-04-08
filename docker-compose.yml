@@ -1,46 +1,16 @@
 services:
   php:
-    build:
-      context: .
-      dockerfile: docker/php/Dockerfile
-      target: dev
-    image: easyshop-php:dev
     container_name: easyshop-php
-    volumes:
-      - .:/app:cached
-      - vendor:/app/vendor
-    environment:
-      APP_ENV: ${APP_ENV:-dev}
-      APP_SECRET: ${APP_SECRET:-secret}
-      DATABASE_URL: ${DATABASE_URL}
-      MESSENGER_TRANSPORT_DSN: ${MESSENGER_TRANSPORT_DSN}
-      ADMIN_HOST: ${ADMIN_HOST:-}
-      MAIN_HOST: ${MAIN_HOST:-}
-      LANDING_HOST: ${LANDING_HOST:-}
-      APP_SCHEME: ${APP_SCHEME:-http}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
-      AI_PROVIDER: ${AI_PROVIDER:-}
-      VAR_DUMPER_SERVER: ${VAR_DUMPER_SERVER:-host.docker.internal:9912}
-      MAILER_DSN: null://null
     depends_on:
       database:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - easyshop
 
   nginx:
-    build:
-      context: .
-      dockerfile: docker/nginx/Dockerfile
-      target: dev
-    image: easyshop-nginx:dev
     container_name: easyshop-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - .:/app:cached
     depends_on:
       - php
     networks:
@@ -57,11 +27,10 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "mysql", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}", "-e", "SELECT 1" ]
-      interval: 2s
-      timeout: 5s
-      retries: 30
-      start_period: 10s
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
       - easyshop
 
@@ -79,29 +48,9 @@ services:
     networks:
       - easyshop
 
-  node:
-    build:
-      context: .
-      dockerfile: docker/node/Dockerfile
-      target: dev
-    image: easyshop-node:dev
-    container_name: easyshop-node
-    working_dir: /app
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-    volumes:
-      - .:/app:cached
-      - node_modules:/app/node_modules
-    command: sh -c "yarn config set registry https://registry.npmjs.org && yarn install && yarn watch"
-    networks:
-      - easyshop
-
 volumes:
   db_data:
   redis_data:
-  vendor:
-  node_modules:
 
 
 networks:
