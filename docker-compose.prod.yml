@@ -42,6 +42,9 @@ services:
     image: caddy:2-alpine
     container_name: easyshop-caddy
     restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     ports:
       - "80:80"
       - "443:443"
