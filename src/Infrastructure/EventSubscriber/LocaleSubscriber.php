@@ -3,7 +3,9 @@
 namespace App\Infrastructure\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class LocaleSubscriber implements EventSubscriberInterface
@@ -86,6 +88,32 @@ class LocaleSubscriber implements EventSubscriberInterface
         return [
             // must be registered before (default) LocaleListener
             KernelEvents::REQUEST => [['onKernelRequest', 20]],
+            KernelEvents::RESPONSE => [['onKernelResponse', -20]],
         ];
+    }
+
+    public function onKernelResponse(ResponseEvent $event): void
+    {
+        $request = $event->getRequest();
+
+        if ($this->adminHost === '' || $request->getHost() !== $this->adminHost) {
+            return;
+        }
+
+        $response = $event->getResponse();
+
+        $response->headers->setCookie(
+            Cookie::create(
+                self::LOCALE_COOKIE_NAME,
+                'pl',
+                new \DateTimeImmutable('+1 year'),
+                '/',
+                null,
+                $request->isSecure(),
+                false,
+                false,
+                Cookie::SAMESITE_LAX
+            )
+        );
     }
 }
