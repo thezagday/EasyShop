@@ -2,6 +2,7 @@
 
 COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.dev.yml
 COMPOSE_PROD = docker compose -f docker-compose.yml -f docker-compose.prod.yml
+NODE_BUILD_IMAGE ?= node:20-alpine
 
 # Default target
 help:
@@ -45,8 +46,12 @@ build:
 
 # Build production assets (on host via container)
 build-assets-prod:
-	$(COMPOSE_DEV) run --rm node yarn install
-	$(COMPOSE_DEV) run --rm node yarn build
+	docker run --rm \
+		-v $(CURDIR):/app \
+		-w /app \
+		-u $$(id -u):$$(id -g) \
+		$(NODE_BUILD_IMAGE) \
+		sh -lc "corepack enable && yarn install --frozen-lockfile && yarn build"
 
 # Build production PHP image
 # Requires assets to be built first
