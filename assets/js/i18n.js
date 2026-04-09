@@ -25,7 +25,9 @@ i18n
             escapeValue: false,
         },
         detection: {
-            order: ['querystring', 'cookie', 'localStorage', 'navigator', 'htmlTag'],
+            order: isInfoHost
+                ? ['querystring', 'cookie', 'localStorage', 'navigator', 'htmlTag']
+                : ['cookie', 'htmlTag'],
             lookupCookie: '_locale',
             caches: isInfoHost ? ['cookie'] : [],
         },

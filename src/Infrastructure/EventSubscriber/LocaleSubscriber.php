@@ -38,13 +38,6 @@ class LocaleSubscriber implements EventSubscriberInterface
             $locale = $cookieLocale;
         }
 
-        if ($locale === null && $request->hasSession()) {
-            $sessionLocale = $request->getSession()->get('_locale');
-            if (\is_string($sessionLocale) && $sessionLocale !== '') {
-                $locale = $sessionLocale;
-            }
-        }
-
         if ($locale === null) {
             $locale = $this->defaultLocale;
         }
