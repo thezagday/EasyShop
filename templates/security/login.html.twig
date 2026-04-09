@@ -9,7 +9,9 @@
             <img src="/img/logo.svg" alt="EasyShop" style="height:32px;">
         </a>
         <div class="ms-auto d-flex align-items-center">
-            {% include '_language_switcher.html.twig' %}
+            {% if app.request.host == landing_host %}
+                {% include '_language_switcher.html.twig' %}
+            {% endif %}
         </div>
     </div>
 </nav>

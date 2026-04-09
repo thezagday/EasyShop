@@ -54,17 +54,9 @@ class DashboardController extends AbstractDashboardController
 
     public function configureAssets(): Assets
     {
-        $request = $this->requestStack->getCurrentRequest();
-        $locale = $request?->getLocale() ?? 'pl';
-
-        $localeSwitcher = $this->renderView('admin/_ea_locale_switcher.html.twig', [
-            'current_locale' => $locale,
-        ]);
-
         return Assets::new()
             ->addHtmlContentToHead('<link rel="icon" href="/img/icon.svg" type="image/svg+xml">')
-            ->addHtmlContentToHead('<link rel="icon" href="/favicon.ico" sizes="any">')
-            ->addHtmlContentToBody($localeSwitcher);
+            ->addHtmlContentToHead('<link rel="icon" href="/favicon.ico" sizes="any">');
     }
 
     public function configureUserMenu(\Symfony\Component\Security\Core\User\UserInterface $user): \EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu

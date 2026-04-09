@@ -20,6 +20,7 @@ export function AppProvider({ children }) {
 
     const isAdmin = roles.includes('ROLE_ADMIN');
     const isAdminHost = window.location.hostname.includes('admin.');
+    const isInfoHost = window.location.hostname.includes('info.');
     const isLoggedIn = !!username;
 
     const value = {
@@ -28,6 +29,7 @@ export function AppProvider({ children }) {
         roles,
         isAdmin,
         isAdminHost,
+        isInfoHost,
         isLoggedIn,
         adminUrl,
         mainUrl,

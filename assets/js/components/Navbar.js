@@ -9,7 +9,7 @@ export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const userMenuRef = useRef(null);
-    const { username, isAdmin, isAdminHost, adminUrl, isLoggedIn } = useAppContext();
+    const { username, isAdmin, isAdminHost, isInfoHost, adminUrl, isLoggedIn } = useAppContext();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -42,7 +42,7 @@ export default function Navbar() {
                             {t('navbar.greeting', { username })}
                         </span>
                     )}
-                    <LanguageSwitcher />
+                    {isInfoHost && <LanguageSwitcher />}
                     <button
                         className="navbar-toggler"
                         type="button"

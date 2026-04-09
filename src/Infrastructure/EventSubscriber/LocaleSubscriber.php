@@ -9,16 +9,31 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class LocaleSubscriber implements EventSubscriberInterface
 {
     private string $defaultLocale;
+    private string $adminHost;
     private const LOCALE_COOKIE_NAME = '_locale';
 
-    public function __construct(string $defaultLocale = 'pl')
+    public function __construct(string $defaultLocale = 'pl', string $adminHost = '')
     {
         $this->defaultLocale = $defaultLocale;
+        $this->adminHost = $adminHost;
     }
 
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
+
+        if ($this->adminHost !== '' && $request->getHost() === $this->adminHost) {
+            $locale = 'pl';
+
+            if ($request->hasSession()) {
+                $request->getSession()->set('_locale', $locale);
+            }
+
+            $request->attributes->set('_locale', $locale);
+            $request->setLocale($locale);
+
+            return;
+        }
 
         if ($locale = $request->query->get('_locale')) {
             if ($this->isAllowedLocale((string) $locale)) {
