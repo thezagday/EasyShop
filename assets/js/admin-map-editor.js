@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import UnifiedMapEditor from './components/Admin/UnifiedMapEditor/UnifiedMapEditor';
+import './i18n';
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('map-editor-root');
