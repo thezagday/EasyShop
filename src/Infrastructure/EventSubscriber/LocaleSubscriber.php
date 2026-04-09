@@ -3,39 +3,22 @@
 namespace App\Infrastructure\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class LocaleSubscriber implements EventSubscriberInterface
 {
     private string $defaultLocale;
-    private string $adminHost;
     private const LOCALE_COOKIE_NAME = '_locale';
 
-    public function __construct(string $defaultLocale = 'pl', string $adminHost = '')
+    public function __construct(string $defaultLocale = 'pl')
     {
         $this->defaultLocale = $defaultLocale;
-        $this->adminHost = $adminHost;
     }
 
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
-
-        if ($this->adminHost !== '' && $request->getHost() === $this->adminHost) {
-            $locale = 'pl';
-
-            if ($request->hasSession()) {
-                $request->getSession()->set('_locale', $locale);
-            }
-
-            $request->attributes->set('_locale', $locale);
-            $request->setLocale($locale);
-
-            return;
-        }
 
         if ($locale = $request->query->get('_locale')) {
             if ($this->isAllowedLocale((string) $locale)) {
@@ -88,32 +71,6 @@ class LocaleSubscriber implements EventSubscriberInterface
         return [
             // must be registered before (default) LocaleListener
             KernelEvents::REQUEST => [['onKernelRequest', 20]],
-            KernelEvents::RESPONSE => [['onKernelResponse', -20]],
         ];
-    }
-
-    public function onKernelResponse(ResponseEvent $event): void
-    {
-        $request = $event->getRequest();
-
-        if ($this->adminHost === '' || $request->getHost() !== $this->adminHost) {
-            return;
-        }
-
-        $response = $event->getResponse();
-
-        $response->headers->setCookie(
-            Cookie::create(
-                self::LOCALE_COOKIE_NAME,
-                'pl',
-                new \DateTimeImmutable('+1 year'),
-                '/',
-                null,
-                $request->isSecure(),
-                false,
-                false,
-                Cookie::SAMESITE_LAX
-            )
-        );
     }
 }
