@@ -48,7 +48,7 @@ user:
         stats_total_routes: "Маршрутов"
         stats_total_distance: "Дистанция (м)"
         stats_total_time: "Время (мин)"
-        stats_total_cost: "Сумма (₽)"
+        stats_total_cost: "Сумма (zł)"
         password: "Пароль (хэш)"
 
 shop:
@@ -127,7 +127,7 @@ commodity:
     label_plural: "Товары"
     fields:
         title: "Название"
-        price: "Цена (₽)"
+        price: "Цена (zł)"
         shop_categories: "Категории в магазинах"
 
 collection:

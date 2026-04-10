@@ -104,7 +104,7 @@ export function ProductSearch({ shopId, onSelect }) {
                                 {product.name}
                                 {product.price && (
                                     <span style={{ float: 'right', color: '#667eea', fontWeight: 'bold' }}>
-                                        {product.price} ₽
+                                        {product.price} zł
                                     </span>
                                 )}
                             </div>

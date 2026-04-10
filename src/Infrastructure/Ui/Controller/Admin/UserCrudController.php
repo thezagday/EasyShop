@@ -74,7 +74,7 @@ class UserCrudController extends AbstractCrudController
         yield IntegerField::new('statsTotalTimeMinutes', new TranslatableMessage('user.fields.stats_total_time', [], 'admin'))
             ->onlyOnDetail();
         yield TextField::new('statsTotalCostDisplay', new TranslatableMessage('user.fields.stats_total_cost', [], 'admin'))
-            ->formatValue(static fn ($value) => $value !== null ? $value . ' ₽' : '0.00 ₽')
+            ->formatValue(static fn ($value) => $value !== null ? $value . ' zł' : '0.00 zł')
             ->onlyOnDetail();
         yield TextField::new('password', new TranslatableMessage('user.fields.password', [], 'admin'))->hideOnIndex();
     }

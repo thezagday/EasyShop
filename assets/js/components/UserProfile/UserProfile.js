@@ -324,7 +324,7 @@ export default function UserProfile() {
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleString('ru-RU', {
+        return date.toLocaleString('pl-PL', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
@@ -334,7 +334,11 @@ export default function UserProfile() {
     };
 
     const formatCost = (cost) => {
-        return cost ? `${parseFloat(cost).toFixed(2)} ₽` : '—';
+        return cost ? `${parseFloat(cost).toFixed(2)} zł` : '—';
+    };
+
+    const formatPrice = (price) => {
+        return price ? `${price} zł` : '';
     };
 
     const formatRouteCategories = (routeCategories) => {
@@ -500,13 +504,13 @@ export default function UserProfile() {
                                                         )}
                                                         <div className="history-stats">
                                                             {item.routeDistance && (
-                                                                <span><i className="fas fa-walking"></i> {item.routeDistance}м</span>
+                                                                <span><i className="fas fa-walking"></i> {item.routeDistance} m</span>
                                                             )}
                                                             {item.routeTime && (
-                                                                <span><i className="fas fa-clock"></i> {item.routeTime}мин</span>
+                                                                <span><i className="fas fa-clock"></i> {item.routeTime} min</span>
                                                             )}
                                                             {item.routeCost && (
-                                                                <span><i className="fas fa-ruble-sign"></i> {formatCost(item.routeCost)}</span>
+                                                                <span><i className="fas fa-coins"></i> {formatCost(item.routeCost)}</span>
                                                             )}
                                                         </div>
                                                         {routeLabel && (
@@ -622,7 +626,7 @@ export default function UserProfile() {
                                                                         <span className="commodity-title">{c.title}</span>
                                                                         <span className="commodity-meta">
                                                                             {c.categoryTitle && <span className="commodity-category">{c.categoryTitle}</span>}
-                                                                            {c.price && <span className="commodity-price">{c.price} ₽</span>}
+                                                                            {c.price && <span className="commodity-price">{formatPrice(c.price)}</span>}
                                                                         </span>
                                                                     </span>
                                                                 </label>
@@ -714,7 +718,7 @@ export default function UserProfile() {
                                                                                     <span className="commodity-title">{c.title}</span>
                                                                                     <span className="commodity-meta">
                                                                                         {c.categoryTitle && <span className="commodity-category">{c.categoryTitle}</span>}
-                                                                                        {c.price && <span className="commodity-price">{c.price} ₽</span>}
+                                                                                        {c.price && <span className="commodity-price">{formatPrice(c.price)}</span>}
                                                                                     </span>
                                                                                 </span>
                                                                             </label>
@@ -803,7 +807,7 @@ export default function UserProfile() {
                                         </div>
                                         <div className="stat-card">
                                             <div className="stat-icon">
-                                                <i className="fas fa-ruble-sign"></i>
+                                                <i className="fas fa-coins"></i>
                                             </div>
                                             <div className="stat-content">
                                                 <div className="stat-value">{formatCost(stats.totalCost)}</div>
@@ -824,7 +828,7 @@ export default function UserProfile() {
                                                 <i className="fas fa-walking"></i>
                                             </div>
                                             <div className="stat-content">
-                                                <div className="stat-value">{stats.totalDistanceMeters}м</div>
+                                                <div className="stat-value">{stats.totalDistanceMeters} m</div>
                                                 <div className="stat-label">{t('profile.stats.total_distance')}</div>
                                             </div>
                                         </div>
@@ -833,7 +837,7 @@ export default function UserProfile() {
                                                 <i className="fas fa-clock"></i>
                                             </div>
                                             <div className="stat-content">
-                                                <div className="stat-value">{stats.totalTimeMinutes}мин</div>
+                                                <div className="stat-value">{stats.totalTimeMinutes} min</div>
                                                 <div className="stat-label">{t('profile.stats.total_time')}</div>
                                             </div>
                                         </div>
@@ -842,7 +846,7 @@ export default function UserProfile() {
                                                 <i className="fas fa-stopwatch"></i>
                                             </div>
                                             <div className="stat-content">
-                                                <div className="stat-value">{stats.averageTimeMinutes}мин</div>
+                                                <div className="stat-value">{stats.averageTimeMinutes} min</div>
                                                 <div className="stat-label">{t('profile.stats.average_time')}</div>
                                             </div>
                                         </div>

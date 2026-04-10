@@ -48,7 +48,7 @@ user:
         stats_total_routes: "Trasy"
         stats_total_distance: "Dystans (m)"
         stats_total_time: "Czas (min)"
-        stats_total_cost: "Suma (₽)"
+        stats_total_cost: "Suma (zł)"
         password: "Hasło (hash)"
 
 shop:
@@ -127,7 +127,7 @@ commodity:
     label_plural: "Towary"
     fields:
         title: "Nazwa"
-        price: "Cena (₽)"
+        price: "Cena (zł)"
         shop_categories: "Kategorie w sklepach"
 
 collection:
